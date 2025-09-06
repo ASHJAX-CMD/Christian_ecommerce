@@ -15,22 +15,16 @@ import Register from "./Pages/Registration";
 import Login from "./Pages/Login";
 import Protected from "./components/users/Protected";
 import { fetchCurrentUser } from "./slices/user";
-
+import EditProduct from "./components/admin/EditProduct"
 function AppContent() {
   const dispatch = useDispatch();
-  const [showSplash, setShowSplash] = useState(true);
-  const {user,loading} = useSelector((state)=>state.user)
+  
   useEffect(() => {
     
     dispatch(fetchCurrentUser());
   }, [dispatch]);
 
-  // Splash logic
-  // if (loading  || showSplash) {
-    
-  //   console.log(user,loading)
-  //   return <Splash onFinish={() => setShowSplash(false)} />
-  // }
+
 
   return (
     <Routes>
@@ -59,6 +53,7 @@ function AppContent() {
         <Route path="products" element={<Products />}>
           <Route path="addproduct" element={<Addproduct />} />
           <Route index element={<LiveProducts />} />
+          <Route path="edit/:id" element={<EditProduct/>}/>
         </Route>
         <Route path="reviews" element={<Reviews />} />
         <Route path="orders" element={<Orders />} />

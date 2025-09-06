@@ -2,8 +2,10 @@ import React, { useEffect } from "react";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { getAllProducts } from "../../slices/product";
 import { useDispatch, useSelector } from "react-redux";
-
+import { CiEdit } from "react-icons/ci";
+import { Navigate, useNavigate } from "react-router-dom";
 const LiveProducts = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { items: products, loading, error } = useSelector((state) => state.products);
 
@@ -26,7 +28,10 @@ const LiveProducts = () => {
             <div className="flex justify-between items-center">
               <h3 className="font-bold text-lg">{p.brand}</h3>
               {console.log(p.brand)}
+            <div className="flex gap-4 items-center" >
+                <CiEdit onClick={() => navigate(`/admin/products/edit/${p._id}`)} className="text-xl  cursor-pointer hover:text-red-700 transition" />
               <AiTwotoneDelete className="text-xl cursor-pointer text-red-500 hover:text-red-700 transition" />
+            </div>
             </div>
 
             <p>
