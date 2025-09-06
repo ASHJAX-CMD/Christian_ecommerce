@@ -33,7 +33,7 @@ const Addproduct = () => {
       compareAtPrice:Number(product.compareAtPrice),
       sizes:product.sizes? product.sizes.split(",").map((s)=>s.trim()):[],
     }
-    console.log(pa)
+    console.log(product)
     dispatch(createProduct(payload));
   };
   // Handle text inputs
