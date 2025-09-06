@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Wireless Headphones",
+    "description": "High-quality wireless headphones with noise cancellation and 20 hours battery life.",
+    "price": 199.99,
+    "discount": 10,
+    "tags": "electronics, audio, wireless",
+    "images": [
+      "https://images.unsplash.com/photo-1585386959984-a4155224a1ad",
+      "https://images.unsplash.com/photo-1612817159949-1fef9edc3e3d"
+    ]
+  },
+  {
+    "name": "Smartphone X Pro",
+    "description": "Latest smartphone with AMOLED display, 128GB storage, and 5G connectivity.",
+    "price": 799.0,
+    "discount": 5,
+    "tags": "electronics, mobile, smartphone",
+    "images": [
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
+      "https://images.unsplash.com/photo-1510557880182-3d4d3c5aa4f2"
+    ]
+  },
+  {
+    "name": "Running Shoes",
+    "description": "Lightweight running shoes with breathable mesh and cushioned soles.",
+    "price": 120.5,
+    "discount": 15,
+    "tags": "fashion, sports, shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1528701800489-20be0fca6e1f",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4a4efc3"
+    ]
+  },
+  {
+    "name": "Gaming Laptop",
+    "description": "Powerful gaming laptop with RTX graphics, 16GB RAM, and 1TB SSD.",
+    "price": 1499.99,
+    "discount": 20,
+    "tags": "electronics, gaming, laptop",
+    "images": [
+      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
+      "https://images.unsplash.com/photo-1587202372775-df5b0c5d36f2"
+    ]
+  },
+  {
+    "name": "Coffee Maker",
+    "description": "Automatic drip coffee maker with programmable timer and 12-cup capacity.",
+    "price": 89.99,
+    "discount": 8,
+    "tags": "home, kitchen, appliances",
+    "images": [
+      "https://images.unsplash.com/photo-1509042239860-f550ce710b93",
+      "https://images.unsplash.com/photo-1523906630133-f6934a1ab1f0"
+    ]
+  }
+]
