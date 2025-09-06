@@ -94,23 +94,28 @@ const LiveProducts = () => {
       </div>
 
       {/* One modal reused for all products */}
-      <dialog ref={dialogRef} className="p-6 rounded-lg shadow-lg">
-        <p>Are you sure you want to delete this product?</p>
-        <div className="flex gap-3 mt-4">
-          <button
-            onClick={closeDialog}
-            className="px-3 py-1 bg-gray-300 rounded"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => handleDelete(selectedProductId)}
-            className="px-3 py-1 bg-red-600 text-white rounded"
-          >
-            Delete
-          </button>
-        </div>
-      </dialog>
+<dialog
+  ref={dialogRef}
+  className="p-6 rounded-lg shadow-lg max-w-sm w-[90%] text-center 
+             fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+>
+  <p>Are you sure you want to delete this product?</p>
+  <div className="flex gap-3 mt-4 justify-center">
+    <button
+      onClick={closeDialog}
+      className="px-3 py-1 bg-gray-300 rounded"
+    >
+      Cancel
+    </button>
+    <button
+      onClick={() => handleDelete(selectedProductId)}
+      className="px-3 py-1 bg-red-600 text-white rounded"
+    >
+      Delete
+    </button>
+  </div>
+</dialog>
+
     </div>
   );
 };
