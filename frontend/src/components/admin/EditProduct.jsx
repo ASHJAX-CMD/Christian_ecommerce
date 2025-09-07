@@ -5,7 +5,8 @@ import axios from "axios";
 const EditProduct = () => {
   const { id } = useParams(); // Extract product ID from URL
   const navigate = useNavigate();
-
+  const [removedImages, setRemovedImages] = useState([]);
+  const [newImages, setNewImages] = useState([]);
   const [product, setProduct] = useState({
     name: "",
     description: "",
@@ -20,9 +21,12 @@ const EditProduct = () => {
     slug: "",
     metaTitle: "",
     metaDescription: "",
-    featured: false
-  });
+    featured: false,
 
+  });
+  const handleImageChange = (e) => {
+    setNewImages((prev)=>[...prev,...e.target.files]);
+  };
   // Fetch product data if editing
   useEffect(() => {
     if (id) {
@@ -38,18 +42,23 @@ const EditProduct = () => {
     const { name, value, type, checked } = e.target;
     setProduct((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   // Submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
-
+        const formData = new FormData();
+    Object.keys(product).forEach((key)=>{
+      if(key!=="images") formData.append(key,product[key]);
+    });
+    removedImages.forEach((img)=>formData.append("removedImages",img));
+    newImages.forEach((img)=>formData.append("newImages",img));
     if (id) {
       // Edit existing product
       axios
-        .patch(`http://localhost:5000/api/products/${id}`, product)
+        .patch(`http://localhost:5000/api/products/${id}`, formData)
         .then(() => navigate("/admin/products"))
         .catch((err) => console.error(err));
     } else {
@@ -69,10 +78,11 @@ const EditProduct = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-
           {/* Basic Info */}
           <section>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Basic Information</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">
+              Basic Information
+            </h3>
             <div className="space-y-4">
               <input
                 type="text"
@@ -126,7 +136,9 @@ const EditProduct = () => {
 
           {/* Pricing */}
           <section>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Pricing</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">
+              Pricing
+            </h3>
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="number"
@@ -159,7 +171,9 @@ const EditProduct = () => {
 
           {/* Variants */}
           <section>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Product Variants</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">
+              Product Variants
+            </h3>
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="text"
@@ -182,7 +196,9 @@ const EditProduct = () => {
 
           {/* SEO & Visibility */}
           <section>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">SEO & Visibility</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">
+              SEO & Visibility
+            </h3>
             <div className="space-y-4">
               <input
                 type="text"
@@ -218,25 +234,43 @@ const EditProduct = () => {
                 Featured Product
               </label>
             </div>
-               <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-3 flex-wrap">
               {product.images?.map((img, j) => (
-                <img
-                  key={j}
-                  src={`http://localhost:5000/uploads/${img}`}  // make sure your backend sends full URLs or prepend host
-                  alt={product.name}
-                  className="w-40 h-40 object-contain rounded-lg "
-                />
+                <div key={j} className="relative">
+                  <img
+                    src={`http://localhost:5000/uploads/${img}`}
+                    alt={product.name}
+                    className="w-40 h-40 object-contain rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setRemovedImages((prev) => [...prev, img])}
+                    className="absolute -top-1 right-4 bg-red-500 text-white px-2 py-1 rounded text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
               ))}
             </div>
           </section>
-
+          <section>
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">Media</h3>
+            <div className="space-y-4">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full border border-gray-300 p-2 rounded-lg"
+              />
+            </div>
+          </section>
           <button
             type="submit"
             className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition duration-200"
           >
             {id ? "Save Changes" : "Add Product"}
           </button>
-        
         </form>
       </div>
     </div>

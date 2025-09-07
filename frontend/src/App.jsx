@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider, useDispatch} from "react-redux";
 import store from "./store";
 import ProtectedAdmin from "./components/admin/Protected";
 import Splash from "./Splash";

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { createProduct } from "../../slices/product";
 const Addproduct = () => {
   const [product, setProduct] = useState({
@@ -22,18 +22,18 @@ const Addproduct = () => {
     status: "draft",
   });
   const dispatch = useDispatch();
-  const { loading, success, error } = useSelector((state) => state.products);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const payload = {
       ...product,
-      price:Number(product.price),
-      discount:Number(product.discount),
-      compareAtPrice:Number(product.compareAtPrice),
-      sizes:product.sizes? product.sizes.split(",").map((s)=>s.trim()):[],
-    }
-    console.log(product)
+      price: Number(product.price),
+      discount: Number(product.discount),
+      compareAtPrice: Number(product.compareAtPrice),
+      sizes: product.sizes ? product.sizes.split(",").map((s) => s.trim()) : [],
+    };
+    console.log(product);
     dispatch(createProduct(payload));
   };
   // Handle text inputs
@@ -159,7 +159,9 @@ const Addproduct = () => {
 
           {/* Pricing */}
           <section>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Pricing</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">
+              Pricing
+            </h3>
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="number"
@@ -260,7 +262,6 @@ const Addproduct = () => {
                   />
                   Featured Product
                 </label>
-
               </div>
             </div>
           </section>
