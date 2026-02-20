@@ -20,6 +20,28 @@ export const fetchUser = createAsyncThunk(
   }
 );
 
+export const createUser = createAsyncThunk(
+  "user/register",
+  async (credential, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/user/register",
+        {
+          email: credential.email,
+          password: credential.password,
+          name: credential.fullName,
+        },
+        { withCredentials: true }
+      );
+
+      return res.data; // success → goes to fulfilled
+    } catch (error) {
+      return rejectWithValue(error.response?.data); // error → goes to rejected
+    }
+  }
+);
+
+
 export const fetchCurrentUser = createAsyncThunk(
   "user/fetchCurrentUser",
   async (_, { rejectWithValue }) => {
@@ -77,7 +99,22 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = null;
         state.success = false;
-      });
+      })
+      .addCase(createUser.pending, (state)=>{
+        state.loading =true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(createUser.fulfilled,(state)=>{
+        state.loading = false;
+        state.user = null;
+        state.success= true;
+      })
+      .addCase(createUser.rejected,(state, action)=>{
+        state.loading = false;
+        state.user = action.payload?.message || "Registration Failed";
+        state.success= false;
+      })
   },
 });
 

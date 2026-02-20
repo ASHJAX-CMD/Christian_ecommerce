@@ -2,8 +2,12 @@
 import React, { useState } from "react";
 import Input from "../components/users/Input";
 import video from "../../public/video/v1.mp4";
-
+import { createUser } from "../slices/user";
+import { useDispatch } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
 const Register = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -15,15 +19,25 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-    console.log("Form Data Submitted: ", formData);
-    // Call your API here
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (formData.password !== formData.confirmPassword) {
+    alert("Passwords do not match!");
+    return;
+  }
+
+  try {
+    const result = await dispatch(createUser(formData)).unwrap();
+
+    console.log("Registration success:", result);
+
+    navigate("/login");  // redirect after success
+  } catch (error) {
+    console.log("Registration failed:", error);
+  }
+};
+
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">

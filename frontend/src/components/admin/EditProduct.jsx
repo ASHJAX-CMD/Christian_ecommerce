@@ -58,13 +58,15 @@ const EditProduct = () => {
     if (id) {
       // Edit existing product
       axios
-        .patch(`http://localhost:5000/api/products/${id}`, formData)
+        .patch(`http://localhost:5000/api/products/${id}`, formData ,
+  { withCredentials: true })
         .then(() => navigate("/admin/products"))
         .catch((err) => console.error(err));
     } else {
       // Add new product
       axios
-        .post("http://localhost:5000/api/products", product)
+        .post("http://localhost:5000/api/products", product ,
+  { withCredentials: true })
         .then(() => navigate("/admin/products"))
         .catch((err) => console.error(err));
     }
@@ -92,8 +94,7 @@ const EditProduct = () => {
                 placeholder="Product Name"
                 className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
-              />
-
+              />                    
               <textarea
                 name="description"
                 value={product.description}
