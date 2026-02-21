@@ -1,6 +1,6 @@
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Provider, useDispatch} from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import store from "./store";
 import ProtectedAdmin from "./components/admin/Protected";
 import Splash from "./Splash";
@@ -15,16 +15,13 @@ import Register from "./Pages/Registration";
 import Login from "./Pages/Login";
 import Protected from "./components/users/Protected";
 import { fetchCurrentUser } from "./slices/user";
-import EditProduct from "./components/admin/EditProduct"
+import EditProduct from "./components/admin/EditProduct";
 function AppContent() {
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
-    
     dispatch(fetchCurrentUser());
   }, [dispatch]);
-
-
 
   return (
     <Routes>
@@ -50,10 +47,11 @@ function AppContent() {
           </ProtectedAdmin>
         }
       >
+         <Route index element={<Navigate to="products" replace />} />
         <Route path="products" element={<Products />}>
           <Route path="addproduct" element={<Addproduct />} />
           <Route index element={<LiveProducts />} />
-          <Route path="edit/:id" element={<EditProduct/>}/>
+          <Route path="edit/:id" element={<EditProduct />} />
         </Route>
         <Route path="reviews" element={<Reviews />} />
         <Route path="orders" element={<Orders />} />
