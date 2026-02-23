@@ -10,8 +10,12 @@ import logo from "../../public/images/logo.png";
 import img1 from "../../public/images/img1.webp";
 import Rating from "../features/users/Rating";
 import { FaShoppingCart } from "react-icons/fa";
-
+import FilterItem from "../components/users/FilterItem";
 const Products = () => {
+  const handleSelect = (type, value) => {
+    console.log(type, value);
+  };
+
   return (
     <div className="min-h-screen">
       <div className="bg-[#fefadf] text-gray-700 font-sans ">
@@ -158,14 +162,13 @@ const Products = () => {
                   <FaShoppingCart />
                   Add to Cart
                 </button>
-                 <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+                <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
                   Shop Now !
                 </button>
               </section>
             </div>
-            
           </div>
-           <div className="p-2 rounded-xl bg-white">
+          <div className="p-2 rounded-xl bg-white">
             <img
               className="  h-102"
               src="https://www.ikea.com/us/en/images/products/roedalm-frame-black__1251233_pe924195_s5.jpg?f=xl"
@@ -183,14 +186,36 @@ const Products = () => {
                   <FaShoppingCart />
                   Add to Cart
                 </button>
-                 <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+                <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
                   Shop Now !
                 </button>
               </section>
             </div>
-            
           </div>
-          
+          <div className="w-60 bg-[#fefadf] p-4 shadow-md rounded-lg">
+            <FilterItem
+              title="Color"
+              options={["Red", "Blue", "Black", "White"]}
+              onSelect={handleSelect}
+            />
+
+            <FilterItem
+              title="Size"
+              options={["S", "M", "L", "XL"]}
+              onSelect={handleSelect}
+            />
+
+            <FilterItem
+              title="Price"
+              options={[
+                "Low to High",
+                "High to Low",
+                "Under $50",
+                "$50 - $100",
+              ]}
+              onSelect={handleSelect}
+            />
+          </div>
         </div>
         <div>
           <div></div>
