@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AiTwotoneDelete } from "react-icons/ai";
-import { getAllProducts } from "../../slices/product";
+import {getAllProducts} from "../../slices/product"
 import { useDispatch, useSelector } from "react-redux";
 import { CiEdit } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";

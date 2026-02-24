@@ -1,20 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaPhoneAlt, FaRegHeart, FaBars } from "react-icons/fa";
 import { AiOutlineShoppingCart, AiOutlineCamera } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
 import { IoIosGlobe } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
 import { IoSearchOutline } from "react-icons/io5";
 import video from "../../public/video/Home_hero.mp4";
 import logo from "../../public/images/logo.png";
 import img1 from "../../public/images/img1.webp";
-import Rating from "../features/users/Rating";
-import { FaShoppingCart } from "react-icons/fa";
 import FilterItem from "../components/users/FilterItem";
+import { getAllProducts } from "../slices/product";
+import ProductCard from "../components/users/ProductCard";
+
 const Products = () => {
+  const dispatch = useDispatch();
   const handleSelect = (type, value) => {
     console.log(type, value);
   };
+
+  const {
+    items: products,
+    loading,
+    error,
+  } = useSelector((state) => state.products);
+
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, [dispatch]);
+
+  if (loading) return <p>Loading products...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="min-h-screen">
@@ -144,54 +160,10 @@ const Products = () => {
         </div>
         <div className="p-4 flex gap-2 px-12">
           <img src={img1} className="h-102" alt="" />
-          <div className="p-2 rounded-xl bg-white">
-            <img
-              className="  h-102"
-              src="https://www.ikea.com/us/en/images/products/roedalm-frame-black__1251233_pe924195_s5.jpg?f=xl"
-              alt=""
-            />
-            <div className="flex  bg-white  p-4 flex-col gap-1">
-              <section>
-                <p className="font-extrabold">RÖDALM</p>
-                <p>Frame, black, 12x16 "</p>
-              </section>
-              <p className="font-extrabold text-2xl">$55.5</p>
-              <section>
-                <Rating rating={null} />
-                <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
-                  <FaShoppingCart />
-                  Add to Cart
-                </button>
-                <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
-                  Shop Now !
-                </button>
-              </section>
-            </div>
-          </div>
-          <div className="p-2 rounded-xl bg-white">
-            <img
-              className="  h-102"
-              src="https://www.ikea.com/us/en/images/products/roedalm-frame-black__1251233_pe924195_s5.jpg?f=xl"
-              alt=""
-            />
-            <div className="flex  bg-white  p-4 flex-col gap-1">
-              <section>
-                <p className="font-extrabold">RÖDALM</p>
-                <p>Frame, black, 12x16 "</p>
-              </section>
-              <p className="font-extrabold text-2xl">$55.5</p>
-              <section>
-                <Rating rating={null} />
-                <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
-                  <FaShoppingCart />
-                  Add to Cart
-                </button>
-                <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
-                  Shop Now !
-                </button>
-              </section>
-            </div>
-          </div>
+          {products.slice(0, 2).map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+
           <div className="w-60 bg-[#fefadf] p-4 shadow-md rounded-lg">
             <FilterItem
               title="Color"
@@ -217,8 +189,13 @@ const Products = () => {
             />
           </div>
         </div>
+
         <div>
-          <div></div>
+          <div className="p-4 flex gap-2 px-12" >
+            {products.slice(2).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
