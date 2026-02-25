@@ -18,7 +18,9 @@ const Products = () => {
   const handleSelect = (type, value) => {
     console.log(type, value);
   };
-
+  const handleSelect2= (type, value) => {
+    console.log(type, value);
+  };
   const {
     items: products,
     loading,
