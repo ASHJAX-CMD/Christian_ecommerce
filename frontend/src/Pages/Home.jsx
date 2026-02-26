@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { IoSearchOutline } from "react-icons/io5";
 import video from "../../public/video/Home_hero.mp4";
 import logo from "../../public/images/logo.png";
-import img1 from "../../public/images/img1.webp";
+// import img1 from "../../public/images/img1.webp";
 import FilterItem from "../components/users/FilterItem";
 import { getAllProducts } from "../slices/product";
 import ProductCard from "../components/users/ProductCard";
@@ -19,9 +19,7 @@ const Products = () => {
   const handleSelect = (type, value) => {
     console.log(type, value);
   };
-  const handleSelect2 = (type, value) => {
-    console.log(type, value);
-  };
+
   const {
     items: products,
     loading,
