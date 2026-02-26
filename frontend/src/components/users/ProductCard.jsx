@@ -3,9 +3,9 @@ import { FaShoppingCart } from "react-icons/fa";
 
 const ProductCard = ({ product }) => {
   return (
-    <div className="p-2 rounded-xl bg-white">
+    <div className="p-2 rounded-xl  bg-white">
       <img
-        className="  h-102"
+        className="  h-86"
         src="https://www.ikea.com/us/en/images/products/roedalm-frame-black__1251233_pe924195_s5.jpg?f=xl"
         alt=""
       />

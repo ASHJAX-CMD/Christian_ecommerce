@@ -13,12 +13,13 @@ import FilterItem from "../components/users/FilterItem";
 import { getAllProducts } from "../slices/product";
 import ProductCard from "../components/users/ProductCard";
 
+import Ideas from "../components/users/Ideas";
 const Products = () => {
   const dispatch = useDispatch();
   const handleSelect = (type, value) => {
     console.log(type, value);
   };
-  const handleSelect2= (type, value) => {
+  const handleSelect2 = (type, value) => {
     console.log(type, value);
   };
   const {
@@ -160,9 +161,13 @@ const Products = () => {
             treasured possessions that last for decades.
           </p>
         </div>
-        <div className="p-4 flex gap-2 px-12">
-          <img src={img1} className="h-102" alt="" />
-          {products.slice(0, 2).map((product) => (
+        <div className=" flex gap-4 flex-col ml-10 p-8 text-2xl font-extrabold " >
+          <p> Ideas for Your Home !</p>
+        </div>
+        <Ideas  />
+        <div className="p-4 ml-4 flex gap-2 px-12">
+          {/* <img src={img1} className="h-86" alt="" /> */}
+          {products.slice(0, 4).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
 
@@ -193,11 +198,7 @@ const Products = () => {
         </div>
 
         <div>
-          <div className="p-4 flex gap-2 px-12" >
-            {products.slice(2).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <div className="p-4 flex ml-30 gap-2 px-12"></div>
         </div>
       </div>
     </div>
