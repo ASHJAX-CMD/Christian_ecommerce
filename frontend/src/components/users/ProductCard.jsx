@@ -2,13 +2,15 @@ import Rating from "../../features/users/Rating";
 import { FaShoppingCart } from "react-icons/fa";
 
 const ProductCard = ({ product }) => {
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
   return (
-    <div className="p-2 rounded-xl  bg-white">
+    <div k className="p-2 rounded-xl  bg-white">
       <img
         className="  h-86"
-        src="https://www.ikea.com/us/en/images/products/roedalm-frame-black__1251233_pe924195_s5.jpg?f=xl"
+        src={`${BASE_URL}/uploads/${product.images[0]}`}
         alt=""
       />
+      {console.log(product)}
       <div className="flex  bg-white  p-4 flex-col gap-1">
         <section>
           <p className="font-extrabold">{product.name}</p>

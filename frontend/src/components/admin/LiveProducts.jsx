@@ -28,7 +28,9 @@ const LiveProducts = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:5000/api/products/${id}`)
+      .delete(`http://localhost:5000/api/products/${id}`,
+      {withCredentials: true,}
+    )
       .then(() => {
         dispatch(getAllProducts()); // refresh list
         closeDialog();

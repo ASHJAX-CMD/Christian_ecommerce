@@ -6,7 +6,6 @@ import ProtectedAdmin from "./components/admin/Protected";
 import Splash from "./Splash";
 import Home from "./Pages/Home";
 import Admin from "./Pages/Admin";
-import Products from "./components/admin/Products";
 import Reviews from "./components/admin/Reviews";
 import Orders from "./components/admin/Orders";
 import Addproduct from "./components/admin/Addproduct";
@@ -16,6 +15,8 @@ import Login from "./Pages/Login";
 import Protected from "./components/users/Protected";
 import { fetchCurrentUser } from "./slices/user";
 import EditProduct from "./components/admin/EditProduct";
+import Product from "./Pages/Product";
+import Products from "./components/admin/Products";
 function AppContent() {
   const dispatch = useDispatch();
 
@@ -39,6 +40,7 @@ function AppContent() {
         }
       />
 
+      <Route path="/product" element={<Product />} />
       <Route
         path="/admin"
         element={
@@ -47,7 +49,7 @@ function AppContent() {
           </ProtectedAdmin>
         }
       >
-         <Route index element={<Navigate to="products" replace />} />
+        <Route index element={<Navigate to="products" replace />} />
         <Route path="products" element={<Products />}>
           <Route path="addproduct" element={<Addproduct />} />
           <Route index element={<LiveProducts />} />

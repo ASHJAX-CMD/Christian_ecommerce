@@ -17,9 +17,8 @@ app.use(express.json());
 // Connect databases
 connectMongo();
 testConnection();
-sequelize.sync({ alter: true }) // updates table structure if needed
-  .then(() => console.log("MySQL tables synced"))
-  .catch(err => console.error("Sequelize sync error:", err));
+sequelize.sync({ force: true })
+
 // Sample routes
 
 app.get('/', (req, res) => res.send('API running'));

@@ -3,6 +3,7 @@ const Product = require("../models/mongodb/Product");
 const router = express.Router();
 const role = require("../middlewares/role");
 const { upload } = require("../middlewares/upload");
+const auth = require("../middlewares/auth");
 
 // GET all products
 router.get("/", async (req, res) => {
@@ -56,7 +57,7 @@ router.patch("/:id",  role(["admin"]), upload.array("newImages"), async (req, re
 });
 
 // DELETE product
-router.delete("/:id", role(["admin"]), async (req, res) => {
+router.delete("/:id",auth, role(["admin"]), async (req, res) => {
   try {
     const { id } = req.params;
     const productdelete = await Product.findByIdAndDelete(id);
