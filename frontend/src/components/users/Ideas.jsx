@@ -35,7 +35,7 @@ const Ideas = () => {
           </div>
 
         {/* Duplicate Cards */}
-        {[1, 2, 3].map((item) => (
+        {/* {[1, 2, 3].map((item) => (
           <div key={item} className="flex flex-col shrink-0 group">
             <div className="w-[500px] h-[600px] overflow-hidden ">
               <img
@@ -60,8 +60,80 @@ const Ideas = () => {
               </div>
             </div>
           </div>
-        ))}
+        ))} */}
 
+        <div className="flex flex-col shrink-0 group">
+            <div className="w-[500px] h-[600px] overflow-hidden ">
+              <img
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                src="https://ik.imagekit.io/2xkwa8s1i/img/npl_modified_images/Paintings-Images-new/WPTGSEVEN16S3V2/WPTGSEVEN16S3V2_LS_1.jpg?tr=w-1200"
+                alt="Interior"
+              />
+            </div>
+
+            <div className="flex flex-col bg-[#f2f2f2] p-10 gap-4 w-[500px]">
+              <p className="text-2xl font-extrabold">
+                Plan Your Perfect Home
+              </p>
+
+              <p className="text-gray-600 leading-relaxed">
+                Turn your house into a home – Personalized Interior Design
+                services for every BHK with IKEA.
+              </p>
+
+              <div className="w-10 h-10 mt-6 flex items-center justify-center rounded-full border border-black transition-all duration-300 group-hover:bg-black group-hover:text-white">
+                <IoArrowForward size={18} />
+              </div>
+            </div>
+          </div>
+          <div  className="flex flex-col shrink-0 group">
+            <div className="w-[500px] h-[600px] overflow-hidden ">
+              <img
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                src="https://ik.imagekit.io/2xkwa8s1i/img/npl_modified_images/Paintings-Images-new/WPTGSATWO16S3V2/WPTGSATWO16S3V2_LS_1.jpg?tr=w-1200"
+                alt="Interior"
+              />
+            </div>
+
+            <div className="flex flex-col  bg-[#f2f2f2] p-10 gap-4 w-[500px]">
+              <p className="text-2xl  font-extrabold">
+                Plan Your Perfect Home
+              </p>
+
+              <p className="text-gray-600 leading-relaxed">
+                Turn your house into a home – Personalized Interior Design
+                services for every BHK with IKEA.
+              </p>
+
+              <div className="w-10 h-10 mt-6 flex items-center justify-center rounded-full border border-black transition-all duration-300 group-hover:bg-black group-hover:text-white">
+                <IoArrowForward size={18} />
+              </div>
+            </div>
+          </div>
+          <div  className="flex flex-col shrink-0 group">
+            <div className="w-[500px] h-[600px] overflow-hidden ">
+              <img
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                src="https://ik.imagekit.io/2xkwa8s1i/img/npl_modified_images/Paintings-Images-new/WPTGSTBPT16S3/WPTGSTBPT16S3_LS_1.jpg?tr=w-1200"
+                alt="Interior"
+              />
+            </div>
+
+            <div className="flex flex-col bg-[#f2f2f2] p-10 gap-4 w-[500px]">
+              <p className="text-2xl font-extrabold">
+                Plan Your Perfect Home
+              </p>
+
+              <p className="text-gray-600 leading-relaxed">
+                Turn your house into a home – Personalized Interior Design
+                services for every BHK with IKEA.
+              </p>
+
+              <div className="w-10 h-10 mt-6 flex items-center justify-center rounded-full border border-black transition-all duration-300 group-hover:bg-black group-hover:text-white">
+                <IoArrowForward size={18} />
+              </div>
+            </div>
+          </div>
       </div>
     </div>
   );

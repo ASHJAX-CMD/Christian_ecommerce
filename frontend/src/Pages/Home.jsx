@@ -6,19 +6,23 @@ import { BsPerson } from "react-icons/bs";
 import { IoIosGlobe } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { IoSearchOutline } from "react-icons/io5";
-
+import { IoArrowForward } from "react-icons/io5";
 import video from "../../public/video/Home_hero.mp4";
 import logo from "../../public/images/logo.png";
 import photo1 from "../../public/images/Photo1.webp";
 import photo2 from "../../public/images/Photo2.webp";
-
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaYoutube,
+  FaXTwitter,
+} from "react-icons/fa6";
 import FilterItem from "../components/users/FilterItem";
 import { getAllProducts } from "../slices/product";
 import ProductCard from "../components/users/ProductCard";
 import Ideas from "../components/users/Ideas";
 
 const Products = () => {
-
   // ==============================
   // REDUX SETUP
   // ==============================
@@ -46,14 +50,11 @@ const Products = () => {
 
   return (
     <div className="min-h-screen">
-
       {/* ===================================================== */}
       {/* =================== HEADER SECTION ================== */}
       {/* ===================================================== */}
       <div className="bg-[#fefadf] text-gray-700 font-sans ">
-        
         <header className="bg-[#273617] text-white px-4 py-2 flex items-center justify-between md:justify-start relative rounded-b-3xl">
-          
           {/* Country Selector */}
           <div className="flex items-center text-2xl gap-1 hover:text-[#38A3A5] cursor-pointer">
             <IoIosGlobe />
@@ -69,12 +70,10 @@ const Products = () => {
           </div>
         </header>
 
-
         {/* ===================================================== */}
         {/* =================== NAVBAR SECTION ================== */}
         {/* ===================================================== */}
         <nav className="flex items-center justify-between px-10 py-3 ">
-
           {/* Mobile Hamburger */}
           <div className="md:hidden">
             <FaBars className="text-xl cursor-pointer" />
@@ -136,13 +135,11 @@ const Products = () => {
           </div>
         </nav>
 
-
         {/* ===================================================== */}
         {/* =================== HERO SECTION ==================== */}
         {/* ===================================================== */}
         <section className="flex justify-center items-center px-4 py-8">
           <div className="relative w-full md:w-[90%] lg:w-[100%] max-w-[1600px]">
-
             <video
               disablePictureInPicture
               autoPlay
@@ -161,12 +158,10 @@ const Products = () => {
         </section>
       </div>
 
-
       {/* ===================================================== */}
       {/* =============== CONTENT SECTION (PART 2) ============ */}
       {/* ===================================================== */}
       <div className="bg-[#fefadf] text-gray-850 font-sans ">
-
         {/* Section Intro Text */}
         <div className="flex flex-col px-20 py-1 gap-6">
           <p className="text-5xl text-black monoton-regular">
@@ -182,12 +177,10 @@ const Products = () => {
           <p>Ideas for Your Home !</p>
         </div>
 
-
         {/* ===================================================== */}
         {/* ============ PRODUCTS + FILTER SECTION ============= */}
         {/* ===================================================== */}
         <div className="p-4 ml-4 flex gap-2 px-12">
-
           {/* Product Cards */}
           {products.slice(0, 4).map((product) => (
             <ProductCard key={product.id} product={product} />
@@ -220,26 +213,29 @@ const Products = () => {
           </div>
         </div>
 
-
         {/* ===================================================== */}
         {/* ================== IDEAS COMPONENT ================== */}
         {/* ===================================================== */}
         <Ideas />
 
-
         {/* ===================================================== */}
         {/* ================== IMAGE GRID SECTION =============== */}
         {/* ===================================================== */}
         <div className="grid grid-cols-3 p-8 px-14 auto-rows-[200px] auto-cols-[400px] gap-4">
-
           {/* Large Image */}
           <div className="row-span-3">
-            <img className="w-full h-full object-cover rounded-2xl" src={photo1} />
+            <img
+              className="w-full h-full object-cover rounded-2xl"
+              src={photo1}
+            />
           </div>
 
           {/* Medium Image */}
           <div className="row-span-2">
-            <img className="w-full h-full object-cover rounded-2xl" src={photo2} />
+            <img
+              className="w-full h-full object-cover rounded-2xl"
+              src={photo2}
+            />
           </div>
 
           {/* Small Images */}
@@ -263,41 +259,211 @@ const Products = () => {
               src="https://assets.wsimgs.com/wsimgs/ab/images/dp/wcm/202314/0114/exotic-ebony-wood-gallery-frame-m.jpg"
             />
           </div>
-
         </div>
-         <div className="p-4 ml-4 flex gap-2 px-12">
 
-          {/* Product Cards */}
-          {products.slice(0, 4).map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        {/* Starting From Price Section */}
 
-          {/* Filter Sidebar */}
-          <div className="w-60 bg-[#fefadf] p-4 shadow-md rounded-lg">
-            <FilterItem
-              title="Color"
-              options={["Red", "Blue", "Black", "White"]}
-              onSelect={handleSelect}
+        <div className="p-4 ml-4 h-[500px] flex px-12 group">
+          {/* LEFT SIDE */}
+          <div className="w-[40%] bg-[#f5f7f6] flex flex-col justify-center items-center">
+            <p
+              style={{ fontFamily: '"Staatliches", sans-serif' }}
+              className="text-6xl"
+            >
+              Bestsellers starting from
+            </p>
+
+            <p className="font-semibold text-5xl">$10.99</p>
+
+            <div className="w-10 h-10 mt-6 flex items-center justify-center rounded-full border border-black transition-colors duration-300 hover:bg-black hover:text-white cursor-pointer">
+              <IoArrowForward size={18} />
+            </div>
+          </div>
+
+          {/* RIGHT SIDE */}
+          <div className="flex-1 h-full relative overflow-hidden">
+            {/* Default Image */}
+            <img
+              src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/bc/9f/ef/brussels-cachet.jpg?w=1200&h=900&s=1"
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
             />
 
-            <FilterItem
-              title="Size"
-              options={["S", "M", "L", "XL"]}
-              onSelect={handleSelect}
-            />
-
-            <FilterItem
-              title="Price"
-              options={[
-                "Low to High",
-                "High to Low",
-                "Under $50",
-                "$50 - $100",
-              ]}
-              onSelect={handleSelect}
+            {/* Hover Image */}
+            <img
+              src="https://images.pexels.com/photos/11696469/pexels-photo-11696469.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+              className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
             />
           </div>
         </div>
+        {/* Explore Frames tab */}
+        <div className="gap-4 bg-white px-14 p-6">
+          <div className="flex gap-4  bg-white   ">
+            <div className="flex flex-col gap-4 w-[50%]">
+              <p
+                style={{ fontFamily: '"Staatliches", sans-serif' }}
+                className="text-2xl"
+              >
+                Explore our Frame and Home Decor Range
+              </p>
+              <p
+                style={{ fontFamily: '"Staatliches", sans-serif' }}
+                className="text-xl text-gray-800"
+              >
+                IKEA is a global leader in life at home.
+              </p>
+              <p className="text-gray-800">
+                Whether you just moved into a new home or looking to revamp your
+                current one, we at IKEA are here to inspire you with affordable
+                home furniture solutions, there is a piece of furniture to every
+                corner of your home.
+              </p>
+              <p className="text-gray-800">
+                Create a home that is perfect for you. Shopping at IKEA is a bit
+                different and exciting compared to your shopping at an everyday
+                retail. It is about experiencing solutions first hand and
+                getting to know ideas and inspirations that can fit perfectly
+                into your home. That’s why, we offer more than 7500 products,
+                solutions at our store along with home furnishing ideas and
+                services for you to explore. When you visit IKEA store, make
+                yourself at home in our many room settings in the store. Squeeze
+                the upholsteries, feel the oriental rugs, try the sofa beds and
+                open the cabinets to feel the quality.
+              </p>
+              <p className="text-gray-800">
+                On the price tag, you’ll find all you need to know about a
+                product, including where in the store you can pick it up. Since
+                most IKEA furniture is flat-packed, they are quite easy to bring
+                home when you buy from the store.
+              </p>
+            </div>
+
+            <div className="flex justify-center w-[50%] flex-wrap gap-x-2 content-center">
+              <div className="flex justify-center flex-wrap gap-x-2 ">
+                {[
+                  "Sofas",
+                  "Beds",
+                  "Dining",
+                  "Tv units",
+                  "Mattresses",
+                  "Seating",
+                  "Coffee tables",
+                  "Wardrobes",
+                  "Storage",
+                  "Bookshelves",
+                  "Shoe racks",
+                  "Decor",
+                  "Bathroom",
+                  "Textiles",
+                  "Pots & plants",
+                  "Home electronics",
+                  "Home improvement",
+                  "Lighting",
+                ].map((item, index) => (
+                  <p
+                    key={index}
+                    className="text-black cursor-pointer font-semibold transition-transform duration-200 hover:scale-105 hover:underline hover:font-bold "
+                  >
+                    {item} |
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-center p-10">
+            <p className="rounded-4xl bg-blue-900 cursor-pointer font-semibold text-white p-4">
+              Learn more !
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-5 bg-gray-50 px-14 p-6 auto-cols-[200px]">
+          <div className=" flex flex-col col-span- gap-8 ">
+            <div className="flex flex-col gap-4">
+              <p className="font-bold text-lg">Join IKEA Family</p>
+              <p>
+                Enjoy member-only discounts & offers, early access to IKEA sale,
+                delicious food offers and much more. Join for free.
+              </p>
+              <p className="p-4 px-6 w-fit text-sm font-semibold bg-black text-white text-center rounded-4xl">
+                Join The Club!
+              </p>
+            </div>
+            <div className="flex flex-col gap-4">
+              <p className="font-bold text-lg">JIKEA Business Network</p>
+              <p>
+                Join the membership program for business customers with exciting
+                benefits and features. Join us for free and enjoy member
+                discounts, quick-fix tips, online tutorials and a lot more.
+              </p>
+              <p className="p-4 px-6 w-fit text-sm font-semibold bg-black text-white text-center rounded-4xl">
+                Join Now
+              </p>
+            </div>
+            <div>
+              <div className="flex items-center  gap-10 mt-8">
+                <FaFacebookF className="text-xl cursor-pointer hover:scale-110 transition-transform duration-200" />
+
+                <FaInstagram className="text-xl cursor-pointer hover:scale-110 transition-transform duration-200" />
+
+                <FaYoutube className="text-xl cursor-pointer hover:scale-110 transition-transform duration-200" />
+
+                <FaXTwitter className="text-xl cursor-pointer hover:scale-110 transition-transform duration-200" />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 ml-8">
+            <p className="font-bold">IKEA Family</p>
+            <p>Log In</p>
+            <p>Join FrameO Family</p>
+            <p>Members Only Offers</p>
+            <p>Workshop & Events</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <p className="font-bold">Services</p>
+            <p>Delivery Services</p>
+            <p>Click & Collect</p>
+            <p>Personal Shopper</p>
+            <p>Online planning tool</p>
+            <p>Assembly Service</p>
+            <p>Measuring Service</p>
+            <p>Kitchen Planning</p>
+            <p>Installation Service</p>
+            <p>Track & manage your Order</p>
+            <p>Customer Service</p>
+            <p>Recycle Program</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <p className="font-bold">Help</p>
+            <p>How to Shop</p>
+            <p>Return policy</p>
+            <p>Prices and price tags</p>
+            <p>Contact us</p>
+            <p>FAQ's</p>
+            <p>Gift Card</p>
+            <p>Terms and Conditions</p>
+            <p>Damaged articles Claim</p>
+            <p>GST rate revision</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <p className="font-bold">About FrameO</p>
+            <p>This is FrameO</p>
+            <p>Careers at FrameO</p>
+            <p>CSR Policy</p>
+            <p>Newsroom</p>
+            <p>Sustainability</p>
+            <p>IKEA Stores</p>
+          </div>
+        </div>
+      </div>
+      <div className="flex bg-gray-50 justify-between w-full px-14 " >
+       <div className="flex w-full py-8 justify-between border-t">
+         <p className="text-sm text-gray-800" >© Inter IKEA Systems B.V. 2000-2026</p>
+        <div className="flex justify-end gap-4" >
+          <p className="text-sm">Privacy Policy</p>
+          <p className="text-sm">Cookies Policy</p>
+          <p className="text-sm">Cookies Settings</p>
+        </div>
+       </div>
       </div>
     </div>
   );

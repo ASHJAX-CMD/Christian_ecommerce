@@ -69,7 +69,7 @@ const userSlice = createSlice({
       state.user = null;
       state.success = false;
       // optionally call backend /logout to clear cookie
-    },
+    },  
   },
   extraReducers: (builder) => {
     builder
