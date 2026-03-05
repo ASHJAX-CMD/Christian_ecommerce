@@ -1,38 +1,29 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 
 import { IoArrowForward } from "react-icons/io5";
 import video from "../../public/video/Home_hero.mp4";
 import photo1 from "../../public/images/Photo1.webp";
 import photo2 from "../../public/images/Photo2.webp";
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaYoutube,
-  FaXTwitter,
-} from "react-icons/fa6";
+
 import FilterItem from "../components/users/FilterItem";
-import { getAllProducts } from "../slices/product";
+
 import ProductCard from "../components/users/ProductCard";
 import Ideas from "../components/users/Ideas";
 import HeaderSection from "../features/users/HeaderSection";
+import Footer from "../features/users/Footer";
 
 const Products = () => {
   // ==============================
   // REDUX SETUP
   // ==============================
-  const dispatch = useDispatch();
 
   const {
     items: products,
     loading,
     error,
   } = useSelector((state) => state.products);
-
-  useEffect(() => {
-    dispatch(getAllProducts());
-  }, [dispatch]);
 
   const handleSelect = (type, value) => {
     console.log(type, value);
@@ -51,24 +42,24 @@ const Products = () => {
       {/* ===================================================== */}
 
       <HeaderSection />
- <section className="flex justify-center items-center px-4 py-8">
-          <div className="relative w-full md:w-[90%] lg:w-[100%] max-w-[1600px]">
-            <video
-              disablePictureInPicture
-              autoPlay
-              muted
-              loop
-              className="w-full rounded-2xl h-auto"
-            >
-              <source src={video} type="video/mp4" />
-            </video>
+      <section className="flex justify-center items-center px-4 py-8">
+        <div className="relative w-full md:w-[90%] lg:w-[100%] max-w-[1600px]">
+          <video
+            disablePictureInPicture
+            autoPlay
+            muted
+            loop
+            className="w-full rounded-2xl h-auto"
+          >
+            <source src={video} type="video/mp4" />
+          </video>
 
-            {/* Hero Text */}
-            <p className="absolute font-['Beau_Rivage'] text-4xl -bottom-6 -left-4 lg:-bottom-10 md:-bottom-6 lg:-left-10 text-black md:text-6xl lg:text-8xl font-bold drop-shadow-lg">
-              Wall Changing Good !
-            </p>
-          </div>
-        </section>
+          {/* Hero Text */}
+          <p className="absolute font-['Beau_Rivage'] text-4xl -bottom-6 -left-4 lg:-bottom-10 md:-bottom-6 lg:-left-10 text-black md:text-6xl lg:text-8xl font-bold drop-shadow-lg">
+            Wall Changing Good !
+          </p>
+        </div>
+      </section>
       {/* ===================================================== */}
       {/* =============== CONTENT SECTION (PART 2) ============ */}
       {/* ===================================================== */}
@@ -286,98 +277,8 @@ const Products = () => {
             </p>
           </div>
         </div>
-
-        <div className="grid grid-cols-5 bg-gray-50 px-14 p-6 auto-cols-[200px]">
-          <div className=" flex flex-col col-span- gap-8 ">
-            <div className="flex flex-col gap-4">
-              <p className="font-bold text-lg">Join IKEA Family</p>
-              <p>
-                Enjoy member-only discounts & offers, early access to IKEA sale,
-                delicious food offers and much more. Join for free.
-              </p>
-              <p className="p-4 px-6 w-fit text-sm font-semibold bg-black text-white text-center rounded-4xl">
-                Join The Club!
-              </p>
-            </div>
-            <div className="flex flex-col gap-4">
-              <p className="font-bold text-lg">JIKEA Business Network</p>
-              <p>
-                Join the membership program for business customers with exciting
-                benefits and features. Join us for free and enjoy member
-                discounts, quick-fix tips, online tutorials and a lot more.
-              </p>
-              <p className="p-4 px-6 w-fit text-sm font-semibold bg-black text-white text-center rounded-4xl">
-                Join Now
-              </p>
-            </div>
-            <div>
-              <div className="flex items-center  gap-10 mt-8">
-                <FaFacebookF className="text-xl cursor-pointer hover:scale-110 transition-transform duration-200" />
-
-                <FaInstagram className="text-xl cursor-pointer hover:scale-110 transition-transform duration-200" />
-
-                <FaYoutube className="text-xl cursor-pointer hover:scale-110 transition-transform duration-200" />
-
-                <FaXTwitter className="text-xl cursor-pointer hover:scale-110 transition-transform duration-200" />
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4 ml-8">
-            <p className="font-bold">IKEA Family</p>
-            <p>Log In</p>
-            <p>Join FrameO Family</p>
-            <p>Members Only Offers</p>
-            <p>Workshop & Events</p>
-          </div>
-          <div className="flex flex-col gap-4">
-            <p className="font-bold">Services</p>
-            <p>Delivery Services</p>
-            <p>Click & Collect</p>
-            <p>Personal Shopper</p>
-            <p>Online planning tool</p>
-            <p>Assembly Service</p>
-            <p>Measuring Service</p>
-            <p>Kitchen Planning</p>
-            <p>Installation Service</p>
-            <p>Track & manage your Order</p>
-            <p>Customer Service</p>
-            <p>Recycle Program</p>
-          </div>
-          <div className="flex flex-col gap-4">
-            <p className="font-bold">Help</p>
-            <p>How to Shop</p>
-            <p>Return policy</p>
-            <p>Prices and price tags</p>
-            <p>Contact us</p>
-            <p>FAQ's</p>
-            <p>Gift Card</p>
-            <p>Terms and Conditions</p>
-            <p>Damaged articles Claim</p>
-            <p>GST rate revision</p>
-          </div>
-          <div className="flex flex-col gap-4">
-            <p className="font-bold">About FrameO</p>
-            <p>This is FrameO</p>
-            <p>Careers at FrameO</p>
-            <p>CSR Policy</p>
-            <p>Newsroom</p>
-            <p>Sustainability</p>
-            <p>IKEA Stores</p>
-          </div>
-        </div>
       </div>
-      <div className="flex bg-gray-50 justify-between w-full px-14 ">
-        <div className="flex w-full py-8 justify-between border-t">
-          <p className="text-sm text-gray-800">
-            © Inter IKEA Systems B.V. 2000-2026
-          </p>
-          <div className="flex justify-end gap-4">
-            <p className="text-sm">Privacy Policy</p>
-            <p className="text-sm">Cookies Policy</p>
-            <p className="text-sm">Cookies Settings</p>
-          </div>
-        </div>
-      </div>
+      <Footer/>
     </div>
   );
 };

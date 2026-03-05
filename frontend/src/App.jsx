@@ -17,6 +17,9 @@ import { fetchCurrentUser } from "./slices/user";
 import EditProduct from "./components/admin/EditProduct";
 import Product from "./Pages/Product";
 import Products from "./components/admin/Products";
+import { getAllProducts } from "./slices/product";
+import Profile from "./Pages/Profile";
+
 function AppContent() {
   const dispatch = useDispatch();
 
@@ -24,6 +27,9 @@ function AppContent() {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, [dispatch]);
   return (
     <Routes>
       {/* Public Routes */}
@@ -41,6 +47,7 @@ function AppContent() {
       />
 
       <Route path="/product" element={<Product />} />
+       <Route path="/profile" element={<Profile />} />
       <Route
         path="/admin"
         element={

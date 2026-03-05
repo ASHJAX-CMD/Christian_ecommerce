@@ -7,10 +7,20 @@ import { Link } from "react-router-dom";
 import { AiOutlineShoppingCart, AiOutlineCamera } from "react-icons/ai";
 import { IoSearchOutline } from "react-icons/io5";
 import { BsPerson } from "react-icons/bs";
+import { useSelector } from 'react-redux';
 
 const HeaderSection = () => {
+  const {
+    user,
+    loading,
+    error
+  }= useSelector((state)=> state.user)
+   if (loading) return null;
   return (
+    
     <div className="bg-[#fefadf] text-gray-700 font-sans ">
+     
+      {console.log(user)}
         <header className="bg-[#273617] text-white px-4 py-2 flex items-center justify-between md:justify-start relative rounded-b-3xl">
           {/* Country Selector */}
           <div className="flex items-center text-2xl gap-1 hover:text-[#38A3A5] cursor-pointer">
@@ -80,10 +90,11 @@ const HeaderSection = () => {
 
             <div className="hidden md:block text-sm">
               <Link
-                to="/login"
+                to={`${user? "/profile":"/login"}`}
                 className="hover:text-[#38A3A5] font-['Oswald'] text-lg font-semibold"
               >
-                Hey! Login / SignUp
+               
+                 {user ? <p>Welcome {user.name}</p> : <p> Hey! Login / SignUp</p>}
               </Link>
             </div>
 

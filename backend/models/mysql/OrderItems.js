@@ -9,7 +9,13 @@ const OrderItem = sequelize.define("OrderItem", {
   price: { type: DataTypes.FLOAT, allowNull: false },
 });
 
-Order.hasMany(OrderItem, { as: "items" });
-OrderItem.belongsTo(Order);
+Order.hasMany(OrderItem, { 
+  foreignKey: "orderId",
+  as: "items"
+});
+
+OrderItem.belongsTo(Order, { 
+  foreignKey: "orderId"
+});
 
 module.exports = OrderItem;

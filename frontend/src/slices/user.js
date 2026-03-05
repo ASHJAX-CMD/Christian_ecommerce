@@ -112,7 +112,7 @@ const userSlice = createSlice({
       })
       .addCase(createUser.rejected,(state, action)=>{
         state.loading = false;
-        state.user = action.payload?.message || "Registration Failed";
+        state.error = action.payload?.message || "Registration Failed";
         state.success= false;
       })
   },
