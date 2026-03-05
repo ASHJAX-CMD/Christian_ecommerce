@@ -9,6 +9,7 @@ const Product = () => {
   const handleSelect = (type, value) => {
     console.log(type, value);
   };
+   
   const {
     items: products,
     loading,

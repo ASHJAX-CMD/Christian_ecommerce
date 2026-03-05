@@ -4,11 +4,12 @@ const { sequelize } = require("../db/mysql");
 
 const Order = require("../models/mysql/Order");
 const OrderItem = require("../models/mysql/OrderItems");
+const Product = require("../models/mongodb/Product");
 
 const auth = require("../middlewares/auth");
 
 /* ======================================================
-   CREATE ORDER
+   CREATE ORDER (SECURE VERSION)
 ====================================================== */
 router.post("/", auth, async (req, res) => {
   const t = await sequelize.transaction();
@@ -20,12 +21,31 @@ router.post("/", auth, async (req, res) => {
       return res.status(400).json({ message: "No items provided" });
     }
 
-    const total = items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+    let total = 0;
+    const orderItemsData = [];
 
-    // Create order
+    // 🔐 Validate products from MongoDB
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+
+      if (!product) {
+        throw new Error("Product not found");
+      }
+
+      const realPrice = product.price;
+
+      total += realPrice * item.quantity;
+
+      orderItemsData.push({
+        productId: product._id.toString(),
+        productName: product.name,
+        productImage: product.image,
+        price: realPrice,
+        quantity: item.quantity,
+      });
+    }
+
+    // 🧾 Create Order
     const order = await Order.create(
       {
         total,
@@ -34,28 +54,27 @@ router.post("/", auth, async (req, res) => {
       { transaction: t }
     );
 
-    // Prepare order items
-    const orderItems = items.map((item) => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      price: item.price,
+    // 📦 Attach orderId to each item
+    const finalItems = orderItemsData.map((item) => ({
+      ...item,
       orderId: order.id,
     }));
 
-    await OrderItem.bulkCreate(orderItems, { transaction: t });
+    await OrderItem.bulkCreate(finalItems, { transaction: t });
 
     await t.commit();
 
-    // Fetch full order with items
+    // 🔎 Return order with items
     const orderWithItems = await Order.findByPk(order.id, {
       include: [{ model: OrderItem, as: "items" }],
     });
 
     res.status(201).json(orderWithItems);
+
   } catch (err) {
     await t.rollback();
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -79,7 +98,6 @@ router.get("/", auth, async (req, res) => {
 
 /* ======================================================
    ADMIN: GET ALL ORDERS
-   (STATIC ROUTE BEFORE DYNAMIC)
 ====================================================== */
 router.get("/admin/all", auth, async (req, res) => {
   try {
@@ -167,9 +185,7 @@ router.delete("/:orderId", auth, async (req, res) => {
     }
 
     if (order.status !== "pending") {
-      return res
-        .status(400)
-        .json({ message: "Cannot cancel this order" });
+      return res.status(400).json({ message: "Cannot cancel this order" });
     }
 
     await order.destroy();

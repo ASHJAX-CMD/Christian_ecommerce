@@ -1,9 +1,23 @@
 import { configureStore } from '@reduxjs/toolkit';
-import productReducer from './slices/product'
+import productReducer from './slices/product';
 import userReducer from './slices/user';
-export default configureStore({
+import cartReducer from './slices/cartSlice';
+
+const store = configureStore({
   reducer: {
     products: productReducer,
-    user:userReducer,
+    user: userReducer,
+    cart: cartReducer
   },
 });
+
+// 🔥 Persist cart automatically
+store.subscribe(() => {
+  const {
+    cart: { items }
+  } = store.getState();
+
+  localStorage.setItem("cart", JSON.stringify(items));
+});
+
+export default store;

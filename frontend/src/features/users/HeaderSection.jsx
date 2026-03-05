@@ -3,13 +3,17 @@ import logo from "../../../public/images/logo.png";
 
 import { IoIosGlobe } from "react-icons/io";
 import { FaPhoneAlt, FaRegHeart, FaBars } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineShoppingCart, AiOutlineCamera } from "react-icons/ai";
 import { IoSearchOutline } from "react-icons/io5";
 import { BsPerson } from "react-icons/bs";
 import { useSelector } from 'react-redux';
 
 const HeaderSection = () => {
+  const navigate = useNavigate();
+  const clickCart = ()=>{
+    navigate("/cart")
+  }
   const {
     user,
     loading,
@@ -98,8 +102,8 @@ const HeaderSection = () => {
               </Link>
             </div>
 
-            <FaRegHeart className="cursor-pointer text-2xl hover:text-[#38A3A5]" />
-            <AiOutlineShoppingCart className="cursor-pointer text-2xl hover:text-[#38A3A5]" />
+            <FaRegHeart  className="cursor-pointer text-2xl hover:text-[#38A3A5]" />
+            <AiOutlineShoppingCart onClick={clickCart} className="cursor-pointer text-2xl hover:text-[#38A3A5]" />
           </div>
         </nav>
 

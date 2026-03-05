@@ -1,8 +1,17 @@
+import { useNavigate } from "react-router-dom";
 import Rating from "../../features/users/Rating";
 import { FaShoppingCart } from "react-icons/fa";
-
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../slices/cartslice";
 const ProductCard = ({ product }) => {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleShopNow = () => {
+    dispatch(addToCart(product));
+    navigate("/cart");
+  };
   return (
     <div k className="p-2 rounded-xl  bg-white">
       <img
@@ -19,11 +28,11 @@ const ProductCard = ({ product }) => {
         <p className="font-extrabold text-2xl">{product.price}</p>
         <section>
           <Rating rating={null} />
-          <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+          <button onClick={handleShopNow} className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
             <FaShoppingCart />
             Add to Cart
           </button>
-          <button className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+          <button onClick={handleShopNow} className="w-full mt-3 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
             Shop Now !
           </button>
         </section>

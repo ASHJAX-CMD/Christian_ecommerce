@@ -19,7 +19,7 @@ import Product from "./Pages/Product";
 import Products from "./components/admin/Products";
 import { getAllProducts } from "./slices/product";
 import Profile from "./Pages/Profile";
-
+import Cart from "../src/Pages/Cart"
 function AppContent() {
   const dispatch = useDispatch();
 
@@ -45,9 +45,9 @@ function AppContent() {
           </Protected>
         }
       />
-
+      <Route path="/cart" element={<Cart />} />
       <Route path="/product" element={<Product />} />
-       <Route path="/profile" element={<Profile />} />
+      <Route path="/profile" element={<Profile />} />
       <Route
         path="/admin"
         element={
