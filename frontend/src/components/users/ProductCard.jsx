@@ -10,7 +10,7 @@ const ProductCard = ({ product }) => {
 
   const handleShopNow = () => {
     dispatch(addToCart(product));
-    navigate("/cart");
+    
   };
   return (
     <div k className="p-2 rounded-xl  bg-white">
