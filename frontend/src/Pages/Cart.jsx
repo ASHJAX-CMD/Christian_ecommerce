@@ -5,7 +5,7 @@ import {
   removeFromCart,
   clearCart,
 } from "../slices/cartSlice";
-import { createOrder } from "../slices/order";
+import { createOrder, resetOrderState } from "../slices/order";
 import HeaderSection from "../features/users/HeaderSection";
 import { useEffect } from "react";
 
@@ -25,13 +25,13 @@ const Cart = () => {
   };
 
   // ✅ Clear cart after success
-  useEffect(() => {
-    if (success) {
-      dispatch(clearCart());
-      alert("Order placed successfully!");
-    }
-  }, [success, dispatch]);
-
+useEffect(() => {
+  if (success) {
+    dispatch(clearCart());
+    alert("Order placed successfully!");
+    dispatch(resetOrderState()); // ✅ reset success
+  }
+}, [success, dispatch]);
   return (
     <div className="min-h-screen bg-gray-100">
       <HeaderSection />

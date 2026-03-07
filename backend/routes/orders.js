@@ -117,6 +117,30 @@ router.get("/admin/all", auth, async (req, res) => {
   }
 });
 
+
+
+router.get("/user/all", auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const orders = await Order.findAll({
+      where: { userId },
+      include: [
+        {
+          model: OrderItem,
+          as: "items"
+        }
+      ],
+      order: [["createdAt", "DESC"]]
+    });
+
+    res.json(orders);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 /* ======================================================
    GET SINGLE ORDER
 ====================================================== */

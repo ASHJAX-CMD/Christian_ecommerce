@@ -17,7 +17,7 @@ const HeaderSection = () => {
   const {
     user,
     loading,
-    error
+    
   }= useSelector((state)=> state.user)
    if (loading) return null;
   return (

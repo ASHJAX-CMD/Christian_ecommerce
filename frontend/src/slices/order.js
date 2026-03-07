@@ -5,35 +5,75 @@ export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (orderData, { rejectWithValue }) => {
     try {
-
       const items = orderData.map((orderItem) => ({
         productId: orderItem._id,
-        quantity: orderItem.quantity
+        quantity: orderItem.quantity,
       }));
 
       const res = await axios.post(
         "http://localhost:5000/api/orders",
         { items },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       return res.data;
-
     } catch (error) {
       return rejectWithValue(error.response?.data?.message);
     }
-  }
+  },
+);
+// export const fetchOrders = createAsyncThunk(
+// "order/fetchOrder",
+// async (User , {rejectWithValue})=>{
+//     try{
+//       console.log("FETCH ORDERS CALLED");
+//         const res = await axios.get(
+//              "http://localhost:5000/api/orders/user/all",
+//              {withCredentials:true}
+//         );
+//          console.log("API RESPONSE:", res.data);
+//         return res.data;
+//     }
+//     catch(error){
+//         return rejectWithValue(error.response?.data?.message)
+//     }
+// }
+// )
+export const fetchOrders = createAsyncThunk(
+  "order/fetchOrder",
+  async (_, { rejectWithValue }) => {
+    try {
+      console.log("FETCH ORDERS CALLED");
+
+      const res = await axios.get("http://localhost:5000/api/orders/user/all", {
+        withCredentials: true,
+      });
+
+      console.log("API RESPONSE:", res.data);
+
+      return res.data;
+    } catch (error) {
+      console.log("API ERROR:", error);
+      return rejectWithValue(error.response?.data?.message);
+    }
+  },
 );
 
 const orderSlice = createSlice({
   name: "order",
   initialState: {
+    orders: [],
     order: null,
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
-
+  reducers: {
+    resetOrderState: (state) => {
+      state.success = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createOrder.pending, (state) => {
@@ -51,8 +91,24 @@ const orderSlice = createSlice({
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Something went wrong";
+      })
+      .addCase(fetchOrders.pending, (state) => {
+        state.loading = true;
+        
+        state.error = false;
+      })
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        
+        state.orders = action.payload;
+      })
+
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Something went wrong";
       });
-  }
+  },
 });
 
 export default orderSlice.reducer;
+export const { resetOrderState } = orderSlice.actions;

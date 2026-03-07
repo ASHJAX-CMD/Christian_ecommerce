@@ -35,15 +35,17 @@ const hashedPassword = await bcrypt.hash("123456", 10);
   console.log("Default user seeded");
 });
 // Sample routes
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => res.send('API running'));
 
 // TODO: Import your routes here
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/address', require('./routes/address'));
 app.use('/api/user', require('./routes/user'));
-app.use('/api/user', require('./routes/orders'));
+// app.use('/api/user', require('./routes/orders'));
 app.use('/api/reviews',require('./routes/reviews'))
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
