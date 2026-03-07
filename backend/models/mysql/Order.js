@@ -1,6 +1,8 @@
 const { DataTypes } = require("sequelize");
 const {sequelize} = require("../../db/mysql");
 const User = require("../mysql/User");
+const Address = require("../mysql/address");
+
 
 const Order = sequelize.define("Order", {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -27,5 +29,8 @@ const Order = sequelize.define("Order", {
 
 User.hasMany(Order, { foreignKey: "userId" });
 Order.belongsTo(User, { foreignKey: "userId" });
+
+Address.hasMany(Order, { foreignKey: "addressId" });
+Order.belongsTo(Address, { foreignKey: "addressId" });
 
 module.exports = Order;
