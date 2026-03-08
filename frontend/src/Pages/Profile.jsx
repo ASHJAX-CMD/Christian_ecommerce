@@ -3,12 +3,14 @@ import { logout } from "../slices/user";
 import HeaderSection from "../features/users/HeaderSection";
 import { useEffect, useState } from "react";
 import { fetchOrders } from "../slices/order";
-import { createAddress } from "../slices/address";
+import { createAddress, deleteAddress, fetchAddresses } from "../slices/address";
+
 const Profile = () => {
   const { user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [showForm, setShowForm] = useState(false);
   const { orders } = useSelector((state) => state.order);
+  const { addresses } = useSelector((state) => state.address);
   const [formData, setFormData] = useState({
     street: "",
     city: "",
@@ -30,6 +32,10 @@ const Profile = () => {
     dispatch(fetchOrders());
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(fetchAddresses());
+  }, [dispatch]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createAddress(formData));
@@ -46,7 +52,6 @@ const Profile = () => {
       isDefault: false,
       country: "",
     });
-    
   };
   useEffect(() => {
     console.log(orders);
@@ -56,6 +61,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen">
+      {console.log(addresses)}
       <HeaderSection />
       <div>
         <div className="min-h-screen p-10 bg-gray-100">
@@ -65,10 +71,38 @@ const Profile = () => {
               <h1 className="text-3xl font-bold">My Profile</h1>
               <p className="mt-2 text-lg">{user.name}</p>
               <p className="text-gray-600">{user.email}</p>
+              
             </div>
 
             <div>
-              <div>if theres already an address</div>
+              <p>Address's</p>
+              {addresses?.map((addr) => (
+                <div key={addr.id} className="border p-3 rounded mb-2">
+                  <p>{addr.street}</p>
+                  <p>
+                    {addr.city}, {addr.state}
+                  </p>
+                  <p>
+                    {addr.zip}, {addr.country}
+                  </p>
+
+                  <div className="flex gap-3 mt-2">
+                    <button
+                      onClick={() => handleEdit(addr)}
+                      className="px-3 py-1 bg-white border rounded"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => dispatch(deleteAddress(addr.id))}
+                      className="px-3 py-1 bg-red-600 text-white rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
               <div className="mt-6">
                 {/* Add Address Button */}
                 <button
