@@ -134,6 +134,28 @@ const addressSlice = createSlice({
       .addCase(deleteAddress.rejected, (state, action) => {
         state.loading1 = false;
         state.error1 = action.payload;
+      })
+      .addCase(updateAddress.pending, (state) => {
+        state.loading1 = true;
+        state.error1 = null;
+        state.success1 = false;
+      })
+
+      .addCase(updateAddress.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.loading1 = false;
+        state.success1 = true;
+        
+        const updated = action.payload.address;
+        console.log("check this first",updated)
+        state.addresses = state.addresses.map((addr) =>
+          addr.id === updated.id ? updated : addr,
+        );
+      })
+
+      .addCase(updateAddress.rejected, (state, action) => {
+        state.loading1 = false;
+        state.error1 = action.payload;
       });
   },
 });

@@ -60,7 +60,7 @@ const updateAddress = async (req, res) => {
   try {
 
     const { id } = req.params;
-    const { userId } = req.user;
+    const userId = req.user.id;
 
     const allowedFields = ["street", "city", "zip", "state", "country"];
 
@@ -71,19 +71,26 @@ const updateAddress = async (req, res) => {
         updates[field] = req.body[field];
       }
     });
-
+console.log(id,userId)
     await Address.update(updates, {
-      where: { id, userId }
-    });
+  where: { id, userId }
+});
 
-    res.status(200).json({
-      success: true,
-      message: "Address updated successfully"
-    });
+const updatedAddress = await Address.findOne({
+  where: { id, userId }
+});
+
+
+res.status(200).json({
+  success: true,
+  address: updatedAddress
+});
 
   } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
+      
       error: error.message,
       message: "Failed to update"
     });

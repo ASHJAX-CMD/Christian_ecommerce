@@ -3,23 +3,34 @@ import { logout } from "../slices/user";
 import HeaderSection from "../features/users/HeaderSection";
 import { useEffect, useState } from "react";
 import { fetchOrders } from "../slices/order";
-import { createAddress, deleteAddress, fetchAddresses } from "../slices/address";
+
+import {
+  createAddress,
+  deleteAddress,
+  fetchAddresses,
+  updateAddress,
+} from "../slices/address";
+import AddressForm from "../components/users/AddressForm";
 
 const Profile = () => {
+  const [mode, setMode] = useState(null); // "add" | "edit" | null
   const { user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [showForm, setShowForm] = useState(false);
+
   const { orders } = useSelector((state) => state.order);
   const { addresses } = useSelector((state) => state.address);
-  const [formData, setFormData] = useState({
+  const emptyAddress = {
     street: "",
     city: "",
     state: "",
     zip: "",
     country: "",
     isDefault: false,
-  });
+  };
+  const [formData, setFormData] = useState(emptyAddress);
 
+  const [editingId, setEditingId] = useState(null);
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -27,6 +38,27 @@ const Profile = () => {
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
+  };
+
+  const handleEdit = (addr) => {
+    setShowForm(false);
+    setMode("edit");
+    setEditingId(addr.id);
+
+    setFormData({
+      street: addr.street,
+      city: addr.city,
+      state: addr.state,
+      zip: addr.zip,
+      country: addr.country,
+      isDefault: addr.isDefault,
+    });
+  };
+  const handleAddClick = () => {
+    setMode("add");
+    setEditingId(null);
+    setShowForm(true);
+    setFormData(emptyAddress);
   };
   useEffect(() => {
     dispatch(fetchOrders());
@@ -38,21 +70,25 @@ const Profile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(createAddress(formData));
 
-    console.log(formData);
+    if (mode === "add") {
+      dispatch(createAddress(formData));
+    }
 
-    setShowForm(false);
+    if (mode === "edit") {
+      dispatch(
+        updateAddress({
+          id: editingId,
+          updatedAddress: formData,
+        }),
+      );
+    }
 
-    setFormData({
-      street: "",
-      city: "",
-      state: "",
-      pincode: "",
-      isDefault: false,
-      country: "",
-    });
+    setMode(null);
+    setEditingId(null);
+    setFormData(emptyAddress);
   };
+
   useEffect(() => {
     console.log(orders);
   }, [orders]);
@@ -71,7 +107,6 @@ const Profile = () => {
               <h1 className="text-3xl font-bold">My Profile</h1>
               <p className="mt-2 text-lg">{user.name}</p>
               <p className="text-gray-600">{user.email}</p>
-              
             </div>
 
             <div>
@@ -101,95 +136,33 @@ const Profile = () => {
                       Delete
                     </button>
                   </div>
+                  {editingId === addr.id && mode === "edit" && (
+                    <AddressForm
+                      formData={formData}
+                      handleChange={handleChange}
+                      handleSubmit={handleSubmit}
+                      cancel={() => setMode(null)}
+                    />
+                  )}
                 </div>
               ))}
               <div className="mt-6">
                 {/* Add Address Button */}
                 <button
-                  onClick={() => setShowForm(true)}
+                  onClick={() => handleAddClick()}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg"
                 >
                   Add Address
                 </button>
 
                 {/* Address Form */}
-                {showForm && (
-                  <form
-                    onSubmit={handleSubmit}
-                    className="mt-4 bg-gray-50 p-6 rounded-lg shadow flex flex-col gap-4 max-w-md"
-                  >
-                    <h3 className="text-lg font-semibold">Add Address</h3>
-
-                    <input
-                      type="text"
-                      name="street"
-                      placeholder="Street"
-                      value={formData.street}
-                      onChange={handleChange}
-                      className="border p-2 rounded"
-                    />
-
-                    <input
-                      type="text"
-                      name="city"
-                      placeholder="City"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="border p-2 rounded"
-                    />
-
-                    <input
-                      type="text"
-                      name="state"
-                      placeholder="State"
-                      value={formData.state}
-                      onChange={handleChange}
-                      className="border p-2 rounded"
-                    />
-
-                    <input
-                      type="text"
-                      name="zip"
-                      placeholder="zip"
-                      value={formData.zip}
-                      onChange={handleChange}
-                      className="border p-2 rounded"
-                    />
-                    <input
-                      type="text"
-                      name="country"
-                      placeholder="Country"
-                      value={formData.country}
-                      onChange={handleChange}
-                      className="border p-2 rounded"
-                    />
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        name="isDefault"
-                        checked={formData.isDefault}
-                        onChange={handleChange}
-                      />
-                      Set as Default Address
-                    </label>
-
-                    <div className="flex gap-3">
-                      <button
-                        type="submit"
-                        className="px-4 py-2 bg-green-600 text-white rounded"
-                      >
-                        Save Address
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setShowForm(false)}
-                        className="px-4 py-2 bg-gray-400 text-white rounded"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
+                {mode === "add" && (
+                  <AddressForm
+                    formData={formData}
+                    handleChange={handleChange}
+                    handleSubmit={handleSubmit}
+                    cancel={() => setMode(null)}
+                  />
                 )}
               </div>
             </div>
