@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 const Cart = () => {
   const dispatch = useDispatch();
-
+const {addresses}= useSelector((state)=>state.address)
   // ✅ Select cart and order state
   const cart = useSelector((state) => state.cart.items);
   const { loading, success, error } = useSelector((state) => state.order);
@@ -21,6 +21,7 @@ const Cart = () => {
   // ✅ Dispatch order on click
   const handleOrder = () => {
     if (cart.length === 0) return alert("Cart is empty!");
+    if(addresses.length ===0 ) return alert("No address Found !")
     dispatch(createOrder(cart));
   };
 

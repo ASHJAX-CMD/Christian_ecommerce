@@ -16,7 +16,7 @@ const Profile = () => {
   const [mode, setMode] = useState(null); // "add" | "edit" | null
   const { user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [showForm, setShowForm] = useState(false);
+  
 
   const { orders } = useSelector((state) => state.order);
   const { addresses } = useSelector((state) => state.address);
@@ -41,7 +41,7 @@ const Profile = () => {
   };
 
   const handleEdit = (addr) => {
-    setShowForm(false);
+    
     setMode("edit");
     setEditingId(addr.id);
 
@@ -57,7 +57,7 @@ const Profile = () => {
   const handleAddClick = () => {
     setMode("add");
     setEditingId(null);
-    setShowForm(true);
+    
     setFormData(emptyAddress);
   };
   useEffect(() => {
