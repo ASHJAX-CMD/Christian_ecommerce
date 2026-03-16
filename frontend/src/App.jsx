@@ -20,8 +20,10 @@ import Products from "./components/admin/Products";
 import { getAllProducts } from "./slices/product";
 import Profile from "./Pages/Profile";
 
-import Cart from "../src/Pages/Cart"
+import Cart from "../src/Pages/Cart";
 import { fetchOrders } from "./slices/order";
+import Design from "./Pages/Design";
+import Offers from "./Pages/Offers";
 function AppContent() {
   const dispatch = useDispatch();
 
@@ -29,7 +31,6 @@ function AppContent() {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
 
-  
   useEffect(() => {
     dispatch(getAllProducts());
   }, [dispatch]);
@@ -38,6 +39,8 @@ function AppContent() {
       {/* Public Routes */}
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/design&support" element={<Design />} />
+      <Route path="/offers" element={<Offers />} />
 
       {/* Protected Routes */}
       <Route

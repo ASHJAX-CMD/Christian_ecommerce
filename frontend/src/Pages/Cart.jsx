@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 const Cart = () => {
   const dispatch = useDispatch();
-const {addresses}= useSelector((state)=>state.address)
+  const { addresses } = useSelector((state) => state.address);
   // ✅ Select cart and order state
   const cart = useSelector((state) => state.cart.items);
   const { loading, success, error } = useSelector((state) => state.order);
@@ -19,20 +19,85 @@ const {addresses}= useSelector((state)=>state.address)
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   // ✅ Dispatch order on click
-  const handleOrder = () => {
+  const handleOrder = async () => {
     if (cart.length === 0) return alert("Cart is empty!");
-    if(addresses.length ===0 ) return alert("No address Found !")
-    dispatch(createOrder(cart));
+    if (addresses.length === 0) return alert("No address Found!");
+
+    try {
+      const result = await dispatch(createOrder(cart)).unwrap();
+
+      const orderId = result.id; // backend order id
+      console.log("Razorpay:", window.Razorpay);
+      
+      handlePayment(orderId);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const handlePayment = async (orderId) => {
+    try {
+      // 1️⃣ Call backend to create Razorpay order
+      const res = await fetch("http://localhost:5000/api/payment/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+           
+        },
+        credentials: "include",
+        body: JSON.stringify({ orderId }),
+      });
+
+      const data = await res.json();
+
+      // 2️⃣ Razorpay checkout options
+      const options = {
+        key: "rzp_test_SRr1EjKBqmk8ho",
+        amount: data.amount,
+        currency: data.currency,
+        order_id: data.razorpayOrderId,
+
+        name: "My Store",
+        description: "Order Payment",
+
+        handler: async function (response) {
+          // 3️⃣ Send payment info to backend
+          await fetch("http://localhost:5000/payments/verify", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(response),
+          });
+
+          alert("Payment Successful");
+        },
+
+        prefill: {
+          name: "Customer Name",
+          email: "customer@email.com",
+        },
+
+        theme: {
+          color: "#000",
+        },
+      };
+
+      // 4️⃣ Open Razorpay checkout
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // ✅ Clear cart after success
-useEffect(() => {
-  if (success) {
-    dispatch(clearCart());
-    alert("Order placed successfully!");
-    dispatch(resetOrderState()); // ✅ reset success
-  }
-}, [success, dispatch]);
+  useEffect(() => {
+    if (success) {
+      dispatch(clearCart());
+      alert("Order placed successfully!");
+      dispatch(resetOrderState()); // ✅ reset success
+    }
+  }, [success, dispatch]);
   return (
     <div className="min-h-screen bg-gray-100">
       <HeaderSection />
@@ -102,10 +167,14 @@ useEffect(() => {
 
         {/* ORDER SUMMARY */}
         <div className="bg-white flex flex-col gap-4 h-fit mt-18 rounded-3xl p-4">
-          <p>SubTotal ({cart.length} Items) : ₹{total}</p>
+          <p>
+            SubTotal ({cart.length} Items) : ₹{total}
+          </p>
           <p>Payment Mode: Cash (Available for Now)</p>
           <p
-            onClick={handleOrder}
+            onClick={() => {
+              handleOrder();
+            }}
             className={`bg-amber-300 text-center cursor-pointer p-2 px-6 rounded-2xl ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}

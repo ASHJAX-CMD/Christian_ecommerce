@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+
 import Rating from "../../features/users/Rating";
 import { FaShoppingCart } from "react-icons/fa";
 import { useDispatch } from "react-redux";
@@ -6,7 +6,7 @@ import { addToCart } from "../../slices/cartslice";
 const ProductCard = ({ product }) => {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+
 
   const handleShopNow = () => {
     dispatch(addToCart(product));

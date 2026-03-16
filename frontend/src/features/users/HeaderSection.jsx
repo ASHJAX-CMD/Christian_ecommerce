@@ -65,10 +65,10 @@ const HeaderSection = () => {
                 <Link to="/product">Products</Link>
               </li>
               <li className="hover:text-[#38A3A5] font-['Oswald'] text-lg font-bold cursor-pointer">
-                <Link to="/">Offers</Link>
+                <Link to="/offers">Offers</Link>
               </li>
               <li className="hover:text-[#38A3A5] font-['Oswald'] text-lg font-bold cursor-pointer">
-                <Link to="/">Design/Support</Link>
+                <Link to="/design&support">Design/Support</Link>
               </li>
             </ul>
           </div>

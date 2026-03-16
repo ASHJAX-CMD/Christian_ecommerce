@@ -32,6 +32,17 @@ const Order = sequelize.define(
       type: DataTypes.ENUM("pending", "completed", "failed"),
       defaultValue: "pending",
     },
+    razorpayOrderId: {
+      type: DataTypes.STRING,
+    },
+
+    razorpayPaymentId: {
+      type: DataTypes.STRING,
+    },
+
+    razorpaySignature: {
+      type: DataTypes.STRING,
+    },
   },
   {
     timestamps: true,
