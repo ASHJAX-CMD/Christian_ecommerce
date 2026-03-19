@@ -28,7 +28,7 @@ const Cart = () => {
 
       const orderId = result.id; // backend order id
       console.log("Razorpay:", window.Razorpay);
-      
+
       handlePayment(orderId);
     } catch (err) {
       console.error(err);
@@ -37,15 +37,17 @@ const Cart = () => {
   const handlePayment = async (orderId) => {
     try {
       // 1️⃣ Call backend to create Razorpay order
-      const res = await fetch("http://localhost:5000/api/payment/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-           
+      const res = await fetch(
+        "http://localhost:5000/api/payment/create-order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ orderId }),
         },
-        credentials: "include",
-        body: JSON.stringify({ orderId }),
-      });
+      );
 
       const data = await res.json();
 
@@ -56,20 +58,32 @@ const Cart = () => {
         currency: data.currency,
         order_id: data.razorpayOrderId,
 
-        name: "My Store",
+        name: "FrameO",
         description: "Order Payment",
+        
 
         handler: async function (response) {
           // 3️⃣ Send payment info to backend
-          await fetch("http://localhost:5000/payments/verify", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
+          const verifyRes = await fetch(
+            "http://localhost:5000/api/payment/verify",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+              body: JSON.stringify(response),
             },
-            body: JSON.stringify(response),
-          });
-
-          alert("Payment Successful");
+          );
+          const data = await verifyRes.json();
+          if (data.success) {
+            alert("Payment Successful");
+            dispatch(clearCart());
+            alert("Order placed successfully!");
+            dispatch(resetOrderState()); // ✅ reset success
+          } else {
+            alert("Payment verification failed ❌");
+          }
         },
 
         prefill: {
@@ -84,20 +98,17 @@ const Cart = () => {
 
       // 4️⃣ Open Razorpay checkout
       const rzp = new window.Razorpay(options);
+      rzp.on("payment.failed", function (response) {
+        console.log(response.error);
+        alert("Payment Failed ❌");
+      });
+      
       rzp.open();
     } catch (error) {
       console.error(error);
     }
   };
 
-  // ✅ Clear cart after success
-  useEffect(() => {
-    if (success) {
-      dispatch(clearCart());
-      alert("Order placed successfully!");
-      dispatch(resetOrderState()); // ✅ reset success
-    }
-  }, [success, dispatch]);
   return (
     <div className="min-h-screen bg-gray-100">
       <HeaderSection />

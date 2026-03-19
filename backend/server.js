@@ -9,12 +9,24 @@ const cookieParser = require("cookie-parser");
 const path = require("path")
 const app = express();
 const bcrypt = require("bcrypt");
+const { webhookHandler } = require('./controllers/webhook');
+
 app.use(cookieParser());
 app.use(cors({
   origin: "http://localhost:5173", // React app URL
   credentials: true,
 }));
-app.use(express.json());
+// app.use((req, res, next) => {
+//   if (req.originalUrl.startsWith("/api/payment/webhook")) return next();
+//   express.json()(req, res, next);
+// });
+
+app.use(
+  "/api/payment/webhook",
+  express.raw({ type: "application/json" }),
+  webhookHandler
+);
+app.use(express.json())
 
 // Connect databases
 connectMongo();
@@ -35,7 +47,8 @@ const hashedPassword = await bcrypt.hash("123456", 10);
   console.log("Default user seeded");
 });
 // Sample routes
-app.use(express.json());
+
+
 app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => res.send('API running'));
 
