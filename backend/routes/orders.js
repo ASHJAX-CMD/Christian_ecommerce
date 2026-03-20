@@ -7,6 +7,7 @@ const OrderItem = require("../models/mysql/OrderItems");
 const Product = require("../models/mongodb/Product");
 
 const auth = require("../middlewares/auth");
+const Address = require("../models/mysql/address");
 
 /* ======================================================
    CREATE ORDER (SECURE VERSION)
@@ -15,7 +16,17 @@ router.post("/", auth, async (req, res) => {
   const t = await sequelize.transaction();
 
   try {
-    const { items } = req.body;
+    const { items, address } = req.body;
+    const userAddress = await Address.findOne({
+      where: {
+        id: address,
+        userId: req.user.id,
+      },
+    });
+
+    if (!userAddress) {
+      throw new Error("Invalid address");
+    }
 
     if (!items || !items.length) {
       return res.status(400).json({ message: "No items provided" });
@@ -50,8 +61,11 @@ router.post("/", auth, async (req, res) => {
       {
         total,
         userId: req.user.id,
+        addressId: address,
+        status: "pending",
+        paymentStatus: "pending",
       },
-      { transaction: t }
+      { transaction: t },
     );
 
     // 📦 Attach orderId to each item
@@ -70,7 +84,6 @@ router.post("/", auth, async (req, res) => {
     });
 
     res.status(201).json(orderWithItems);
-
   } catch (err) {
     await t.rollback();
     console.error(err);
@@ -117,8 +130,6 @@ router.get("/admin/all", auth, async (req, res) => {
   }
 });
 
-
-
 router.get("/user/all", auth, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -128,14 +139,13 @@ router.get("/user/all", auth, async (req, res) => {
       include: [
         {
           model: OrderItem,
-          as: "items"
-        }
+          as: "items",
+        },
       ],
-      order: [["createdAt", "DESC"]]
+      order: [["createdAt", "DESC"]],
     });
 
     res.json(orders);
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

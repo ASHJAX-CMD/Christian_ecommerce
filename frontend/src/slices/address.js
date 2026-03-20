@@ -93,7 +93,15 @@ const addressSlice = createSlice({
         state.loading = false;
         state.success = true;
         state.address = action.payload.address;
-        state.addresses.push(action.payload.address);
+        const newAddr = action.payload.address;
+
+        if (newAddr.isDefault) {
+          state.addresses.forEach((addr) => {
+            addr.isDefault = false;
+          });
+        }
+
+        state.addresses.push(newAddr);
       })
 
       .addCase(createAddress.rejected, (state, action) => {
@@ -145,9 +153,14 @@ const addressSlice = createSlice({
         console.log(action.payload);
         state.loading1 = false;
         state.success1 = true;
-        
+
         const updated = action.payload.address;
-        console.log("check this first",updated)
+        if (updated.isDefault) {
+          state.addresses.forEach((addr) => {
+            addr.isDefault = false;
+          });
+        }
+        console.log("check this first", updated);
         state.addresses = state.addresses.map((addr) =>
           addr.id === updated.id ? updated : addr,
         );

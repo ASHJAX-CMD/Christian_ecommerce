@@ -8,14 +8,13 @@ import {
 import { createOrder, resetOrderState } from "../slices/order";
 import HeaderSection from "../features/users/HeaderSection";
 import { useEffect } from "react";
-
 const Cart = () => {
   const dispatch = useDispatch();
   const { addresses } = useSelector((state) => state.address);
   // ✅ Select cart and order state
   const cart = useSelector((state) => state.cart.items);
   const { loading, success, error } = useSelector((state) => state.order);
-
+  const defaultAddress = addresses?.find((addr) => addr.isDefault);
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   // ✅ Dispatch order on click
@@ -24,7 +23,14 @@ const Cart = () => {
     if (addresses.length === 0) return alert("No address Found!");
 
     try {
-      const result = await dispatch(createOrder(cart)).unwrap();
+      if (!defaultAddress) {
+        return alert("No default address found!");
+      }
+      const orderData = {
+        cart: cart,
+        addressId: defaultAddress.id,
+      };
+      const result = await dispatch(createOrder(orderData)).unwrap();
 
       const orderId = result.id; // backend order id
       console.log("Razorpay:", window.Razorpay);
@@ -60,7 +66,6 @@ const Cart = () => {
 
         name: "FrameO",
         description: "Order Payment",
-        
 
         handler: async function (response) {
           // 3️⃣ Send payment info to backend
@@ -102,7 +107,7 @@ const Cart = () => {
         console.log(response.error);
         alert("Payment Failed ❌");
       });
-      
+
       rzp.open();
     } catch (error) {
       console.error(error);
@@ -182,6 +187,19 @@ const Cart = () => {
             SubTotal ({cart.length} Items) : ₹{total}
           </p>
           <p>Payment Mode: Cash (Available for Now)</p>
+          {defaultAddress && (
+            <div>
+              <p>Delivering to Default Address</p>
+              <div className="border p-2 rounded">
+                <p>Street: {defaultAddress.street}</p>
+                <p>City: {defaultAddress.city}</p>
+                <p>State: {defaultAddress.state}</p>
+                <p>ZipCode: {defaultAddress.zip}</p>
+                <p>Country: {defaultAddress.country}</p>
+              </div>
+              <p>To change Default address Go to Profile Tab</p>
+            </div>
+          )}
           <p
             onClick={() => {
               handleOrder();

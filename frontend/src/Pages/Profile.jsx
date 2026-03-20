@@ -16,7 +16,6 @@ const Profile = () => {
   const [mode, setMode] = useState(null); // "add" | "edit" | null
   const { user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  
 
   const { orders } = useSelector((state) => state.order);
   const { addresses } = useSelector((state) => state.address);
@@ -41,7 +40,6 @@ const Profile = () => {
   };
 
   const handleEdit = (addr) => {
-    
     setMode("edit");
     setEditingId(addr.id);
 
@@ -57,7 +55,7 @@ const Profile = () => {
   const handleAddClick = () => {
     setMode("add");
     setEditingId(null);
-    
+
     setFormData(emptyAddress);
   };
   useEffect(() => {
@@ -120,7 +118,11 @@ const Profile = () => {
                   <p>
                     {addr.zip}, {addr.country}
                   </p>
-
+                  {addr.isDefault && (
+                    <p className="font-semibold text-sm border inline-block p-1 rounded">
+                      Default Address
+                    </p>
+                  )}
                   <div className="flex gap-3 mt-2">
                     <button
                       onClick={() => handleEdit(addr)}

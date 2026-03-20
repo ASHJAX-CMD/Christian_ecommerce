@@ -3,19 +3,22 @@ import axios from "axios";
 
 export const createOrder = createAsyncThunk(
   "order/createOrder",
-  async (orderData, { rejectWithValue }) => {
+  async ({cart,addressId}, { rejectWithValue }) => {
     try {
-      const items = orderData.map((orderItem) => ({
+      const items = cart.map((orderItem) => ({
         productId: orderItem._id,
         quantity: orderItem.quantity,
       }));
-
+const cartData = {
+  items:items,
+  address:addressId
+}
       const res = await axios.post(
         "http://localhost:5000/api/orders",
-        { items },
+         cartData,
         { withCredentials: true },
       );
-
+console.log("Sent cart Data",cartData)
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message);
