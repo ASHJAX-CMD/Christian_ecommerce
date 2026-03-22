@@ -42,7 +42,7 @@ exports.webhookHandler = async (req, res) => {
         return res.sendStatus(200);
       }
       const [updated] = await Order.update(
-      { status: 'paid', paymentStatus: 'completed' },
+      { status: 'placed', paymentStatus: 'completed' },
       { where: { razorpayOrderId:razorpay_order_id, paymentStatus: 'pending' } }
     );
 
@@ -53,7 +53,7 @@ exports.webhookHandler = async (req, res) => {
 
       // 💰 Update DB
        
-      order.status = "paid";
+      order.status = "placed";
       order.paymentStatus = "completed";
       order.paymentMethod = payment.method;
       order.razorpayPaymentId = razorpay_payment_id;

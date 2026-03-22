@@ -180,7 +180,9 @@ const Profile = () => {
                   <div key={order.id} className="border p-4 mb-2 rounded">
                     <p>Order ID: {order.id}</p>
                     <p>Total: ${order.total}</p>
-                    <p>Status: {order.status}</p>
+                    <p>Order Status: {order.status}</p>
+                    <p>Payment Status: {order.paymentStatus}</p>
+                    {console.log("Orderererer",order)}
                   </div>
                 ))
               )}

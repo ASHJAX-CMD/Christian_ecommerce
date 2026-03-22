@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import { createProduct } from "../../slices/product";
 const Addproduct = () => {
   const [product, setProduct] = useState({
@@ -16,6 +16,7 @@ const Addproduct = () => {
     images: [],
     video: null,
     slug: "",
+    quantity: "",
     metaTitle: "",
     metaDescription: "",
     featured: false,
@@ -28,6 +29,7 @@ const Addproduct = () => {
 
     const payload = {
       ...product,
+      quantity: Number(product.quantity),
       price: Number(product.price),
       discount: Number(product.discount),
       compareAtPrice: Number(product.compareAtPrice),
@@ -94,7 +96,15 @@ const Addproduct = () => {
                 className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
               />
-
+              <input
+                type="number"
+                name="quantity"
+                value={product.quantity}
+                onChange={handleChange}
+                placeholder="quantity"
+                className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              />
               <textarea
                 name="description"
                 value={product.description}

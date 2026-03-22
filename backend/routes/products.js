@@ -12,52 +12,59 @@ router.get("/", async (req, res) => {
 });
 
 // PATCH (update product)
-router.patch("/:id",  role(["admin"]), upload.array("newImages"), async (req, res) => {
-  try {
-    const { id } = req.params;
+router.patch(
+  "/:id",
+  role(["admin"]),
+  upload.array("newImages"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (req.body.discount === "null" || req.body.discount === "") {
+        req.body.discount = 0;
+      }
+      // --- Remove images ---
+      if (req.body.removedImages) {
+        let removed = req.body.removedImages;
+        if (typeof removed === "string") removed = [removed];
 
-    // --- Remove images ---
-    if (req.body.removedImages) {
-      let removed = req.body.removedImages;
-      if (typeof removed === "string") removed = [removed];
+        await Product.findByIdAndUpdate(id, {
+          $pull: { images: { $in: removed } },
+        });
+      }
 
-      await Product.findByIdAndUpdate(id, {
-        $pull: { images: { $in: removed } },
-      });
+      // --- Add new images ---
+      if (req.files && req.files.length > 0) {
+        const newImgs = req.files.map((f) => f.filename);
+
+        await Product.findByIdAndUpdate(id, {
+          $push: { images: { $each: newImgs } },
+        });
+      }
+
+      // --- Update other fields ---
+      let otherFields = { ...req.body };
+      delete otherFields.removedImages;
+      delete otherFields.newImages;
+
+      if (Object.keys(otherFields).length > 0) {
+        await Product.findByIdAndUpdate(id, { $set: otherFields });
+      }
+
+      const updatedProduct = await Product.findById(id);
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      res.json(updatedProduct);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server Error" });
     }
-
-    // --- Add new images ---
-    if (req.files && req.files.length > 0) {
-      const newImgs = req.files.map((f) => f.filename);
-
-      await Product.findByIdAndUpdate(id, {
-        $push: { images: { $each: newImgs } },
-      });
-    }
-
-    // --- Update other fields ---
-    let otherFields = { ...req.body };
-    delete otherFields.removedImages;
-    delete otherFields.newImages;
-
-    if (Object.keys(otherFields).length > 0) {
-      await Product.findByIdAndUpdate(id, { $set: otherFields });
-    }
-
-    const updatedProduct = await Product.findById(id);
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    res.json(updatedProduct);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
-  }
-});
+  },
+);
 
 // DELETE product
-router.delete("/:id",auth, role(["admin"]), async (req, res) => {
+router.delete("/:id", auth, role(["admin"]), async (req, res) => {
   try {
     const { id } = req.params;
     const productdelete = await Product.findByIdAndDelete(id);
@@ -104,7 +111,7 @@ router.post(
         metaDescription: req.body.metaDescription,
         featured: req.body.featured === "true",
         status: req.body.status || "draft",
-
+        quantity: req.body.quantity,
         images: req.files?.images?.map((f) => f.filename) || [],
         video: req.files?.video?.[0]?.filename || null,
       });
@@ -115,15 +122,14 @@ router.post(
       console.error("Save error:", err);
       res.status(500).json({ message: err.message });
     }
-  }
+  },
 );
 
 // GET single product
-router.get("/:productId",  async (req, res) => {
+router.get("/:productId", async (req, res) => {
   try {
     const product = await Product.findById(req.params.productId);
-    if (!product)
-      return res.status(404).json({ message: "Product not found" });
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
     res.json(product);
   } catch (err) {

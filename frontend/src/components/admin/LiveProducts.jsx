@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AiTwotoneDelete } from "react-icons/ai";
-import {getAllProducts} from "../../slices/product"
+import { getAllProducts } from "../../slices/product";
 import { useDispatch, useSelector } from "react-redux";
 import { CiEdit } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
@@ -9,9 +9,11 @@ import axios from "axios";
 const LiveProducts = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { items: products, loading, error } = useSelector(
-    (state) => state.products
-  );
+  const {
+    items: products,
+    loading,
+    error,
+  } = useSelector((state) => state.products);
 
   const dialogRef = useRef();
   const [selectedProductId, setSelectedProductId] = useState(null);
@@ -28,9 +30,9 @@ const LiveProducts = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:5000/api/products/${id}`,
-      {withCredentials: true,}
-    )
+      .delete(`http://localhost:5000/api/products/${id}`, {
+        withCredentials: true,
+      })
       .then(() => {
         dispatch(getAllProducts()); // refresh list
         closeDialog();
@@ -78,7 +80,7 @@ const LiveProducts = () => {
               <span className="font-bold">Discount:</span> {p.discount}%
             </p>
             <p>
-              <span className="font-bold">Tags:</span> {p.tags}
+              <span className="font-bold">Product Quantity:</span> {p.quantity}
             </p>
 
             <div className="flex gap-3 flex-wrap">
@@ -96,28 +98,27 @@ const LiveProducts = () => {
       </div>
 
       {/* One modal reused for all products */}
-<dialog
-  ref={dialogRef}
-  className="p-6 rounded-lg shadow-lg max-w-sm w-[90%] text-center 
+      <dialog
+        ref={dialogRef}
+        className="p-6 rounded-lg shadow-lg max-w-sm w-[90%] text-center 
              fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
->
-  <p>Are you sure you want to delete this product?</p>
-  <div className="flex gap-3 mt-4 justify-center">
-    <button
-      onClick={closeDialog}
-      className="px-3 py-1 bg-gray-300 rounded"
-    >
-      Cancel
-    </button>
-    <button
-      onClick={() => handleDelete(selectedProductId)}
-      className="px-3 py-1 bg-red-600 text-white rounded"
-    >
-      Delete
-    </button>
-  </div>
-</dialog>
-
+      >
+        <p>Are you sure you want to delete this product?</p>
+        <div className="flex gap-3 mt-4 justify-center">
+          <button
+            onClick={closeDialog}
+            className="px-3 py-1 bg-gray-300 rounded"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => handleDelete(selectedProductId)}
+            className="px-3 py-1 bg-red-600 text-white rounded"
+          >
+            Delete
+          </button>
+        </div>
+      </dialog>
     </div>
   );
 };

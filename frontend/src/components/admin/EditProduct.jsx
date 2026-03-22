@@ -14,6 +14,7 @@ const EditProduct = () => {
     brand: "",
     tags: "",
     price: 0,
+    quantity: 0,
     compareAtPrice: 0,
     discount: 0,
     colors: "",
@@ -22,10 +23,9 @@ const EditProduct = () => {
     metaTitle: "",
     metaDescription: "",
     featured: false,
-
   });
   const handleImageChange = (e) => {
-    setNewImages((prev)=>[...prev,...e.target.files]);
+    setNewImages((prev) => [...prev, ...e.target.files]);
   };
   // Fetch product data if editing
   useEffect(() => {
@@ -49,24 +49,26 @@ const EditProduct = () => {
   // Submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
-        const formData = new FormData();
-    Object.keys(product).forEach((key)=>{
-      if(key!=="images") formData.append(key,product[key]);
+    const formData = new FormData();
+    Object.keys(product).forEach((key) => {
+      if (key !== "images") formData.append(key, product[key]);
     });
-    removedImages.forEach((img)=>formData.append("removedImages",img));
-    newImages.forEach((img)=>formData.append("newImages",img));
+    removedImages.forEach((img) => formData.append("removedImages", img));
+    newImages.forEach((img) => formData.append("newImages", img));
     if (id) {
       // Edit existing product
       axios
-        .patch(`http://localhost:5000/api/products/${id}`, formData ,
-  { withCredentials: true })
+        .patch(`http://localhost:5000/api/products/${id}`, formData, {
+          withCredentials: true,
+        })
         .then(() => navigate("/admin/products"))
         .catch((err) => console.error(err));
     } else {
       // Add new product
       axios
-        .post("http://localhost:5000/api/products", product ,
-  { withCredentials: true })
+        .post("http://localhost:5000/api/products", product, {
+          withCredentials: true,
+        })
         .then(() => navigate("/admin/products"))
         .catch((err) => console.error(err));
     }
@@ -94,7 +96,7 @@ const EditProduct = () => {
                 placeholder="Product Name"
                 className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
-              />                    
+              />
               <textarea
                 name="description"
                 value={product.description}
@@ -104,7 +106,15 @@ const EditProduct = () => {
                 className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
               />
-
+              <input
+                type="number"
+                name="quantity"
+                value={product.quantity}
+                onChange={handleChange}
+                placeholder="quantity"
+                className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              />
               <div className="grid grid-cols-2 gap-4">
                 <input
                   type="text"

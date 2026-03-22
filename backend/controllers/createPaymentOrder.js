@@ -37,7 +37,18 @@ exports.verifyPayment = async (req, res) => {
   try {
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
       req.body;
+    console.log("VERIFY HIT:", {
+      razorpay_payment_id,
+      razorpay_order_id,
+    });
+    if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+      console.log("❌ CANCELLED PAYMENT HIT BACKEND");
 
+      return res.status(400).json({
+        success: false,
+        message: "Payment cancelled",
+      });
+    }
     // 🔐 Step 1: Create expected signature
     const generated_signature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -60,26 +71,34 @@ exports.verifyPayment = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
     if (order.paymentStatus === "completed") {
-      return res.json({ success: true, message: "Already verified by webHook" });
-    }
-    const [updated] = await Order.update(
-      { status: "paid", paymentStatus: "completed" },
-      { where: { razorpayOrderId:razorpay_order_id, paymentStatus: "pending" } },
-    );
-
-    if (updated === 0) {
-      // Already processed by webhook or another verify
       return res.json({
         success: true,
-        message: "Already verified by WebHook",
+        message: "Already verified by webHook",
       });
     }
-    const payment = await razorpay.payments.fetch(razorpay_payment_id);
+    let payment;
 
+    try {
+      payment = await razorpay.payments.fetch(razorpay_payment_id);
+      console.log(payment.status);
+    } catch (err) {
+      console.log("❌ INVALID PAYMENT ID");
+
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment",
+      });
+    }
     if (payment.amount !== order.total * 100) {
       return res.status(400).json({
         success: false,
         message: "Amount mismatch",
+      });
+    }
+    if (payment.order_id !== razorpay_order_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Order mismatch",
       });
     }
     if (payment.status !== "captured") {
@@ -89,14 +108,21 @@ exports.verifyPayment = async (req, res) => {
       });
     }
 
-    order.status = "paid";
+    if (order.paymentStatus === "completed") {
+      // Already processed by webhook or another verify
+      return res.json({
+        success: true,
+        message: "Already verified by WebHook",
+      });
+    }
+    order.status = "placed";
     order.paymentStatus = "completed";
     order.paymentMethod = payment.method;
     order.razorpayPaymentId = razorpay_payment_id;
     order.razorpaySignature = razorpay_signature;
     await order.save();
-    console.log("written by Verify");
-    res.json({ success: true });
+    console.log("Payment Verified Waiting for WebHook");
+    res.json({ success: true, message: "Waiting for WebHook" });
   } catch (err) {
     console.error("VERIFY ERROR:", err);
     res.status(500).json({ error: err.message });
