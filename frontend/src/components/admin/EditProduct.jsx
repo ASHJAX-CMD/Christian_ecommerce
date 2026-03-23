@@ -40,9 +40,17 @@ const EditProduct = () => {
   // General change handler for text/number inputs
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setProduct((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : type === "number"
+            ? value === ""
+              ? 0 // 👈 THIS FIX
+              : Number(value)
+            : value,
     }));
   };
 

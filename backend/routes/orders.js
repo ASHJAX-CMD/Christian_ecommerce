@@ -119,7 +119,7 @@ router.post("/", auth, async (req, res) => {
         total,
         userId: req.user.id,
         addressId: address,
-        status: "placed",
+        status: "pending",
         paymentStatus: "pending",
       },
       { transaction: t },

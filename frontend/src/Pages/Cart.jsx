@@ -15,7 +15,7 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart.items);
   const { loading, success, error } = useSelector((state) => state.order);
   const defaultAddress = addresses?.find((addr) => addr.isDefault);
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = cart.reduce((sum, item) => sum + item.price * item.cartQuantity, 0);
 
   // ✅ Dispatch order on click
   const handleOrder = async () => {
@@ -163,7 +163,7 @@ const Cart = () => {
                   >
                     -
                   </button>
-                  <span>{item.quantity}</span>
+                  <span>{item.cartQuantity}</span>
                   <button
                     onClick={() => dispatch(increaseQty(item._id))}
                     className="text-lg"

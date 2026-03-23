@@ -115,12 +115,12 @@ exports.verifyPayment = async (req, res) => {
         message: "Already verified by WebHook",
       });
     }
-    order.status = "placed";
-    order.paymentStatus = "completed";
-    order.paymentMethod = payment.method;
-    order.razorpayPaymentId = razorpay_payment_id;
-    order.razorpaySignature = razorpay_signature;
-    await order.save();
+    // order.status = "placed";
+    // order.paymentStatus = "completed";
+    // order.paymentMethod = payment.method;
+    // order.razorpayPaymentId = razorpay_payment_id;
+    // order.razorpaySignature = razorpay_signature;
+    // await order.save();
     console.log("Payment Verified Waiting for WebHook");
     res.json({ success: true, message: "Waiting for WebHook" });
   } catch (err) {

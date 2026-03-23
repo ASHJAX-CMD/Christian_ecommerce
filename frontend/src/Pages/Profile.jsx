@@ -62,9 +62,7 @@ const Profile = () => {
     dispatch(fetchOrders());
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchAddresses());
-  }, [dispatch]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();

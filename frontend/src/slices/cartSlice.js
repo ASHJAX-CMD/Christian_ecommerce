@@ -26,9 +26,11 @@ const cartSlice = createSlice({
       );
 
       if (existing) {
-        existing.quantity += 1;
+        existing.cartQuantity += 1;
+        console.log(JSON.parse(JSON.stringify(state.items)));
       } else {
-        state.items.push({ ...product, quantity: 1 });
+        state.items.push({ ...product, cartQuantity: 1 });
+        console.log(JSON.parse(JSON.stringify(state.items)));
       }
     },
 
@@ -36,7 +38,7 @@ const cartSlice = createSlice({
       const item = state.items.find(
         item => item._id === action.payload
       );
-      if (item) item.quantity += 1;
+      if (item) item.cartQuantity += 1;
     },
 
     decreaseQty: (state, action) => {
@@ -44,8 +46,8 @@ const cartSlice = createSlice({
         item => item._id === action.payload
       );
       if (item) {
-        item.quantity -= 1;
-        if (item.quantity <= 0) {
+        item.cartQuantity -= 1;
+        if (item.cartQuantity <= 0) {
           state.items = state.items.filter(
             i => i._id !== action.payload
           );

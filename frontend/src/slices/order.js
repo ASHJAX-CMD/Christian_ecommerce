@@ -7,7 +7,7 @@ export const createOrder = createAsyncThunk(
     try {
       const items = cart.map((orderItem) => ({
         productId: orderItem._id,
-        quantity: orderItem.quantity,
+        quantity: orderItem.cartQuantity,
       }));
 const cartData = {
   items:items,

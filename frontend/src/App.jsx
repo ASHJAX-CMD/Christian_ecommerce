@@ -24,6 +24,7 @@ import Cart from "../src/Pages/Cart";
 import { fetchOrders } from "./slices/order";
 import Design from "./Pages/Design";
 import Offers from "./Pages/Offers";
+import { fetchAddresses } from "./slices/address";
 function AppContent() {
   const dispatch = useDispatch();
 
@@ -33,7 +34,9 @@ function AppContent() {
 
   useEffect(() => {
     dispatch(getAllProducts());
+     dispatch(fetchAddresses());
   }, [dispatch]);
+
   return (
     <Routes>
       {/* Public Routes */}
