@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Provider, useDispatch } from "react-redux";
 import store from "./store";
@@ -27,14 +27,18 @@ import Offers from "./Pages/Offers";
 import { fetchAddresses } from "./slices/address";
 function AppContent() {
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
 
+
+  
+
+
   useEffect(() => {
     dispatch(getAllProducts());
-     dispatch(fetchAddresses());
+    dispatch(fetchAddresses())
   }, [dispatch]);
 
   return (

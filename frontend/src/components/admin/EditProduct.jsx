@@ -7,6 +7,7 @@ const EditProduct = () => {
   const navigate = useNavigate();
   const [removedImages, setRemovedImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
+  const arrayFields = ["sizes", "colors", "tags"];
   const [product, setProduct] = useState({
     name: "",
     description: "",
@@ -32,7 +33,20 @@ const EditProduct = () => {
     if (id) {
       axios
         .get(`http://localhost:5000/api/products/${id}`)
-        .then((res) => setProduct(res.data))
+        .then((res) => {
+          const data = res.data;
+
+          setProduct({
+            ...data,
+            sizes: Array.isArray(data.sizes)
+              ? data.sizes.join(", ")
+              : data.sizes,
+            colors: Array.isArray(data.colors)
+              ? data.colors.join(", ")
+              : data.colors,
+            tags: Array.isArray(data.tags) ? data.tags.join(", ") : data.tags,
+          });
+        })
         .catch((err) => console.error(err));
     }
   }, [id]);
@@ -48,7 +62,7 @@ const EditProduct = () => {
           ? checked
           : type === "number"
             ? value === ""
-              ? 0 // 👈 THIS FIX
+              ? 0
               : Number(value)
             : value,
     }));
@@ -59,7 +73,17 @@ const EditProduct = () => {
     e.preventDefault();
     const formData = new FormData();
     Object.keys(product).forEach((key) => {
-      if (key !== "images") formData.append(key, product[key]);
+      if (key === "images") return;
+
+      const value = product[key];
+
+      if (arrayFields.includes(key)) {
+        const arr = value ? value.split(",").map((v) => v.trim()) : [];
+
+        formData.append(key, JSON.stringify(arr));
+      } else {
+        formData.append(key, value);
+      }
     });
     removedImages.forEach((img) => formData.append("removedImages", img));
     newImages.forEach((img) => formData.append("newImages", img));
@@ -74,7 +98,7 @@ const EditProduct = () => {
     } else {
       // Add new product
       axios
-        .post("http://localhost:5000/api/products", product, {
+        .post("http://localhost:5000/api/products", formData, {
           withCredentials: true,
         })
         .then(() => navigate("/admin/products"))

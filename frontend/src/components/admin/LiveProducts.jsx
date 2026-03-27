@@ -82,6 +82,9 @@ const LiveProducts = () => {
             <p>
               <span className="font-bold">Product Quantity:</span> {p.quantity}
             </p>
+             <p>
+              <span className="font-bold">Product Sizes:</span> {p.sizes}
+            </p>
 
             <div className="flex gap-3 flex-wrap">
               {p.images?.map((img, j) => (

@@ -82,24 +82,29 @@
 // export const { resetProductState } = productSlice.actions;
 // export default productSlice.reducer;
 
-
 // src/store/productSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 export const getAllProducts = createAsyncThunk(
   "products/getallproducts",
-  async(_,{rejectWithValue} )=>{
-  try{
-    const res = await axios.get(
-    "http://localhost:5000/api/products",
-    {withCredentials:true}
-  )
-  return res.data
-  }catch(error){
-    return rejectWithValue(error.response.data || error.message)
-  }
-  }
-)
+  async (params, { rejectWithValue }) => {
+    console.log("PARAMS RECEIVED IN THUNK:", params);
+    try {
+      const res = await axios.get(
+        
+        "http://localhost:5000/api/products",
+
+        {
+          params: params,
+          withCredentials: true,
+        },
+      );
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data || error.message);
+    }
+  },
+);
 // Async thunk for posting product
 export const createProduct = createAsyncThunk(
   "products/createProduct",
@@ -113,11 +118,13 @@ export const createProduct = createAsyncThunk(
           productData.images.forEach((img) => formData.append("images", img));
         } else if (key === "video" && productData.video) {
           formData.append("video", productData.video);
-        } else if (productData[key] !== "") {
+        } else if (Array.isArray(productData[key])) {
+          formData.append(key, JSON.stringify(productData[key]));
+        } else if (productData[key] !== "" && productData[key] != null ) {
           formData.append(key, productData[key]);
         }
       });
-
+      console.log("Its the FormData Baby",formData)
       // ✅ Proper axios POST
       const res = await axios.post(
         "http://localhost:5000/api/products",
@@ -127,22 +134,23 @@ export const createProduct = createAsyncThunk(
           headers: {
             "Content-Type": "multipart/form-data", // ✅ required for file upload
           },
-        }
+        },
       );
 
       return res.data; // ✅ axios gives parsed response directly
     } catch (err) {
       return rejectWithValue(
-        err.response?.data?.message || err.message || "Something went wrong"
+        err.response?.data?.message || err.message || "Something went wrong",
       );
     }
-  }
+  },
 );
 
 const productSlice = createSlice({
   name: "products",
   initialState: {
     items: [], // list of products
+    totalCount: Number,
     loading: false,
     error: null,
     success: false,
@@ -171,21 +179,23 @@ const productSlice = createSlice({
         state.error = action.payload || "Something went wrong";
       })
       .addCase(getAllProducts.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    })
-    .addCase(getAllProducts.fulfilled, (state, action) => {
-      state.loading = false;
-      state.items=action.payload; // set products array
-      console.log(state.items)
-    })
-    .addCase(getAllProducts.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload || "Failed to fetch products";
-    });
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        const { products } = action.payload;
+        const { totalCount } = action.payload;
+        state.items = products; // set products array
+        state.totalCount = totalCount;
+        console.log(state.items);
+      })
+      .addCase(getAllProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch products";
+      });
   },
 });
 
 export const { resetProductState } = productSlice.actions;
 export default productSlice.reducer;
-  

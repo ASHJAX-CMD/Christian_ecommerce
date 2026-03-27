@@ -1,20 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import HeaderSection from "../features/users/HeaderSection";
 import FilterItem from "../components/users/FilterItem";
 import ProductCard from "../components/users/ProductCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Footer from "../features/users/Footer";
-
+import { getAllProducts } from "../slices/product";
+import { useEffect } from "react";
 const Product = () => {
+  const dispatch = useDispatch();
   const handleSelect = (type, value) => {
+    const key = type.toLowerCase();
     console.log(type, value);
+    setFilter((prev) => {
+      const current = prev[key];
+
+      const updated = current.includes(value)
+        ? current.filter((v) => v !== value)
+        : [...current, value];
+      return { ...prev, [key]: updated };
+    });
+    newPage(1);
   };
-   
+  const [page, newPage] = useState(1);
+  const [filter, setFilter] = useState({
+    color: [],
+    size: [],
+    price: [0, 5000],
+  });
   const {
     items: products,
     loading,
     error,
   } = useSelector((state) => state.products);
+
+  const fetchProducts = async () => {
+    const params = {
+      page,
+      limit: 10,
+      size: filter.size, // ✅ FIX
+      color: filter.color,
+      // minPrice: filter.price[0],      maxPrice: filter.price[1],}
+    };
+    console.log("SENDING PARAMS:", params);
+    dispatch(getAllProducts(params));
+  };
+
+  useEffect(() => {
+    console.log("FILTER:", filter);
+    console.log("PAGE:", page);
+  }, [filter, page]);
+  useEffect(() => {
+     console.log("FETCH TRIGGERED");
+    fetchProducts();
+  }, [page, filter]);
   return (
     <div className="min-h-screen">
       <HeaderSection />
@@ -217,7 +255,7 @@ const Product = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

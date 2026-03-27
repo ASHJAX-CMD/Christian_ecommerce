@@ -4,11 +4,75 @@ const router = express.Router();
 const role = require("../middlewares/role");
 const { upload } = require("../middlewares/upload");
 const auth = require("../middlewares/auth");
+const { NUMBER } = require("sequelize");
+const parseJSON = (value, fallback = []) => {
+  if (!value) return fallback;
+  if (Array.isArray(value)) return value;
 
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+};
+
+const transformers = {
+  sizes: (v) => parseJSON(v),
+  price: (v) => Number(v),
+  compareAtPrice: (v) => Number(v),
+  quantity: (v) => Number(v),
+
+  discount: (v) =>
+    v === "" || v === "null" ? 0 : Number(v),
+
+  featured: (v) => v === "true",
+};
+const transformProductFields = (data) => {
+  const result = {};
+
+  Object.keys(data).forEach((key) => {
+    const value = data[key];
+
+    result[key] = transformers[key]
+      ? transformers[key](value)
+      : value;
+  });
+
+  return result;
+};
 // GET all products
 router.get("/", async (req, res) => {
-  const products = await Product.find();
-  res.json(products);
+  const page = NUMBER(req.query.page) || 1;
+  const limit = NUMBER(req.query.limit) || 2;
+  const query = {};
+
+  // 🔹 color filter
+  if (req.query.color) {
+    query.color = { $in: [].concat(req.query.color) };
+  }
+
+  // 🔹 size filter 
+  const sizeQuery = req.query.size || req.query["size[]"];
+
+if (sizeQuery) {
+  query.sizes = { $in: [].concat(sizeQuery) };
+}
+  // 🔹 price filter
+  if (req.query.minPrice && req.query.maxPrice) {
+    query.price = {
+      $gte: Number(req.query.minPrice),
+      $lte: Number(req.query.maxPrice),
+    };
+  }
+
+  const products = await Product.find(query)
+    .skip((page - 1) * limit)
+    .limit(limit);
+  const totalCount = await Product.countDocuments(query);
+  console.log("REQ QUERY:", req.query);
+  console.log("QUERY:", query);
+  console.log("Prooducts on Query", products);
+  res.json({ products, totalCount });
 });
 
 // PATCH (update product)
@@ -45,7 +109,7 @@ router.patch(
       let otherFields = { ...req.body };
       delete otherFields.removedImages;
       delete otherFields.newImages;
-
+      otherFields = transformProductFields(otherFields);
       if (Object.keys(otherFields).length > 0) {
         await Product.findByIdAndUpdate(id, { $set: otherFields });
       }
@@ -99,12 +163,9 @@ router.post(
         description: req.body.description,
         category: req.body.category,
         brand: req.body.brand,
-        tags: req.body.tags,
-        colors: req.body.colors,
-        sizes: req.body.sizes ? req.body.sizes.split(",") : [],
-        compareAtPrice: req.body.compareAtPrice
-          ? Number(req.body.compareAtPrice)
-          : undefined,
+        tags: parseJSON(req.body.tags, req.body.tags),
+        colors: parseJSON(req.body.colors, req.body.colors),
+        sizes: parseJSON(req.body.sizes),
         discount: req.body.discount ? Number(req.body.discount) : undefined,
         slug: req.body.slug,
         metaTitle: req.body.metaTitle,
@@ -115,7 +176,7 @@ router.post(
         images: req.files?.images?.map((f) => f.filename) || [],
         video: req.files?.video?.[0]?.filename || null,
       });
-
+      console.log("NEW Product", product);
       await product.save();
       res.status(201).json(product);
     } catch (err) {
