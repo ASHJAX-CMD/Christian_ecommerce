@@ -37,7 +37,7 @@ function AppContent() {
 
 
   useEffect(() => {
-    dispatch(getAllProducts());
+    dispatch(getAllProducts({}));
     dispatch(fetchAddresses())
   }, [dispatch]);
 

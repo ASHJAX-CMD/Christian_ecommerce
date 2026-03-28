@@ -10,6 +10,29 @@ const Product = () => {
   const dispatch = useDispatch();
   const handleSelect = (type, value) => {
     const key = type.toLowerCase();
+    if (key === "price") {
+      let min = 0;
+      let max = 100000;
+
+      if (value === "Under or = 500") {
+        min = 0;
+        max = 500;
+      } else if (value === "500 - 1000") {
+        min = 500;
+        max = 1000;
+      } else if (value === "Above or = 1000") {
+        min = 1000;
+        max = 100000;
+      }
+
+      setFilter((prev) => ({
+        ...prev,
+        price: [min, max],
+      }));
+
+      newPage(1);
+      return;
+    }
     console.log(type, value);
     setFilter((prev) => {
       const current = prev[key];
@@ -31,33 +54,36 @@ const Product = () => {
     items: products,
     loading,
     error,
-    totalCount
+    totalCount,
   } = useSelector((state) => state.products);
-const hasMore = products.length < totalCount;
+  const hasMore = products.length < totalCount;
   const fetchProducts = () => {
-  const params = {
-    page,
-    limit: 8,
+    const params = {
+      page,
+      limit: 8,
+    };
+
+    if (filter.size.length > 0) {
+      params.size = filter.size;
+    }
+
+    if (filter.color.length > 0) {
+      params.color = filter.color;
+    }
+    if (filter.price.length > 0) {
+      params.minPrice = filter.price[0];
+      params.maxPrice = filter.price[1];
+    }
+    console.log("FINAL PARAMS:", params);
+    dispatch(getAllProducts(params));
   };
-
-  if (filter.size.length > 0) {
-    params.size = filter.size;
-  }
-
-  if (filter.color.length > 0) {
-    params.color = filter.color;
-  }
-
-  console.log("FINAL PARAMS:", params);
-  dispatch(getAllProducts(params));
-};
 
   useEffect(() => {
     console.log("FILTER:", filter);
     console.log("PAGE:", page);
   }, [filter, page]);
   useEffect(() => {
-     console.log("FETCH TRIGGERED");
+    console.log("FETCH TRIGGERED");
     fetchProducts();
   }, [page, filter]);
   return (
@@ -80,14 +106,16 @@ const hasMore = products.length < totalCount;
         {/* Product Item */}
         <div className="flex py-6 items-start gap-8">
           {/* filter Item */}
-          <div className="w-60 bg-[#fefadf] p-4 shadow-md  rounded-lg sticky top-0">
+          <div className="w-52 bg-[#fefadf] p-4 shadow-md  rounded-lg sticky top-0">
             <FilterItem
+              type="checkbox"
               title="Color"
               options={["Red", "Blue", "Black", "White"]}
               onSelect={handleSelect}
             />
 
             <FilterItem
+              type="checkbox"
               title="Size"
               options={["S", "M", "L", "XL"]}
               onSelect={handleSelect}
@@ -95,12 +123,8 @@ const hasMore = products.length < totalCount;
 
             <FilterItem
               title="Price"
-              options={[
-                "Low to High",
-                "High to Low",
-                "Under $50",
-                "$50 - $100",
-              ]}
+              type="radio"
+              options={["Under or = 500", "500 - 1000", "Above or = 1000"]}
               onSelect={handleSelect}
             />
           </div>
@@ -115,17 +139,21 @@ const hasMore = products.length < totalCount;
               })}
             </div>
             {/* Load More Button */}
-            {hasMore && 
-            <div className="mt-4">
-              <div className="flex justify-center">
-                <p onClick={()=> newPage(prev=> prev+1)} className="bg-white border flex justify-center flex-col items-center  font-semibold  p-2 px-6 w-fit rounded-4xl">
-                  Load More!
-                  <p className="font-normal" >Showing {products.length} of {totalCount} Products</p>
-                </p>
-                
+            {hasMore && (
+              <div className="mt-4">
+                <div className="flex justify-center">
+                  <p
+                    onClick={() => newPage((prev) => prev + 1)}
+                    className="bg-white border flex justify-center flex-col items-center  font-semibold  p-2 px-6 w-fit rounded-4xl"
+                  >
+                    Load More!
+                    <p className="font-normal">
+                      Showing {products.length} of {totalCount} Products
+                    </p>
+                  </p>
+                </div>
               </div>
-             
-            </div>}
+            )}
           </div>
         </div>
         {/* Text Container */}

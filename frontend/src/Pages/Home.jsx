@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-import {  useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { IoArrowForward } from "react-icons/io5";
 import video from "../../public/video/Home_hero.mp4";
@@ -13,12 +13,16 @@ import ProductCard from "../components/users/ProductCard";
 import Ideas from "../components/users/Ideas";
 import HeaderSection from "../features/users/HeaderSection";
 import Footer from "../features/users/Footer";
+import { getAllProducts } from "../slices/product";
 
 const Products = () => {
+  const dispatch = useDispatch();
   // ==============================
   // REDUX SETUP
   // ==============================
-
+  useEffect(() => {
+    dispatch(getAllProducts({}));
+  }, [dispatch]);
   const {
     items: products,
     loading,
@@ -278,7 +282,7 @@ const Products = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

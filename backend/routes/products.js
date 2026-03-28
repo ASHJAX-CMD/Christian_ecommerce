@@ -38,7 +38,7 @@ const transformProductFields = (data) => {
 
     result[key] = transformers[key] ? transformers[key](value) : value;
   });
-  console.log("Data After TransformProductFields", result)
+  console.log("Data After TransformProductFields", result);
   return result;
 };
 // GET all products
@@ -61,9 +61,11 @@ router.get("/", async (req, res) => {
   }
   // 🔹 price filter
   if (req.query.minPrice && req.query.maxPrice) {
+    const min = Math.max(0, Number(req.query.minPrice));
+    const max = Math.min(100000, Number(req.query.maxPrice));
     query.price = {
-      $gte: Number(req.query.minPrice),
-      $lte: Number(req.query.maxPrice),
+      $gte: min,
+      $lte: max,
     };
   }
 
@@ -73,7 +75,7 @@ router.get("/", async (req, res) => {
   const totalCount = await Product.countDocuments(query);
   console.log("REQ QUERY:", req.query);
   console.log("QUERY:", query);
-  console.log("products that are Being sent",products)
+
   res.json({ products, totalCount });
 });
 
@@ -113,7 +115,7 @@ router.patch(
       delete otherFields.removedImages;
       delete otherFields.newImages;
       otherFields = transformProductFields(otherFields);
-      console.log("Data before Updating in Patch",otherFields)
+      console.log("Data before Updating in Patch", otherFields);
       if (Object.keys(otherFields).length > 0) {
         await Product.findByIdAndUpdate(id, { $set: otherFields });
       }
