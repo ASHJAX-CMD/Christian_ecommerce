@@ -149,6 +149,7 @@ const productSlice = createSlice({
   name: "products",
   initialState: {
     items: [], // list of products
+    homeItems: [],
     totalCount: 0,
     loading: false,
     error: null,
@@ -185,10 +186,18 @@ const productSlice = createSlice({
         state.loading = false;
         const { products } = action.payload;
         const { totalCount } = action.payload;
-        if (action.meta.arg.page === 1) {
-          state.items = products; // first load
+        state.homeItems = products;
+        const isHome = action.meta.arg?.type === "home";
+        if (isHome) {
+          // 🔥 HOME PAGE DATA
+          state.homeItems = products;
         } else {
-          state.items = [...state.items, ...products]; // append
+          // 🔥 PRODUCT PAGE DATA
+          if (action.meta.arg.page === 1) {
+            state.items = products;
+          } else {
+            state.items = [...state.items, ...products];
+          }
         }
         state.totalCount = totalCount;
         console.log(state.items);

@@ -21,14 +21,14 @@ const Products = () => {
   // REDUX SETUP
   // ==============================
   useEffect(() => {
-    dispatch(getAllProducts({}));
+    dispatch(getAllProducts({ type: "home" }));
   }, [dispatch]);
   const {
-    items: products,
+    
     loading,
     error,
   } = useSelector((state) => state.products);
-
+const { homeItems: products } = useSelector((state) => state.products);
   const handleSelect = (type, value) => {
     console.log(type, value);
   };
