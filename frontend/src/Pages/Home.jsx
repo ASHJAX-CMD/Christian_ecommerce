@@ -82,14 +82,14 @@ const Products = () => {
         {/* ===================================================== */}
         {/* ============ PRODUCTS + FILTER SECTION ============= */}
         {/* ===================================================== */}
-        <div className="p-4 ml-4 flex gap-2 px-12">
+        <div className="p-4 ml-4 flex gap-8 justify-center px-12">
           {/* Product Cards */}
           {products.slice(0, 4).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
 
           {/* Filter Sidebar */}
-          <div className="w-60 bg-[#fefadf] p-4 shadow-md rounded-lg">
+          {/* <div className="w-60 bg-[#fefadf] p-4 shadow-md rounded-lg">
             <FilterItem
               title="Color"
               options={["Red", "Blue", "Black", "White"]}
@@ -112,7 +112,7 @@ const Products = () => {
               ]}
               onSelect={handleSelect}
             />
-          </div>
+          </div> */}
         </div>
 
         {/* ===================================================== */}

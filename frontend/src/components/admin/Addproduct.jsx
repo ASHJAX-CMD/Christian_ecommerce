@@ -34,6 +34,7 @@ const Addproduct = () => {
       discount: Number(product.discount),
       compareAtPrice: Number(product.compareAtPrice),
       sizes: product.sizes ? product.sizes.split(",").map((s) => s.trim()) : [],
+      colors:product.colors? product.colors.split(",").map((s)=>s.trim()):[]
     };
     console.log(product);
     dispatch(createProduct(payload));

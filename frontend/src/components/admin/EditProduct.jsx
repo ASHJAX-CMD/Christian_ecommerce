@@ -76,7 +76,7 @@ const EditProduct = () => {
       if (key === "images") return;
 
       const value = product[key];
-
+console.log("This Edit Data is Being Sent to API for Edit",product.colors)
       if (arrayFields.includes(key)) {
         const arr = value ? value.split(",").map((v) => v.trim()) : [];
 
@@ -87,6 +87,7 @@ const EditProduct = () => {
     });
     removedImages.forEach((img) => formData.append("removedImages", img));
     newImages.forEach((img) => formData.append("newImages", img));
+    
     if (id) {
       // Edit existing product
       axios

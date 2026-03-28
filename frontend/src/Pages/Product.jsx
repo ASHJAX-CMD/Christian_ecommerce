@@ -31,19 +31,26 @@ const Product = () => {
     items: products,
     loading,
     error,
+    totalCount
   } = useSelector((state) => state.products);
-
-  const fetchProducts = async () => {
-    const params = {
-      page,
-      limit: 10,
-      size: filter.size, // ✅ FIX
-      color: filter.color,
-      // minPrice: filter.price[0],      maxPrice: filter.price[1],}
-    };
-    console.log("SENDING PARAMS:", params);
-    dispatch(getAllProducts(params));
+const hasMore = products.length < totalCount;
+  const fetchProducts = () => {
+  const params = {
+    page,
+    limit: 8,
   };
+
+  if (filter.size.length > 0) {
+    params.size = filter.size;
+  }
+
+  if (filter.color.length > 0) {
+    params.color = filter.color;
+  }
+
+  console.log("FINAL PARAMS:", params);
+  dispatch(getAllProducts(params));
+};
 
   useEffect(() => {
     console.log("FILTER:", filter);
@@ -108,13 +115,17 @@ const Product = () => {
               })}
             </div>
             {/* Load More Button */}
+            {hasMore && 
             <div className="mt-4">
               <div className="flex justify-center">
-                <p className="bg-white border  font-semibold  p-2 px-6 w-fit rounded-4xl">
+                <p onClick={()=> newPage(prev=> prev+1)} className="bg-white border flex justify-center flex-col items-center  font-semibold  p-2 px-6 w-fit rounded-4xl">
                   Load More!
+                  <p className="font-normal" >Showing {products.length} of {totalCount} Products</p>
                 </p>
+                
               </div>
-            </div>
+             
+            </div>}
           </div>
         </div>
         {/* Text Container */}

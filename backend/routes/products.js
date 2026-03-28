@@ -19,11 +19,14 @@ const parseJSON = (value, fallback = []) => {
 const transformers = {
   sizes: (v) => parseJSON(v),
   price: (v) => Number(v),
+  colors: (v) => {
+    console.log("Data from Transformers Function", parseJSON(v));
+    return parseJSON(v);
+  },
   compareAtPrice: (v) => Number(v),
   quantity: (v) => Number(v),
 
-  discount: (v) =>
-    v === "" || v === "null" ? 0 : Number(v),
+  discount: (v) => (v === "" || v === "null" ? 0 : Number(v)),
 
   featured: (v) => v === "true",
 };
@@ -33,30 +36,29 @@ const transformProductFields = (data) => {
   Object.keys(data).forEach((key) => {
     const value = data[key];
 
-    result[key] = transformers[key]
-      ? transformers[key](value)
-      : value;
+    result[key] = transformers[key] ? transformers[key](value) : value;
   });
-
+  console.log("Data After TransformProductFields", result)
   return result;
 };
 // GET all products
 router.get("/", async (req, res) => {
-  const page = NUMBER(req.query.page) || 1;
-  const limit = NUMBER(req.query.limit) || 2;
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 8;
   const query = {};
 
   // 🔹 color filter
-  if (req.query.color) {
-    query.color = { $in: [].concat(req.query.color) };
+  const colorQuery = req.query.color || req.query["color[]"];
+  if (colorQuery) {
+    query.colors = { $in: [].concat(colorQuery) };
   }
 
-  // 🔹 size filter 
+  // 🔹 size filter
   const sizeQuery = req.query.size || req.query["size[]"];
 
-if (sizeQuery) {
-  query.sizes = { $in: [].concat(sizeQuery) };
-}
+  if (sizeQuery) {
+    query.sizes = { $in: [].concat(sizeQuery) };
+  }
   // 🔹 price filter
   if (req.query.minPrice && req.query.maxPrice) {
     query.price = {
@@ -71,7 +73,7 @@ if (sizeQuery) {
   const totalCount = await Product.countDocuments(query);
   console.log("REQ QUERY:", req.query);
   console.log("QUERY:", query);
-  console.log("Prooducts on Query", products);
+  console.log("products that are Being sent",products)
   res.json({ products, totalCount });
 });
 
@@ -81,6 +83,7 @@ router.patch(
   role(["admin"]),
   upload.array("newImages"),
   async (req, res) => {
+    console.log("this is the Data form Frontend", req.body);
     try {
       const { id } = req.params;
       if (req.body.discount === "null" || req.body.discount === "") {
@@ -110,6 +113,7 @@ router.patch(
       delete otherFields.removedImages;
       delete otherFields.newImages;
       otherFields = transformProductFields(otherFields);
+      console.log("Data before Updating in Patch",otherFields)
       if (Object.keys(otherFields).length > 0) {
         await Product.findByIdAndUpdate(id, { $set: otherFields });
       }

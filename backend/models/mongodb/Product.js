@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
   tags: { type: String },
   category: { type: String },
   brand: { type: String },
-  colors: { type: String },
+  colors: { type: [String] },
   sizes: { type: [String] },          // array of strings
   images: { type: [String], default: [] }, // array of image URLs
   video: { type: String, default: null },

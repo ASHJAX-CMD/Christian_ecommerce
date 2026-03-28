@@ -91,7 +91,6 @@ export const getAllProducts = createAsyncThunk(
     console.log("PARAMS RECEIVED IN THUNK:", params);
     try {
       const res = await axios.get(
-        
         "http://localhost:5000/api/products",
 
         {
@@ -120,11 +119,11 @@ export const createProduct = createAsyncThunk(
           formData.append("video", productData.video);
         } else if (Array.isArray(productData[key])) {
           formData.append(key, JSON.stringify(productData[key]));
-        } else if (productData[key] !== "" && productData[key] != null ) {
+        } else if (productData[key] !== "" && productData[key] != null) {
           formData.append(key, productData[key]);
         }
       });
-      console.log("Its the FormData Baby",formData)
+      console.log("Its the FormData Baby", formData);
       // ✅ Proper axios POST
       const res = await axios.post(
         "http://localhost:5000/api/products",
@@ -150,7 +149,7 @@ const productSlice = createSlice({
   name: "products",
   initialState: {
     items: [], // list of products
-    totalCount: Number,
+    totalCount: 0,
     loading: false,
     error: null,
     success: false,
@@ -186,7 +185,11 @@ const productSlice = createSlice({
         state.loading = false;
         const { products } = action.payload;
         const { totalCount } = action.payload;
-        state.items = products; // set products array
+        if (action.meta.arg.page === 1) {
+          state.items = products; // first load
+        } else {
+          state.items = [...state.items, ...products]; // append
+        }
         state.totalCount = totalCount;
         console.log(state.items);
       })

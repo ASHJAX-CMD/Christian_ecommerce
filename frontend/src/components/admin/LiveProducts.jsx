@@ -3,17 +3,14 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { getAllProducts } from "../../slices/product";
 import { useDispatch, useSelector } from "react-redux";
 import { CiEdit } from "react-icons/ci";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 
 const LiveProducts = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {
-    items: products,
-    loading,
-    error,
-  } = useSelector((state) => state.products);
+
+  const { products, loading, error, page, newPage } = useOutletContext();
 
   const dialogRef = useRef();
   const [selectedProductId, setSelectedProductId] = useState(null);
@@ -34,15 +31,12 @@ const LiveProducts = () => {
         withCredentials: true,
       })
       .then(() => {
-        dispatch(getAllProducts()); // refresh list
+        newPage(1);
+        dispatch(getAllProducts({ page: 1, limit: 8 })); // refresh list
         closeDialog();
       })
       .catch((err) => console.error(err));
   };
-
-  useEffect(() => {
-    dispatch(getAllProducts());
-  }, [dispatch]);
 
   if (loading) return <p>Loading products...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -82,7 +76,7 @@ const LiveProducts = () => {
             <p>
               <span className="font-bold">Product Quantity:</span> {p.quantity}
             </p>
-             <p>
+            <p>
               <span className="font-bold">Product Sizes:</span> {p.sizes}
             </p>
 
