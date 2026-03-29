@@ -1,9 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../slices/user";
+import {  logout, logoutUser } from "../slices/user";
 import HeaderSection from "../features/users/HeaderSection";
 import { useEffect, useState } from "react";
 import { fetchOrders } from "../slices/order";
-
 import {
   createAddress,
   deleteAddress,
@@ -11,12 +10,13 @@ import {
   updateAddress,
 } from "../slices/address";
 import AddressForm from "../components/users/AddressForm";
-
+import { Navigate, useNavigate } from "react-router-dom";
+logoutUser
 const Profile = () => {
   const [mode, setMode] = useState(null); // "add" | "edit" | null
   const { user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { orders } = useSelector((state) => state.order);
   const { addresses } = useSelector((state) => state.address);
   const emptyAddress = {
@@ -39,6 +39,12 @@ const Profile = () => {
     });
   };
 
+  const handleLogOut1 = ()=>{
+    dispatch(logoutUser())
+    dispatch(logout())
+    
+    navigate("/login");
+  }
   const handleEdit = (addr) => {
     setMode("edit");
     setEditingId(addr.id);
@@ -89,7 +95,7 @@ const Profile = () => {
     console.log(orders);
   }, [orders]);
   if (loading) return <p>Loading...</p>;
-  if (!user) return <p>Please login</p>;
+  if (!user) return <Navigate to="/login" />;
 
   return (
     <div className="min-h-screen">
@@ -188,7 +194,7 @@ const Profile = () => {
 
             {/* Logout */}
             <button
-              onClick={() => dispatch(logout())}
+              onClick={() => handleLogOut1()}
               className="mt-8 px-4 py-2 bg-black text-white rounded-lg"
             >
               Logout

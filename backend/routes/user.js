@@ -38,6 +38,28 @@ router.post("/register", async (req, res) => {
 // LOGIN
 // ----------------------
 // login route
+// ----------------------
+// LOGOUT
+// ----------------------
+router.post("/logout", (req, res) => {
+  try {
+     if (!req.cookies?.token) {
+    return res.status(400).json({ message: "Already logged out" });
+  }
+  
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        secure: false, // true in production (HTTPS)
+        sameSite: "Lax",
+      })
+      .json({ success: true, message: "Logged out successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Logout failed" });
+  }
+});
+
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;

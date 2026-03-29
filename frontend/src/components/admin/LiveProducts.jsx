@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {  useRef, useState } from "react";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { getAllProducts } from "../../slices/product";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch,  } from "react-redux";
 import { CiEdit } from "react-icons/ci";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";

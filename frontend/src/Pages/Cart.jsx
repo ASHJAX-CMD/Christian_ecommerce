@@ -7,18 +7,19 @@ import {
 } from "../slices/cartSlice";
 import { createOrder, resetOrderState } from "../slices/order";
 import HeaderSection from "../features/users/HeaderSection";
-import { useEffect } from "react";
+
 const Cart = () => {
   const dispatch = useDispatch();
   const { addresses } = useSelector((state) => state.address);
   // ✅ Select cart and order state
   const cart = useSelector((state) => state.cart.items);
-  const { loading, success, error } = useSelector((state) => state.order);
+  const { loading, error } = useSelector((state) => state.order);
   const defaultAddress = addresses?.find((addr) => addr.isDefault);
   const total = cart.reduce((sum, item) => sum + item.price * item.cartQuantity, 0);
-
+  const {user} = useSelector((state)=>state.user)
   // ✅ Dispatch order on click
   const handleOrder = async () => {
+    if(!user)return alert("Please Login/SignUp First!")
     if (cart.length === 0) return alert("Cart is empty!");
     if (addresses.length === 0) return alert("No address Found!");
 

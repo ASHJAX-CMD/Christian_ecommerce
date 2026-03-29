@@ -7,7 +7,7 @@ import Splash from "./Splash";
 import Home from "./Pages/Home";
 import Admin from "./Pages/Admin";
 import Reviews from "./components/admin/Reviews";
-import Orders from "./components/admin/Orders";
+import Orders from "./components/admin/Orders.jsx";
 import Addproduct from "./components/admin/Addproduct";
 import LiveProducts from "./components/admin/LiveProducts";
 import Register from "./Pages/Registration";
@@ -53,9 +53,9 @@ function AppContent() {
       <Route
         path="/home"
         element={
-          <Protected>
+          
             <Home />
-          </Protected>
+          
         }
       />
       <Route path="/cart" element={<Cart />} />

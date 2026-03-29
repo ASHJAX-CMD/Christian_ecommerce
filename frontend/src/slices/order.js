@@ -62,6 +62,25 @@ export const fetchOrders = createAsyncThunk(
   },
 );
 
+export const fetchOrdersAdmin = createAsyncThunk(
+  "order/fetchOrdersAdmin",
+  async (_, { rejectWithValue }) => {
+    try {
+      console.log("FETCH ORDERS CALLED");
+
+      const res = await axios.get("http://localhost:5000/api/orders/admin/all", {
+        withCredentials: true,
+      });
+
+      console.log("API RESPONSE:", res.data);
+
+      return res.data;
+    } catch (error) {
+      console.log("API ERROR:", error);
+      return rejectWithValue(error.response?.data?.message);
+    }
+  },
+);
 const orderSlice = createSlice({
   name: "order",
   initialState: {
@@ -109,7 +128,20 @@ const orderSlice = createSlice({
       .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Something went wrong";
-      });
+      })
+      .addCase(fetchOrdersAdmin.pending, (state,action)=>{
+        state.loading= true;
+        state.error = action.payload;
+      })
+       .addCase(fetchOrdersAdmin.fulfilled, (state, action) => {
+        state.loading = false;
+        
+        state.orders = action.payload;
+      })
+      .addCase(fetchOrdersAdmin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = null ;
+      })
   },
 });
 

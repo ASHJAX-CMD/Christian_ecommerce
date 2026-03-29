@@ -29,9 +29,9 @@ const Products = () => {
     error,
   } = useSelector((state) => state.products);
 const { homeItems: products } = useSelector((state) => state.products);
-  const handleSelect = (type, value) => {
-    console.log(type, value);
-  };
+  // const handleSelect = (type, value) => {
+  //   console.log(type, value);
+  // };
 
   // ==============================
   // LOADING & ERROR STATES

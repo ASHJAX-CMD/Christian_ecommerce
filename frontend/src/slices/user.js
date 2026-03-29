@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 // Async thunk for login
 export const fetchUser = createAsyncThunk(
@@ -50,6 +52,23 @@ export const fetchCurrentUser = createAsyncThunk(
         withCredentials: true, // send cookie
       });
       return res.data.user;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+
+export const logoutUser = createAsyncThunk(
+  "user/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      await axios.post(
+        "http://localhost:5000/api/user/logout",
+        {},
+        { withCredentials: true }
+      );
+      return true;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -115,6 +134,10 @@ const userSlice = createSlice({
         state.error = action.payload?.message || "Registration Failed";
         state.success= false;
       })
+      .addCase(logoutUser.fulfilled, (state) => {
+  state.user = null;
+  state.success = false;
+})
   },
 });
 

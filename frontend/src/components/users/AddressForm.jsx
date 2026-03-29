@@ -34,7 +34,7 @@ const AddressForm = ({ formData, handleChange, handleSubmit, cancel }) => {
       />
 
       <input
-        type="text"
+        type="number"
         name="zip"
         placeholder="Zip"
         value={formData.zip}
