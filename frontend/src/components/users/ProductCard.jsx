@@ -19,7 +19,7 @@ const ProductCard = ({ product }) => {
     dispatch(addToCart(product));
     setIsAdded(true);
     setCount((prev) => prev + 1);
-    console.log(item)
+    console.log(item);
     setTimeout(() => {
       setIsAdded(false);
     }, 5000);
@@ -49,9 +49,9 @@ const ProductCard = ({ product }) => {
         </section>
         <p className="font-extrabold text-2xl">{product.price}</p>
         <section>
-          <div className="flex flex-col gap-2" >
+          <div className="flex flex-col gap-2">
             <Rating rating={null} />
-          <p>Stock Left: {product.quantity}</p>
+            <p>Stock Left: {product.quantity}</p>
           </div>
           <button
             onClick={handleShopNow}

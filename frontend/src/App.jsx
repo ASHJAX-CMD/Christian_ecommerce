@@ -25,20 +25,17 @@ import { fetchOrders } from "./slices/order";
 import Design from "./Pages/Design";
 import Offers from "./Pages/Offers";
 import { fetchAddresses } from "./slices/address";
+import OrderDetails from "./components/admin/OrderDetails.jsx";
 function AppContent() {
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
 
-
-  
-
-
   useEffect(() => {
     dispatch(getAllProducts({}));
-    dispatch(fetchAddresses())
+    dispatch(fetchAddresses());
   }, [dispatch]);
 
   return (
@@ -50,14 +47,7 @@ function AppContent() {
       <Route path="/offers" element={<Offers />} />
 
       {/* Protected Routes */}
-      <Route
-        path="/home"
-        element={
-          
-            <Home />
-          
-        }
-      />
+      <Route path="/home" element={<Home />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/product" element={<Product />} />
       <Route path="/profile" element={<Profile />} />
@@ -77,6 +67,7 @@ function AppContent() {
         </Route>
         <Route path="reviews" element={<Reviews />} />
         <Route path="orders" element={<Orders />} />
+        <Route path="orders/:id" element={<OrderDetails />} />
       </Route>
 
       {/* Default route */}

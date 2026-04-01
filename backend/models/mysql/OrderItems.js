@@ -7,6 +7,13 @@ const OrderItem = sequelize.define("OrderItem", {
   productId: { type: DataTypes.STRING, allowNull: false },
   quantity: { type: DataTypes.INTEGER, defaultValue: 1 },
   price: { type: DataTypes.FLOAT, allowNull: false },
+  productName: {
+  type: DataTypes.STRING,
+},
+
+productImage: {
+  type: DataTypes.STRING,
+},
 });
 
 Order.hasMany(OrderItem, { 

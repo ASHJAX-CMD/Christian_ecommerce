@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { sequelize } = require("../db/mysql");
-
+const User = require("../models/mysql/User")
 const Order = require("../models/mysql/Order");
 const OrderItem = require("../models/mysql/OrderItems");
 const Product = require("../models/mongodb/Product");
@@ -61,7 +61,7 @@ router.post("/", auth, async (req, res) => {
     // ✅ Fetch products
     const products = await Product.find(
       { _id: { $in: productIds } },
-      { name: 1, price: 1, image: 1, stock: 1 },
+      { name: 1, price: 1, images: 1, stock: 1 },
     );
 
     // ✅ Create Map
@@ -107,7 +107,7 @@ router.post("/", auth, async (req, res) => {
       orderItemsData.push({
         productId: product._id.toString(),
         productName: product.name,
-        productImage: product.image,
+        productImage: product.images,
         price: realPrice,
         quantity: item.quantity,
       });
@@ -266,13 +266,62 @@ router.get("/admin/all", auth, async (req, res) => {
     }
 
     const orders = await Order.findAll({
-      include: [{ model: OrderItem, as: "items" }],
+      // include: [{ model: OrderItem, as: "items" }],
       order: [["createdAt", "DESC"]],
     });
 
     res.json(orders);
   } catch (err) {
     console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+//Particular Order details with Items
+router.get("/admin/:orderId", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      console.log("not admin")
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const orderId = parseInt(req.params.orderId);
+
+    if (isNaN(orderId)) {
+      return res.status(400).json({ message: "Invalid order ID" });
+    }
+
+    const order = await Order.findOne({
+      where: { id: orderId },
+      include: [
+        {
+          model: OrderItem,
+          as: "items",
+          attributes: ["productName", "productImage", "price", "quantity"],
+        },
+        {
+          model: Address,
+          attributes: ["id", "city", "state", "zip"],
+        },
+        {
+          model: User,
+          attributes: ["id", "name", "email"],
+        },
+      ],
+    });
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json(order);
+  } catch (err) {
+    console.error("Error fetching order:", {
+      orderId: req.params.orderId,
+      error: err.message,
+    });
+
     res.status(500).json({ message: "Server error" });
   }
 });

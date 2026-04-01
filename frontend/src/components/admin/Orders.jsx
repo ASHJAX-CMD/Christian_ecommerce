@@ -1,5 +1,5 @@
 // import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Package, ChevronRight, Search, CaseUpper } from "lucide-react";
 import { useEffect, useState } from "react";
 // import { Input } from "@/components/ui/input";
@@ -40,6 +40,7 @@ const Orders = () => {
   }, []);
   const orders = useSelector((state) => state.order.orders);
   const navigate = useNavigate();
+
 
   const [search, setSearch] = useState("");
 
@@ -116,8 +117,9 @@ const Orders = () => {
                   };
                   return (
                     <tr
+                      
                       key={order.id}
-                      onClick={() => navigate(`/orders/${order.id}`)}
+                      onClick={() => navigate(`/admin/orders/${order.id}`)}
                       className="border-b last:border-0 hover:bg-muted/40 cursor-pointer transition-colors group"
                     >
                       <td className="px-6 py-4 font-semibold text-sm text-foreground">
@@ -152,6 +154,7 @@ const Orders = () => {
                       <td className="px-4 py-4">
                         <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                       </td>
+                      
                     </tr>
                   );
                 })}
@@ -170,6 +173,7 @@ const Orders = () => {
           </div>
         </div>
       </div>
+      
     </div>
   );
 };

@@ -23,7 +23,7 @@ const Sidebar = ({ pathname }) => {
           <Link
             to="/admin/products"
             className={`h-full rounded-2xl p-2 ${
-              pathname === "/admin/products"
+              pathname.startsWith("/admin/products")
                 ? "border border-green-400"
                 : ""
             } ${
@@ -37,7 +37,7 @@ const Sidebar = ({ pathname }) => {
           <Link
             to="/admin/orders"
             className={`h-full rounded-2xl p-2 ${
-              pathname === "/admin/orders"
+              pathname.startsWith("/admin/orders")
                 ? "border border-green-400"
                 : "border-none"
             } `}
@@ -47,7 +47,7 @@ const Sidebar = ({ pathname }) => {
           <Link
             to="/admin/reviews"
             className={`h-full rounded-2xl p-2 ${
-              pathname === "/admin/reviews"
+              pathname.startsWith("/admin/reviews")
                 ? "border border-green-400"
                 : "border-none"
             } `}

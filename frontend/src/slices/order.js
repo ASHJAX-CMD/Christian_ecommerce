@@ -3,22 +3,22 @@ import axios from "axios";
 
 export const createOrder = createAsyncThunk(
   "order/createOrder",
-  async ({cart,addressId}, { rejectWithValue }) => {
+  async ({ cart, addressId }, { rejectWithValue }) => {
     try {
       const items = cart.map((orderItem) => ({
         productId: orderItem._id,
         quantity: orderItem.cartQuantity,
       }));
-const cartData = {
-  items:items,
-  address:addressId
-}
+      const cartData = {
+        items: items,
+        address: addressId,
+      };
       const res = await axios.post(
         "http://localhost:5000/api/orders",
-         cartData,
+        cartData,
         { withCredentials: true },
       );
-console.log("Sent cart Data",cartData)
+      console.log("Sent cart Data", cartData);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message);
@@ -68,9 +68,12 @@ export const fetchOrdersAdmin = createAsyncThunk(
     try {
       console.log("FETCH ORDERS CALLED");
 
-      const res = await axios.get("http://localhost:5000/api/orders/admin/all", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        "http://localhost:5000/api/orders/admin/all",
+        {
+          withCredentials: true,
+        },
+      );
 
       console.log("API RESPONSE:", res.data);
 
@@ -81,10 +84,32 @@ export const fetchOrdersAdmin = createAsyncThunk(
     }
   },
 );
+
+export const fetchOderDetails = createAsyncThunk(
+  "order/fetchOrderDetails",
+  async (id, { rejectWithValue }) => {
+    try {
+      const orderId = id;
+      const res = await axios.get(
+        `http://localhost:5000/api/orders/admin/${orderId}`,
+        {
+          withCredentials: true,
+        },
+      );
+      console.log("res from api", res.data);
+      return res.data;
+    } catch (error) {
+      console.log("API Error", error);
+      return rejectWithValue(error.response?.data?.message);
+    }
+  },
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {
     orders: [],
+    orderDetails: null,
     order: null,
     loading: false,
     error: null,
@@ -116,12 +141,12 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
-        
+
         state.error = false;
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.loading = false;
-        
+
         state.orders = action.payload;
       })
 
@@ -129,19 +154,32 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Something went wrong";
       })
-      .addCase(fetchOrdersAdmin.pending, (state,action)=>{
-        state.loading= true;
+      .addCase(fetchOrdersAdmin.pending, (state, action) => {
+        state.loading = true;
         state.error = action.payload;
       })
-       .addCase(fetchOrdersAdmin.fulfilled, (state, action) => {
+      .addCase(fetchOrdersAdmin.fulfilled, (state, action) => {
         state.loading = false;
-        
+
         state.orders = action.payload;
       })
       .addCase(fetchOrdersAdmin.rejected, (state, action) => {
         state.loading = false;
-        state.error = null ;
+        state.error = null;
       })
+      .addCase(fetchOderDetails.pending, (state, action) => {
+        state.loading = true;
+        state.error = action.payload;
+      })
+      .addCase(fetchOderDetails.fulfilled, (state, action) => {
+        state.loading = false;
+
+        state.orderDetails = action.payload;
+      })
+      .addCase(fetchOderDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      });
   },
 });
 
