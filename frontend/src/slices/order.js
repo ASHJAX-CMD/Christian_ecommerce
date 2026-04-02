@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 
 export const createOrder = createAsyncThunk(
   "order/createOrder",
@@ -105,6 +106,26 @@ export const fetchOderDetails = createAsyncThunk(
   },
 );
 
+export const refund = createAsyncThunk(
+  "order/refund",
+  async (id, { rejectWithValue }) => {
+    try {
+   
+       const res = await axios.post(
+        `http://localhost:5000/api/payment/verify/refund/${id}`,
+        {}, // empty body
+        { withCredentials: true } // config
+      );
+
+       
+      return res.data; 
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error.response?.data?.message);
+    }
+  },
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {
@@ -163,7 +184,7 @@ const orderSlice = createSlice({
 
         state.orders = action.payload;
       })
-      .addCase(fetchOrdersAdmin.rejected, (state, action) => {
+      .addCase(fetchOrdersAdmin.rejected, (state) => {
         state.loading = false;
         state.error = null;
       })
@@ -176,7 +197,20 @@ const orderSlice = createSlice({
 
         state.orderDetails = action.payload;
       })
-      .addCase(fetchOderDetails.rejected, (state, action) => {
+      .addCase(fetchOderDetails.rejected, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+       .addCase(refund.pending, (state, action) => {
+        state.loading = true;
+        state.error = action.payload;
+      })
+      .addCase(refund.fulfilled, (state, action) => {
+        state.loading = false;
+
+        // state.orderDetails.status = action.payload;
+      })
+      .addCase(refund.rejected, (state) => {
         state.loading = false;
         state.error = null;
       });

@@ -1,8 +1,8 @@
 import { ArrowLeft } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchOderDetails } from "../../slices/order";
+import { fetchOderDetails, refund } from "../../slices/order";
 
 const statusConfig = {
   pending: {
@@ -29,22 +29,40 @@ const statusConfig = {
     label: "Cancelled",
     className: "bg-destructive/15 text-destructive border-destructive/30",
   },
+  refunded: {
+    label: "refunded",
+    className: "bg-purple-100 text-purple-600 border-purple-300",
+  },
 };
 
 const OrderDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [refundStarted, setRefundStarted] = useState(false);
   const order = useSelector((state) => state.order.orderDetails);
+  const { loading } = useSelector((state) => state.order);
   console.log("params id:", id);
-
+  const [status, setStatus] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchOderDetails(id));
   }, [id]);
-
+  useEffect(() => {
+    if (order?.status) {
+      setStatus(order.status);
+    }
+  }, [order]);
   // const orderItems = useSelector((state) => state.order.orderDetails);
   console.log("order details", order);
 
+  const handleRefund = async () => {
+    try {
+      await dispatch(refund(id)).unwrap();
+      setRefundStarted(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   if (!order) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -59,7 +77,6 @@ const OrderDetails = () => {
       </div>
     );
   }
-
   const sc = statusConfig[order.status];
 
   return (
@@ -82,7 +99,7 @@ const OrderDetails = () => {
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
               Placed on{" "}
-              {new Date(order.date).toLocaleDateString("en-US", {
+              {new Date(order.createdAt).toLocaleDateString("en-US", {
                 month: "long",
                 day: "numeric",
                 year: "numeric",
@@ -90,10 +107,19 @@ const OrderDetails = () => {
             </p>
           </div>
           <p
-            
             className={`${sc.className} bg-white  rounded-3xl text-sm px-4 py-1.5`}
           >
-            {sc.label}
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="bg-transparent outline-none"
+            >
+              {Object.keys(statusConfig).map((key) => (
+                <option key={key} value={key}>
+                  {statusConfig[key].label}
+                </option>
+              ))}
+            </select>
           </p>
         </div>
 
@@ -182,7 +208,43 @@ const OrderDetails = () => {
               ${order.total.toFixed(2)}
             </span>
           </div>
+          {/* Local immediate feedback */}
+          {refundStarted && order.paymentStatus !== "refunded" && (
+            <p className="p-4 bg-yellow-100 text-yellow-600 rounded-2xl mt-2">
+              Refund started… check back soon ⏳
+            </p>
+          )}
+
+          {/* Backend-driven states */}
+          {order.paymentStatus === "refund_pending" && (
+            <p className="p-4 bg-yellow-100 text-yellow-600 rounded-2xl mt-2">
+              Refund processing ⏳
+            </p>
+          )}
+
+          {order.paymentStatus === "refunded" && (
+            <p className="p-4 bg-green-100 text-green-600 rounded-2xl mt-2">
+              Refunded ✅
+            </p>
+          )}
+
+          {order.paymentStatus === "refund_failed" && (
+            <p className="p-4 bg-red-100 text-red-600 rounded-2xl mt-2">
+              Refund failed ❌
+            </p>
+          )}
         </div>
+        {(!refundStarted && order.paymentStatus !== "refunded") && (
+          <p
+            className={`p-4 inline-block rounded-2xl mt-2 
+    ${loading ? "bg-gray-300 cursor-not-allowed" : "bg-white cursor-pointer"}`}
+            onClick={() => {
+              if (!loading) handleRefund(order.id);
+            }}
+          >
+            {loading ? "Processing..." : "Refund"}
+          </p>
+        )}
       </div>
     </div>
   );

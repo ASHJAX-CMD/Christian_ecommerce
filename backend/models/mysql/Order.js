@@ -29,7 +29,7 @@ const Order = sequelize.define(
     },
 
     paymentStatus: {
-      type: DataTypes.ENUM("pending", "completed", "failed"),
+      type: DataTypes.ENUM("pending","paid","refunded","refund_failed", "completed","refund_pending", "failed"),
       defaultValue: "pending",
     },
     razorpayOrderId: {
@@ -43,6 +43,12 @@ const Order = sequelize.define(
     razorpaySignature: {
       type: DataTypes.STRING,
     },
+    refundId:{
+      type:DataTypes.STRING
+    },
+     refundedAt:{
+      type:DataTypes.DATE,
+     }
   },
   {
     timestamps: true,
