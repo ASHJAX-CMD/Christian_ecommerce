@@ -1,8 +1,6 @@
-# Christian_ecommerce
-
 # 🛍️ Christian E-Commerce Platform
 
-## 📌 Overview
+📌 Overview
 
 A full-stack e-commerce platform built with a focus on **real-world backend architecture, secure payments, and scalable system design**.
 
