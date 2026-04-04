@@ -2,19 +2,16 @@ import { ArrowLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchOderDetails, refund } from "../../slices/order";
+import { fetchOderDetails, refund, updateOrderStatus } from "../../slices/order";
 
 const statusConfig = {
   pending: {
     label: "Pending",
     className: "bg-warning/15 text-warning border-warning/30",
   },
-  processing: {
-    label: "Processing",
-    className: "bg-info/15 text-info border-info/30",
-  },
+
   placed: {
-    label: "Placed",
+    label: "placed",
     className: "bg-info/15 text-info border-info/30",
   },
   shipped: {
@@ -28,11 +25,7 @@ const statusConfig = {
   cancelled: {
     label: "Cancelled",
     className: "bg-destructive/15 text-destructive border-destructive/30",
-  },
-  refunded: {
-    label: "refunded",
-    className: "bg-purple-100 text-purple-600 border-purple-300",
-  },
+  }
 };
 
 const OrderDetails = () => {
@@ -54,7 +47,15 @@ const OrderDetails = () => {
   }, [order]);
   // const orderItems = useSelector((state) => state.order.orderDetails);
   console.log("order details", order);
+  const handleStatusUpdate = async () => {
+    if (status === order.status) return; // 🚀 avoid useless call
 
+    try {
+      await dispatch(updateOrderStatus({ id, status })).unwrap();
+    } catch (err) {
+      console.log("Update failed:", err);
+    }
+  };
   const handleRefund = async () => {
     try {
       await dispatch(refund(id)).unwrap();
@@ -63,6 +64,7 @@ const OrderDetails = () => {
       console.log(err);
     }
   };
+  
   if (!order) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -233,8 +235,11 @@ const OrderDetails = () => {
               Refund failed ❌
             </p>
           )}
+          
         </div>
-        {(!refundStarted && order.paymentStatus !== "refunded") && (
+
+      <div className="flex gap-3" >
+          {!refundStarted && order.paymentStatus !== "refunded" && (
           <p
             className={`p-4 inline-block rounded-2xl mt-2 
     ${loading ? "bg-gray-300 cursor-not-allowed" : "bg-white cursor-pointer"}`}
@@ -245,6 +250,22 @@ const OrderDetails = () => {
             {loading ? "Processing..." : "Refund"}
           </p>
         )}
+       <div
+  onClick={() => {
+    if (!loading && status !== order.status) {
+      handleStatusUpdate();
+    }
+  }}
+  className={`p-4 inline-block rounded-2xl mt-2 
+  ${
+    loading || status === order.status
+      ? "bg-gray-300 cursor-not-allowed"
+      : "bg-white cursor-pointer"
+  }`}
+>
+  {loading ? "Updating..." : "Update Status"}
+</div> 
+      </div>
       </div>
     </div>
   );

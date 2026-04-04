@@ -14,7 +14,7 @@ const refundController = async (req, res) => {
     }
 
     // 2. Validate payment
-    if (order.paymentStatus !== "paid") {
+    if (order.paymentStatus === "pending") {
       return res.status(400).json({
         message: "Only paid orders can be refunded",
       });

@@ -374,7 +374,7 @@ router.get("/:orderId", auth, async (req, res) => {
 /* ======================================================
    UPDATE ORDER STATUS (ADMIN)
 ====================================================== */
-router.put("/:orderId", auth, async (req, res) => {
+router.put("/status/:orderId", auth, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
       return res.status(403).json({ message: "Forbidden" });
@@ -382,15 +382,30 @@ router.put("/:orderId", auth, async (req, res) => {
 
     const { status } = req.body;
 
-    const order = await Order.findByPk(req.params.orderId);
+    const order = await Order.findOne({
+  where: { id: req.params.orderId },
+  include: [
+    {
+      model: OrderItem,
+      as: "items",
+    },
+    {
+      model: Address,
+    },
+    {
+      model: User,
+      attributes: ["id", "name", "email"],
+    },
+  ],
+});
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-
+console.log("This is the Status",order)
     order.status = status;
     await order.save();
-
+console.log("the updated order",order)
     res.json(order);
   } catch (err) {
     console.error(err);

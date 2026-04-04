@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+
 
 export const createOrder = createAsyncThunk(
   "order/createOrder",
@@ -126,6 +126,30 @@ export const refund = createAsyncThunk(
   },
 );
 
+export const updateOrderStatus = createAsyncThunk(
+  "order/updateOrderStatus",
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:5000/api/orders/status/${id}`,
+        { status },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // if using cookies/JWT
+        }
+      );
+
+      return res.data; // updated order
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data || { message: "Something went wrong" }
+      );
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {
@@ -213,7 +237,18 @@ const orderSlice = createSlice({
       .addCase(refund.rejected, (state) => {
         state.loading = false;
         state.error = null;
-      });
+      })
+        .addCase(updateOrderStatus.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(updateOrderStatus.fulfilled, (state, action) => {
+      state.loading = false;
+      state.orderDetails = action.payload; // update UI instantly
+    })
+    .addCase(updateOrderStatus.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload?.message;
+    });
   },
 });
 
