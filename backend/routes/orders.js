@@ -442,4 +442,32 @@ router.delete("/:orderId", auth, async (req, res) => {
   }
 });
 
+
+//OveralDetails for DashBoard
+router.get("/admin/dashboard/ordertotaldetails",auth, async (req,res)=>{
+ try{
+   if(req.user.role !=="admin"){
+    return res.status(403).json({message:"not a Admin to Get OrderTotal Details"})
+  }
+  const [orderStats, totalProducts, lowStock] = await Promise.all([
+  Order.findAll({
+    attributes: [
+      "status",
+      [sequelize.fn("COUNT", sequelize.col("id")), "count"],
+    ],
+    group: ["status"],
+  }),
+
+  Product.countDocuments(),
+
+  Product.countDocuments({ quantity: { $lt: 10 } }),
+]);
+ res.json({orderStats,totalProducts,lowStock});
+ } catch (error){
+  console.log(error)
+  res.status(500).json({message:"Server Error while getting order total details"})
+ }
+  
+})
+
 module.exports = router;

@@ -20,6 +20,16 @@ const Sidebar = ({ pathname }) => {
           <p className="text-white">{user.name}</p>
         </div>
         <div className="flex flex-col gap-16 ml-2 justify-center">
+           <Link
+            to="/admin/dashboard"
+            className={`h-full rounded-2xl p-2 ${
+              pathname.startsWith("/admin/dashboard")
+                ? "border border-green-400"
+                : ""
+            }  `}
+          >
+            DashBoard
+          </Link>
           <Link
             to="/admin/products"
             className={`h-full rounded-2xl p-2 ${

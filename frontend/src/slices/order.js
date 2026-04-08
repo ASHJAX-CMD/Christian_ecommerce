@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
 export const createOrder = createAsyncThunk(
   "order/createOrder",
   async ({ cart, addressId }, { rejectWithValue }) => {
@@ -110,15 +109,13 @@ export const refund = createAsyncThunk(
   "order/refund",
   async (id, { rejectWithValue }) => {
     try {
-   
-       const res = await axios.post(
+      const res = await axios.post(
         `http://localhost:5000/api/payment/verify/refund/${id}`,
         {}, // empty body
-        { withCredentials: true } // config
+        { withCredentials: true }, // config
       );
 
-       
-      return res.data; 
+      return res.data;
     } catch (error) {
       console.log(error);
       return rejectWithValue(error.response?.data?.message);
@@ -138,16 +135,32 @@ export const updateOrderStatus = createAsyncThunk(
             "Content-Type": "application/json",
           },
           withCredentials: true, // if using cookies/JWT
-        }
+        },
       );
 
       return res.data; // updated order
     } catch (err) {
       return rejectWithValue(
-        err.response?.data || { message: "Something went wrong" }
+        err.response?.data || { message: "Something went wrong" },
       );
     }
-  }
+  },
+);
+
+export const fetchOrderStats = createAsyncThunk(
+  "order/fetchOrderStats",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/orders/admin/dashboard/ordertotaldetails",
+        { withCredentials: true },
+      );
+
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  },
 );
 
 const orderSlice = createSlice({
@@ -155,6 +168,9 @@ const orderSlice = createSlice({
   initialState: {
     orders: [],
     orderDetails: null,
+    orderStats: [],
+    totalProducts:0,
+    lowStock:0,
     order: null,
     loading: false,
     error: null,
@@ -225,7 +241,7 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = null;
       })
-       .addCase(refund.pending, (state, action) => {
+      .addCase(refund.pending, (state, action) => {
         state.loading = true;
         state.error = action.payload;
       })
@@ -238,17 +254,33 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = null;
       })
-        .addCase(updateOrderStatus.pending, (state) => {
-      state.loading = true;
-    })
-    .addCase(updateOrderStatus.fulfilled, (state, action) => {
-      state.loading = false;
-      state.orderDetails = action.payload; // update UI instantly
-    })
-    .addCase(updateOrderStatus.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload?.message;
-    });
+      .addCase(updateOrderStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateOrderStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orderDetails = action.payload; // update UI instantly
+      })
+      .addCase(updateOrderStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message;
+      })
+      .addCase(fetchOrderStats.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchOrderStats.fulfilled, (state, action) => {
+        state.loading = false;
+
+        // convert array → object for easy use
+
+        state.orderStats = action.payload.orderStats; // ✅ array
+        state.totalProducts = action.payload.totalProducts;
+        state.lowStock = action.payload.lowStock;
+      })
+      .addCase(fetchOrderStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 

@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  replace,
+} from "react-router-dom";
 import { Provider, useDispatch } from "react-redux";
 import store from "./store";
 import ProtectedAdmin from "./components/admin/Protected";
 import Splash from "./Splash";
+
 import Home from "./Pages/Home";
 import Admin from "./Pages/Admin";
 import Reviews from "./components/admin/Reviews";
@@ -26,6 +33,7 @@ import Design from "./Pages/Design";
 import Offers from "./Pages/Offers";
 import { fetchAddresses } from "./slices/address";
 import OrderDetails from "./components/admin/OrderDetails.jsx";
+import Dashboard from "./components/admin/Dashboard.jsx";
 function AppContent() {
   const dispatch = useDispatch();
 
@@ -59,7 +67,9 @@ function AppContent() {
           </ProtectedAdmin>
         }
       >
-        <Route index element={<Navigate to="products" replace />} />
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+
         <Route path="products" element={<Products />}>
           <Route path="addproduct" element={<Addproduct />} />
           <Route index element={<LiveProducts />} />
