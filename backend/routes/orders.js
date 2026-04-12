@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { sequelize } = require("../db/mysql");
-const User = require("../models/mysql/User")
+const User = require("../models/mysql/User");
 const Order = require("../models/mysql/Order");
 const OrderItem = require("../models/mysql/OrderItems");
 const Product = require("../models/mongodb/Product");
-
+const { Op } = require("sequelize");
 const auth = require("../middlewares/auth");
 const Address = require("../models/mysql/address");
 
@@ -47,7 +47,7 @@ router.post("/", auth, async (req, res) => {
       }
 
       if (mergedItemsMap.has(item.productId)) {
-        mergedItemsMap.get(item.productId).quantity += item.quantity; 
+        mergedItemsMap.get(item.productId).quantity += item.quantity;
       } else {
         mergedItemsMap.set(item.productId, { ...item });
       }
@@ -172,7 +172,7 @@ router.post("/", auth, async (req, res) => {
 //     });
 
 //     if (!userAddress) {
-//       throw new Error("Invalid address"); 
+//       throw new Error("Invalid address");
 //     }
 
 //     if (!items || !items.length) {
@@ -277,12 +277,11 @@ router.get("/admin/all", auth, async (req, res) => {
   }
 });
 
-
 //Particular Order details with Items
 router.get("/admin/:orderId", auth, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
-      console.log("not admin")
+      console.log("not admin");
       return res.status(403).json({ message: "Forbidden" });
     }
 
@@ -383,29 +382,29 @@ router.put("/status/:orderId", auth, async (req, res) => {
     const { status } = req.body;
 
     const order = await Order.findOne({
-  where: { id: req.params.orderId },
-  include: [
-    {
-      model: OrderItem,
-      as: "items",
-    },
-    {
-      model: Address,
-    },
-    {
-      model: User,
-      attributes: ["id", "name", "email"],
-    },
-  ],
-});
+      where: { id: req.params.orderId },
+      include: [
+        {
+          model: OrderItem,
+          as: "items",
+        },
+        {
+          model: Address,
+        },
+        {
+          model: User,
+          attributes: ["id", "name", "email"],
+        },
+      ],
+    });
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-console.log("This is the Status",order)
+    console.log("This is the Status", order);
     order.status = status;
     await order.save();
-console.log("the updated order",order)
+    console.log("the updated order", order);
     res.json(order);
   } catch (err) {
     console.error(err);
@@ -442,32 +441,146 @@ router.delete("/:orderId", auth, async (req, res) => {
   }
 });
 
-
 //OveralDetails for DashBoard
-router.get("/admin/dashboard/ordertotaldetails",auth, async (req,res)=>{
- try{
-   if(req.user.role !=="admin"){
-    return res.status(403).json({message:"not a Admin to Get OrderTotal Details"})
+// router.get("/admin/dashboard/ordertotaldetails", auth, async (req, res) => {
+//   try {
+//     if (req.user.role !== "admin") {
+//       return res
+//         .status(403)
+//         .json({ message: "not a Admin to Get OrderTotal Details" });
+//     }
+//     const [orderStats, totalProducts, lowStock] = await Promise.all([
+//       Order.findAll({
+//         attributes: [
+//           "status",
+//           [sequelize.fn("COUNT", sequelize.col("id")), "count"],
+//         ],
+//         group: ["status"],
+//       }),
+
+//       Product.countDocuments(),
+
+//       Product.countDocuments({ quantity: { $lt: 10 } }),
+//     ]);
+//     res.json({ orderStats, totalProducts, lowStock });
+//   } catch (error) {
+//     console.log(error);
+//     res
+//       .status(500)
+//       .json({ message: "Server Error while getting order total details" });
+//   }
+// });
+
+router.get("/admin/dashboard/ordertotaldetails", auth, async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Not an admin" });
   }
-  const [orderStats, totalProducts, lowStock] = await Promise.all([
-  Order.findAll({
-    attributes: [
-      "status",
-      [sequelize.fn("COUNT", sequelize.col("id")), "count"],
-    ],
-    group: ["status"],
-  }),
 
-  Product.countDocuments(),
+  let thisMonth = {};
+  let prevMonthOrderStats = {};
+  let dailyOrders = [];
+  let totalProducts = 0;
+  let lowStock = 0;
 
-  Product.countDocuments({ quantity: { $lt: 10 } }),
-]);
- res.json({orderStats,totalProducts,lowStock});
- } catch (error){
-  console.log(error)
-  res.status(500).json({message:"Server Error while getting order total details"})
- }
-  
-})
+  const lastMonth = new Date();
+  const beforelastMonth = new Date();
+
+  lastMonth.setDate(lastMonth.getDate() - 30);
+  beforelastMonth.setDate(beforelastMonth.getDate() - 60);
+
+  try {
+    // 🟢 This Month
+    thisMonth = await Order.findOne({
+      attributes: [
+        [sequelize.fn("COUNT", sequelize.col("id")), "totalOrders"],
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(
+              `CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END`,
+            ),
+          ),
+          "cancelledOrders",
+        ],
+        [sequelize.fn("SUM", sequelize.col("total")), "revenue"], // ✅ FIXED
+      ],
+      where: {
+        createdAt: {
+          [Op.gte]: lastMonth,
+        },
+      },
+      raw: true,
+    });
+
+    // 🔵 Previous Month
+    prevMonthOrderStats = await Order.findOne({
+      attributes: [
+        [sequelize.fn("COUNT", sequelize.col("id")), "totalOrders"],
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(
+              `CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END`,
+            ),
+          ),
+          "cancelledOrders",
+        ],
+        [sequelize.fn("SUM", sequelize.col("total")), "revenue"], // ✅ FIXED
+      ],
+      where: {
+        createdAt: {
+          [Op.gte]: beforelastMonth,
+          [Op.lt]: lastMonth,
+        },
+      },
+      raw: true,
+    });
+
+    // 📈 Last 10 Days
+    const last10Days = new Date();
+    last10Days.setDate(last10Days.getDate() - 10);
+
+    dailyOrders = await Order.findAll({
+      attributes: [
+        [sequelize.fn("DATE", sequelize.col("createdAt")), "date"],
+        [sequelize.fn("COUNT", sequelize.col("id")), "orders"],
+      ],
+      where: {
+        createdAt: {
+          [Op.gte]: last10Days,
+        },
+      },
+      group: [sequelize.fn("DATE", sequelize.col("createdAt"))],
+      order: [[sequelize.fn("DATE", sequelize.col("createdAt")), "ASC"]],
+      raw: true,
+    });
+  } catch (err) {
+    console.log("Order DB error:", err.message);
+  }
+
+  // 🍃 Mongo
+  try {
+    totalProducts = await Product.countDocuments();
+    lowStock = await Product.countDocuments({
+      quantity: { $lt: 10 },
+    });
+  } catch (err) {
+    console.log("Mongo DB error:", err.message);
+  }
+  console.log({
+    thisMonth,
+    prevMonthOrderStats,
+    dailyOrders,
+    totalProducts,
+    lowStock
+  });
+  res.json({
+    thisMonth,
+    prevMonthOrderStats,
+    dailyOrders,
+    totalProducts,
+    lowStock,
+  });
+});
 
 module.exports = router;
