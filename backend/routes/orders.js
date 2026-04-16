@@ -493,6 +493,33 @@ router.get("/admin/dashboard/ordertotaldetails", auth, async (req, res) => {
     thisMonth = await Order.findOne({
       attributes: [
         [sequelize.fn("COUNT", sequelize.col("id")), "totalOrders"],
+
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(`CASE WHEN status = 'placed' THEN 1 ELSE 0 END`),
+          ),
+          "placedOrders",
+        ],
+
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(`CASE WHEN status = 'pending' THEN 1 ELSE 0 END`),
+          ),
+          "pendingOrders",
+        ],
+
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(
+              `CASE WHEN status = 'delivered' THEN 1 ELSE 0 END`,
+            ),
+          ),
+          "completedOrders",
+        ],
+
         [
           sequelize.fn(
             "SUM",
@@ -502,7 +529,20 @@ router.get("/admin/dashboard/ordertotaldetails", auth, async (req, res) => {
           ),
           "cancelledOrders",
         ],
-        [sequelize.fn("SUM", sequelize.col("total")), "revenue"], // ✅ FIXED
+
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(
+              `CASE 
+        WHEN paymentStatus = 'paid' OR status = 'delivered' 
+        THEN total 
+        ELSE 0 
+      END`,
+            ),
+          ),
+          "revenue",
+        ],
       ],
       where: {
         createdAt: {
@@ -516,6 +556,33 @@ router.get("/admin/dashboard/ordertotaldetails", auth, async (req, res) => {
     prevMonthOrderStats = await Order.findOne({
       attributes: [
         [sequelize.fn("COUNT", sequelize.col("id")), "totalOrders"],
+
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(`CASE WHEN status = 'placed' THEN 1 ELSE 0 END`),
+          ),
+          "placedOrders",
+        ],
+
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(`CASE WHEN status = 'pending' THEN 1 ELSE 0 END`),
+          ),
+          "pendingOrders",
+        ],
+
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(
+              `CASE WHEN status = 'delivered' THEN 1 ELSE 0 END`,
+            ),
+          ),
+          "completedOrders",
+        ],
+
         [
           sequelize.fn(
             "SUM",
@@ -525,7 +592,20 @@ router.get("/admin/dashboard/ordertotaldetails", auth, async (req, res) => {
           ),
           "cancelledOrders",
         ],
-        [sequelize.fn("SUM", sequelize.col("total")), "revenue"], // ✅ FIXED
+
+        [
+          sequelize.fn(
+            "SUM",
+            sequelize.literal(
+              `CASE 
+        WHEN paymentStatus = 'paid' OR status = 'delivered' 
+        THEN total 
+        ELSE 0 
+      END`,
+            ),
+          ),
+          "revenue",
+        ],
       ],
       where: {
         createdAt: {
@@ -567,12 +647,33 @@ router.get("/admin/dashboard/ordertotaldetails", auth, async (req, res) => {
   } catch (err) {
     console.log("Mongo DB error:", err.message);
   }
+  try {
+    thisMonth = {
+      totalOrders: Number(thisMonth.totalOrders) || 0,
+      placedOrders: Number(thisMonth.placedOrders) || 0,
+      pendingOrders: Number(thisMonth.pendingOrders) || 0,
+      completedOrders: Number(thisMonth.completedOrders) || 0,
+      cancelledOrders: Number(thisMonth.cancelledOrders) || 0,
+      revenue: Number(thisMonth.revenue) || 0,
+    };
+
+    prevMonthOrderStats = {
+      totalOrders: Number(prevMonthOrderStats.totalOrders) || 0,
+      placedOrders: Number(prevMonthOrderStats.placedOrders) || 0,
+      pendingOrders: Number(prevMonthOrderStats.pendingOrders) || 0,
+      completedOrders: Number(prevMonthOrderStats.completedOrders) || 0,
+      cancelledOrders: Number(prevMonthOrderStats.cancelledOrders) || 0,
+      revenue: Number(prevMonthOrderStats.revenue) || 0,
+    };
+  } catch (err) {
+    console.log("Some Error in Data Filtering of DashBoard", err);
+  }
   console.log({
     thisMonth,
     prevMonthOrderStats,
     dailyOrders,
     totalProducts,
-    lowStock
+    lowStock,
   });
   res.json({
     thisMonth,

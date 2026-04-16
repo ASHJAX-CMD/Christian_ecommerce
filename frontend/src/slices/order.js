@@ -168,7 +168,7 @@ const orderSlice = createSlice({
   initialState: {
     orders: [],
     orderDetails: null,
-    orderStats: [],
+    orderStats: {},
     totalProducts:0,
     lowStock:0,
     order: null,
@@ -273,9 +273,9 @@ const orderSlice = createSlice({
 
         // convert array → object for easy use
 
-        state.orderStats = action.payload.orderStats; // ✅ array
-        state.totalProducts = action.payload.totalProducts;
-        state.lowStock = action.payload.lowStock;
+        state.orderStats = action.payload; // ✅ array
+        // state.totalProducts = action.payload.totalProducts;
+        // state.lowStock = action.payload.lowStock;
       })
       .addCase(fetchOrderStats.rejected, (state, action) => {
         state.loading = false;
