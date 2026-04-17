@@ -107,7 +107,7 @@ const Products = () => {
           <div className="flex justify-center">
             <p
               onClick={() => newPage((prev) => prev + 1)}
-              className="bg-white border  font-semibold  p-2 px-6 w-fit rounded-4xl"
+              className="bg-white  font-semibold  p-2 px-6 w-fit rounded-4xl"
             >
               Load More!
             </p>

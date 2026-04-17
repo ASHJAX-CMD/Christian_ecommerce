@@ -69,7 +69,7 @@ const StatCard = ({
   const isPositive = diff >= 0;
   const TrendIcon = isPositive ? BsGraphUpArrow : BsGraphDownArrow;
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm hover:shadow-md">
+    <div className="rounded-xl   bg-card p-6 bg-white shadow-sm hover:shadow-md">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{title}</p>
         <div className={`${color} rounded-lg p-2`}>

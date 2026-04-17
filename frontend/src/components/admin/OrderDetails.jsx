@@ -127,8 +127,8 @@ const OrderDetails = () => {
 
         <div className="grid gap-6  md:grid-cols-3">
           {/* Customer Info */}
-          <div className="rounded-xl  border bg-card p-5 shadow-sm">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+          <div className="rounded-xl  border bg-white p-5 shadow-sm">
+            <h3 className="text-xs font-semibold  text-muted-foreground uppercase tracking-wider mb-4">
               Customer
             </h3>
             <p className="font-semibold text-foreground mb-1">
@@ -140,7 +140,7 @@ const OrderDetails = () => {
           </div>
 
           {/* Shipping */}
-          <div className="rounded-xl border bg-card p-5 shadow-sm">
+          <div className="rounded-xl border bg-white p-5 shadow-sm">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
               Shipping
             </h3>
@@ -152,7 +152,7 @@ const OrderDetails = () => {
           </div>
 
           {/* Payment */}
-          <div className="rounded-xl border bg-card p-5 shadow-sm">
+          <div className="rounded-xl border bg-white p-5 shadow-sm">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
               Payment
             </h3>
@@ -164,7 +164,7 @@ const OrderDetails = () => {
         </div>
 
         {/* Items */}
-        <div className="mt-6 rounded-xl border bg-card shadow-sm overflow-hidden">
+        <div className="mt-6 rounded-xl border bg-white shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b bg-muted/50">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
               <p className="h-3.5 w-3.5" /> Items ({order.items.length})

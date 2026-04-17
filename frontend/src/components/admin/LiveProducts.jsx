@@ -47,7 +47,7 @@ const LiveProducts = () => {
         {products.map((p) => (
           <div
             key={p._id}
-            className="flex flex-col gap-3 border p-4 rounded-2xl bg-white shadow-sm hover:shadow-md transition"
+            className="flex flex-col gap-3  p-4 rounded-2xl bg-white shadow-sm hover:shadow-md transition"
           >
             <div className="flex justify-between items-center">
               <h3 className="font-bold text-lg">{p.name}</h3>
