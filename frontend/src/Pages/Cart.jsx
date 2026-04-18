@@ -7,7 +7,7 @@ import {
 } from "../slices/cartSlice";
 import { createOrder, resetOrderState } from "../slices/order";
 import HeaderSection from "../features/users/HeaderSection";
-
+import { loadRazorpay } from "../utils/loadRazorpay";
 const Cart = () => {
   const dispatch = useDispatch();
   const { addresses } = useSelector((state) => state.address);
@@ -43,6 +43,19 @@ const Cart = () => {
   };
   const handlePayment = async (orderId) => {
     try {
+       // 🔥 load SDK dynamically
+    const isLoaded = await loadRazorpay();
+
+    if (!isLoaded) {
+      alert("Failed to load payment system. Check your internet.");
+      return;
+    }
+
+    if (!window.Razorpay) {
+      alert("Razorpay not available. Try again.");
+      return;
+    }
+    
       // 1️⃣ Call backend to create Razorpay order
       const res = await fetch(
         "http://localhost:5000/api/payment/create-order",

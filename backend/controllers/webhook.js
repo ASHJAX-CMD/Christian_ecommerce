@@ -82,7 +82,7 @@ exports.webhookHandler = async (req, res) => {
         await Order.update(
           {
             paymentStatus: "refunded",
-            status:"cancelled",
+            status: "cancelled",
             refundId: refund.id,
             refundedAt: new Date(),
           },
@@ -125,6 +125,9 @@ exports.webhookHandler = async (req, res) => {
         return res.sendStatus(200);
       }
 
+      if (order.paymentStatus === "paid") {
+        return res.sendStatus(200); // already handled
+      }
       await Order.update(
         {
           status: "placed",
@@ -136,7 +139,6 @@ exports.webhookHandler = async (req, res) => {
         {
           where: {
             razorpayOrderId: payment.order_id,
-            paymentStatus: "pending",
           },
         },
       );
