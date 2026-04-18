@@ -10,6 +10,11 @@ const path = require("path")
 const app = express();
 const bcrypt = require("bcrypt");
 const { webhookHandler } = require('./controllers/webhook');
+const http = require("http");
+const { initSocket } = require("./config/socket"); // we'll create this next
+
+const server = http.createServer(app);
+
 
 app.use(cookieParser());
 app.use(cors({
@@ -61,5 +66,20 @@ app.use('/api/user', require('./routes/user'));
 app.use('/api/payment', require('./routes/payement'));
 // app.use('/api/user', require('./routes/orders'));
 app.use('/api/reviews',require('./routes/reviews'))
+
+// initialize socket
+initSocket(server);
+app.get("/test-socket", (req, res) => {
+  const io = initSocket();
+
+  io.to("admin").emit("newOrder", {
+    message: "🔥 Test order from backend",
+    time: new Date(),
+  });
+
+  res.send("Socket event sent!");
+});
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

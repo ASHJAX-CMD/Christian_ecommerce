@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "../components/admin/Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 
+import AdminSocketHandler from "../features/admin/AdminSocketHandler.jsx";
 const Admin = () => {
   const [activetab, setActivetab] = useState("orders");
   const location = useLocation();
@@ -9,6 +10,7 @@ const Admin = () => {
   return (
     <div className="w-screen h-screen bg-gray-200 flex">
       {/* Sidebar */}
+      <AdminSocketHandler/>
       <div className="w-64 bg-white shadow-md">
         <Sidebar
           activetab={activetab}

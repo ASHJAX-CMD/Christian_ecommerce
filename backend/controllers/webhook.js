@@ -1,7 +1,9 @@
-const { status } = require("init");
 const Order = require("../models/mysql/Order");
 const crypto = require("crypto");
-
+const { getIO } = require("../config/socket");
+const User = require("../models/mysql/User");
+const Product = require("../models/mongodb/Product");
+const OrderItem = require("../models/mysql/OrderItems");
 exports.webhookHandler = async (req, res) => {
   try {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -69,14 +71,13 @@ exports.webhookHandler = async (req, res) => {
     //     console.log("✅ Refund updated via webhook");
     //   }
     // }
+
     if (body.event === "refund.processed") {
       const refund = body.payload.refund.entity;
-
-      console.log("💸 Refund processed:", refund.id);
-
       const order = await Order.findOne({
-        where: { razorpayPaymentId: refund.payment_id },
+        where: { razorpayOrderId: payment.order_id },
       });
+      console.log("💸 Refund processed:", refund.id);
 
       if (order) {
         await Order.update(
@@ -115,6 +116,22 @@ exports.webhookHandler = async (req, res) => {
 
       const order = await Order.findOne({
         where: { razorpayOrderId: payment.order_id },
+        include: [
+          {
+            model: User,
+            attributes: ["name"],
+          },
+          {
+            model: OrderItem,
+            as: "items",
+            // include: [
+            //   {
+            //     model: Product,
+            //     attributes: ["name"],
+            //   },
+            // ],
+          },
+        ],
       });
 
       if (!order) return res.sendStatus(200);
@@ -143,6 +160,24 @@ exports.webhookHandler = async (req, res) => {
         },
       );
 
+      console.log("EMITTING ORDER:", {
+        order,
+        user: order?.User,
+        items: order?.items,
+      });
+      const io = getIO();
+      io.to("admin").emit("newOrder", {
+        orderId: order.id,
+        userName: order.User.name,
+        products: order.items.map((item) => ({
+          name: item.name, // ✅ from SQL
+          qty: item.quantity,
+          price: item.price,
+          image: item.image,
+        })),
+        total: order.total,
+        paymentMethod: payment.method,
+      });
       console.log("✅ Order updated via webhook");
     }
 
