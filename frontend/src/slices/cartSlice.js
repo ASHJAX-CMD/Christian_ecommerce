@@ -12,11 +12,13 @@ const loadCartFromStorage = () => {
 
 const initialState = {
   items: loadCartFromStorage(),
+  
 };
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
+  
   reducers: {
 
     addToCart: (state, action) => {

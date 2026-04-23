@@ -8,6 +8,7 @@ import {
 import { createOrder, resetOrderState } from "../slices/order";
 import HeaderSection from "../features/users/HeaderSection";
 import { loadRazorpay } from "../utils/loadRazorpay";
+import CartSkeleton from "../Skeleton/CartSkeleton";
 const Cart = () => {
   const dispatch = useDispatch();
   const id = import.meta.env.VITE_RAZORPAY_KEY_ID; 
@@ -128,10 +129,10 @@ const Cart = () => {
       console.error(error);
     }
   };
-
+  if (loading) return <CartSkeleton />;
+  
   return (
     <div className="min-h-screen bg-gray-100">
-      <HeaderSection />
       <div className="flex">
         {/* Cart Items */}
         <div className="p-16 w-[80%] px-12">

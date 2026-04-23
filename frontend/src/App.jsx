@@ -35,7 +35,7 @@ import Offers from "./Pages/Offers";
 import { fetchAddresses } from "./slices/address";
 import OrderDetails from "./components/admin/OrderDetails.jsx";
 import Dashboard from "./components/admin/Dashboard.jsx";
-
+import UserLayout from "./Pages/UserLayout.jsx";
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -50,55 +50,58 @@ function AppContent() {
   }, [dispatch]);
 
   return (
-      <>
+    <>
       <ToastContainer
         position="top-right"
-        autoClose={5000}       // ⏱ duration
+        autoClose={5000} // ⏱ duration
         hideProgressBar={false} // 📉 progress bar visible
         newestOnTop={true}
         closeOnClick
-        pauseOnHover           // ⏸ pause progress on hover
+        pauseOnHover // ⏸ pause progress on hover
         draggable
         theme="dark"
       />
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/design&support" element={<Design />} />
-      <Route path="/offers" element={<Offers />} />
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
 
-      {/* Protected Routes */}
-      <Route path="/home" element={<Home />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/product" element={<Product />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route
-        path="/admin"
-        element={
-          <ProtectedAdmin>
-            <Admin />
-          </ProtectedAdmin>
-        }
-      >
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
 
-        <Route path="products" element={<Products />}>
-          <Route path="addproduct" element={<Addproduct />} />
-          <Route index element={<LiveProducts />} />
-          <Route path="edit/:id" element={<EditProduct />} />
+        {/* USER LAYOUT WRAPPER */}
+        <Route element={<UserLayout />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/product" element={<Product />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/design&support" element={<Design />} />
+          <Route path="/offers" element={<Offers />} />
         </Route>
-        <Route path="reviews" element={<Reviews />} />
-        <Route path="orders" element={<Orders />} />
-        <Route path="orders/:id" element={<OrderDetails />} />
-      </Route>
 
-      {/* Default route */}
-      <Route path="*" element={<Navigate to="/home" replace />} />
-    </Routes>
-      </>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedAdmin>
+              <Admin />
+            </ProtectedAdmin>
+          }
+        >
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
 
+          <Route path="products" element={<Products />}>
+            <Route path="addproduct" element={<Addproduct />} />
+            <Route index element={<LiveProducts />} />
+            <Route path="edit/:id" element={<EditProduct />} />
+          </Route>
+          <Route path="reviews" element={<Reviews />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="orders/:id" element={<OrderDetails />} />
+        </Route>
+
+        {/* Default route */}
+        <Route path="*" element={<Navigate to="/home" replace />} />
+      </Routes>
+    </>
   );
 }
 

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Footer from "../features/users/Footer";
 import { getAllProducts } from "../slices/product";
 import { useEffect } from "react";
+import ProductPageSkeleton from "../Skeleton/ProductPageSkeleton";
 const Product = () => {
   const dispatch = useDispatch();
   const handleSelect = (type, value) => {
@@ -75,7 +76,9 @@ const Product = () => {
       params.maxPrice = filter.price[1];
     }
     console.log("FINAL PARAMS:", params);
-    dispatch(getAllProducts(params));
+   if(!products || products.length === 0){
+     dispatch(getAllProducts(params));
+   }
   };
 
   useEffect(() => {
@@ -86,9 +89,11 @@ const Product = () => {
     console.log("FETCH TRIGGERED");
     fetchProducts();
   }, [page, filter]);
+  
+  if (loading) return <ProductPageSkeleton />;
   return (
     <div className="min-h-screen">
-      <HeaderSection />
+      
       {/* main product div */}
 
       <div className="p-8 px-10  ">
@@ -294,7 +299,7 @@ const Product = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      
     </div>
   );
 };

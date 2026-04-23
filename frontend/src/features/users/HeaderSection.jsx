@@ -46,7 +46,7 @@ const HeaderSection = () => {
 
         {/* Logo + Desktop Menu */}
         <div className="hidden md:flex items-center gap-5">
-          <Link to="/">
+          <Link to="/home">
             <img
               className="h-14 w-auto border-2 rounded-2xl"
               src={logo}

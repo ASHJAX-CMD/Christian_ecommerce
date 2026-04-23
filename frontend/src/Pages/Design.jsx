@@ -4,7 +4,7 @@ import HeaderSection from '../features/users/HeaderSection'
 const Design = () => {
   return (
     <div className='min-h-screen' >
-      <HeaderSection />
+      
       <div>
         This Feature is Coming Soon!
       </div>

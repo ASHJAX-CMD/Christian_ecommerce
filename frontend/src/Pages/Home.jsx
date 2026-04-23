@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-
+import HomeSkeleton from "../Skeleton/HomeSkeleton";
 import { IoArrowForward } from "react-icons/io5";
 import video from "../../public/video/Home_hero.mp4";
 import photo1 from "../../public/images/Photo1.webp";
@@ -20,15 +20,14 @@ const Products = () => {
   // ==============================
   // REDUX SETUP
   // ==============================
-  useEffect(() => {
+ 
+const { homeItems: products, loading } = useSelector((state) => state.products);
+
+useEffect(() => {
+  if (!products || products.length === 0) {
     dispatch(getAllProducts({ type: "home" }));
-  }, [dispatch]);
-  const {
-    
-    loading,
-    error,
-  } = useSelector((state) => state.products);
-const { homeItems: products } = useSelector((state) => state.products);
+  }
+}, [dispatch, products]);
   // const handleSelect = (type, value) => {
   //   console.log(type, value);
   // };
@@ -36,8 +35,10 @@ const { homeItems: products } = useSelector((state) => state.products);
   // ==============================
   // LOADING & ERROR STATES
   // ==============================
-  if (loading) return <p>Loading products...</p>;
-  if (error) return <p>Error: {error}</p>;
+  const [videoLoaded, setVideoLoaded] = useState(false);
+ 
+if(loading) return <HomeSkeleton/>
+
 
   return (
     <div className="min-h-screen">
@@ -45,18 +46,27 @@ const { homeItems: products } = useSelector((state) => state.products);
       {/* =================== HEADER SECTION ================== */}
       {/* ===================================================== */}
 
-      <HeaderSection />
+      
+    
       <section className="flex justify-center items-center px-4 py-8">
         <div className="relative w-full md:w-[90%] lg:w-[100%] max-w-[1600px]">
-          <video
-            disablePictureInPicture
-            autoPlay
-            muted
-            loop
-            className="w-full rounded-2xl h-auto"
-          >
-            <source src={video} type="video/mp4" />
-          </video>
+          <div className="relative">
+            {!videoLoaded && (
+              <div className="w-full h-[400px] bg-gray-200 rounded-2xl animate-pulse absolute inset-0" />
+            )}
+
+            <video
+              onLoadedData={() => setVideoLoaded(true)}
+              className={`w-full rounded-2xl transition-opacity duration-500 ${
+                videoLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              autoPlay
+              muted
+              loop
+            >
+              <source src={video} type="video/mp4" />
+            </video>
+          </div>
 
           {/* Hero Text */}
           <p className="absolute font-['Beau_Rivage'] text-4xl -bottom-6 -left-4 lg:-bottom-10 md:-bottom-6 lg:-left-10 text-black md:text-6xl lg:text-8xl font-bold drop-shadow-lg">
@@ -282,7 +292,7 @@ const { homeItems: products } = useSelector((state) => state.products);
           </div>
         </div>
       </div>
-      <Footer />
+  
     </div>
   );
 };

@@ -11,6 +11,7 @@ import {
 } from "../slices/address";
 import AddressForm from "../components/users/AddressForm";
 import { Navigate, useNavigate } from "react-router-dom";
+import ProfileSkeleton from "../Skeleton/ProfileSkeleton";
 logoutUser
 const Profile = () => {
   const [mode, setMode] = useState(null); // "add" | "edit" | null
@@ -94,13 +95,13 @@ const Profile = () => {
   useEffect(() => {
     console.log(orders);
   }, [orders]);
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <ProfileSkeleton/>;
   if (!user) return <Navigate to="/login" />;
-
+  
   return (
     <div className="min-h-screen">
       {console.log(addresses)}
-      <HeaderSection />
+      
       <div>
         <div className="min-h-screen p-10 bg-gray-100">
           <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-md p-8">
