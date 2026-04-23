@@ -1,4 +1,6 @@
 const { Server } = require("socket.io");
+const cookie = require("cookie");
+const jwt = require("jsonwebtoken");
 
 let io;
 
@@ -13,16 +15,29 @@ exports.initSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
-    socket.on("register", (userId) => {
-      socket.join(userId);
-    });
+    try {
+      const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+      const token = cookies.token;
 
-    io.on("connection", (socket) => {
-      socket.on("joinAdmin", () => {
+      if (!token) throw new Error("No token");
+
+      const user = jwt.verify(token, process.env.JWT_SECRET);
+
+      // attach user
+      socket.user = user;
+
+      // join personal room
+      socket.join(user.id);
+
+      // join admin room
+      if (user.role === "admin") {
         socket.join("admin");
-        console.log("Admin joined room:", socket.id);
-      });
-    });
+        console.log("✅ Admin joined");
+      }
+
+    } catch (err) {
+      console.log("❌ Unauthorized socket");
+    }
 
     socket.on("disconnect", () => {
       console.log("User disconnected");
@@ -33,8 +48,6 @@ exports.initSocket = (server) => {
 };
 
 exports.getIO = () => {
-  if (!io) {
-    throw new Error("Socket not initialized!");
-  }
+  if (!io) throw new Error("Socket not initialized!");
   return io;
 };

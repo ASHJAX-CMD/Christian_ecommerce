@@ -26,7 +26,8 @@ import Product from "./Pages/Product";
 import Products from "./components/admin/Products";
 import { getAllProducts } from "./slices/product";
 import Profile from "./Pages/Profile";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Cart from "../src/Pages/Cart";
 import { fetchOrders } from "./slices/order";
 import Design from "./Pages/Design";
@@ -49,6 +50,17 @@ function AppContent() {
   }, [dispatch]);
 
   return (
+      <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}       // ⏱ duration
+        hideProgressBar={false} // 📉 progress bar visible
+        newestOnTop={true}
+        closeOnClick
+        pauseOnHover           // ⏸ pause progress on hover
+        draggable
+        theme="dark"
+      />
     <Routes>
       {/* Public Routes */}
       <Route path="/register" element={<Register />} />
@@ -85,6 +97,8 @@ function AppContent() {
       {/* Default route */}
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
+      </>
+
   );
 }
 

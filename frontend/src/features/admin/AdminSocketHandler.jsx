@@ -9,9 +9,13 @@ const AdminSocketHandler = ({ user }) => {
 
     // 🛠 join admin room
     socket.on("connect", () => {
-        
-      socket.emit("joinAdmin");
-      console.log("Socket is Connected Succesfully")
+       {console.log("user details ",user)}
+      if (user?.role === "admin") {
+    socket.emit("joinAdmin"); 
+      console.log("✅ Admin joined");
+    } else {
+      console.log("❌ Non-admin tried to join admin room");
+    }
     });
     // 🔔 listeners
     socket.off("newOrder").on("newOrder", (data) => {

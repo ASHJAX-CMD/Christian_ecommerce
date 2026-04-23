@@ -10,6 +10,7 @@ import HeaderSection from "../features/users/HeaderSection";
 import { loadRazorpay } from "../utils/loadRazorpay";
 const Cart = () => {
   const dispatch = useDispatch();
+  const id = import.meta.env.VITE_RAZORPAY_KEY_ID; 
   const { addresses } = useSelector((state) => state.address);
   // ✅ Select cart and order state
   const cart = useSelector((state) => state.cart.items);
@@ -73,7 +74,7 @@ const Cart = () => {
 
       // 2️⃣ Razorpay checkout options
       const options = {
-        key: "rzp_test_SRr1EjKBqmk8ho",
+        key: id,
         amount: data.amount,
         currency: data.currency,
         order_id: data.razorpayOrderId,

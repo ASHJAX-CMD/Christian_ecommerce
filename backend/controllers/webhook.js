@@ -119,7 +119,7 @@ exports.webhookHandler = async (req, res) => {
         include: [
           {
             model: User,
-            attributes: ["name"],
+            attributes: ["name","role"],
           },
           {
             model: OrderItem,
@@ -162,13 +162,14 @@ exports.webhookHandler = async (req, res) => {
 
       console.log("EMITTING ORDER:", {
         order,
-        user: order?.User,
+        userRole: order?.User.role,
         items: order?.items,
       });
       const io = getIO();
       io.to("admin").emit("newOrder", {
         orderId: order.id,
         userName: order.User.name,
+        role:order.User.role,
         products: order.items.map((item) => ({
           name: item.name, // ✅ from SQL
           qty: item.quantity,
