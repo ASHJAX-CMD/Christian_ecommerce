@@ -1,9 +1,9 @@
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 export const getAllProducts = createAsyncThunk(
   "products/getallproducts",
   async (params, { rejectWithValue }) => {
+    await new Promise((res) => setTimeout(res, 1500))
     console.log("PARAMS RECEIVED IN THUNK:", params);
     try {
       const res = await axios.get(
@@ -67,7 +67,9 @@ const productSlice = createSlice({
     items: [], // list of products
     homeItems: [],
     totalCount: 0,
-    loading: false,
+    isFetching: true, // fetching products
+    isCreating: false, // admin create
+    isPaginating: false, // loading more
     error: null,
     success: false,
   },
@@ -81,45 +83,56 @@ const productSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createProduct.pending, (state) => {
-        state.loading = true;
+        state.isCreating = true;
         state.error = null;
         state.success = false;
       })
       .addCase(createProduct.fulfilled, (state, action) => {
-        state.loading = false;
+        state.isCreating = false;
         state.success = true;
         state.items.push(action.payload); // add new product to state
       })
       .addCase(createProduct.rejected, (state, action) => {
-        state.loading = false;
+        state.isCreating = false;
         state.error = action.payload || "Something went wrong";
       })
-      .addCase(getAllProducts.pending, (state) => {
-        state.loading = true;
+      .addCase(getAllProducts.pending, (state,action) => {
+        if (action.meta.arg.page > 1) {
+          state.isPaginating = true;
+        } else {
+          state.isFetching = true;
+        }
         state.error = null;
       })
       .addCase(getAllProducts.fulfilled, (state, action) => {
-        state.loading = false;
         const { products } = action.payload;
         const { totalCount } = action.payload;
+          state.isFetching = false;
+  state.isPaginating = false;
         state.homeItems = products;
         const isHome = action.meta.arg?.type === "home";
         if (isHome) {
-          // 🔥 HOME PAGE DATA
+          //  HOME PAGE DATA
           state.homeItems = products;
         } else {
-          // 🔥 PRODUCT PAGE DATA
+          // PRODUCT PAGE DATA
           if (action.meta.arg.page === 1) {
+            state.items = [];
             state.items = products;
           } else {
-            state.items = [...state.items, ...products];
+            const newItems = products.filter(
+              (newItem) =>
+                !state.items.some((item) => item._id === newItem._id),
+            );
+
+            state.items = [...state.items, ...newItems];
           }
         }
         state.totalCount = totalCount;
         console.log(state.items);
       })
       .addCase(getAllProducts.rejected, (state, action) => {
-        state.loading = false;
+        state.isFetching = false;
         state.error = action.payload || "Failed to fetch products";
       });
   },

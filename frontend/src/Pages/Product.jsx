@@ -7,6 +7,8 @@ import Footer from "../features/users/Footer";
 import { getAllProducts } from "../slices/product";
 import { useEffect } from "react";
 import ProductPageSkeleton from "../Skeleton/ProductPageSkeleton";
+import ProfileSkeleton from "../Skeleton/ProfileSkeleton";
+
 const Product = () => {
   const dispatch = useDispatch();
   const handleSelect = (type, value) => {
@@ -53,11 +55,12 @@ const Product = () => {
   });
   const {
     items: products,
-    loading,
+    isFetching,
+    isPaginating,
     error,
     totalCount,
   } = useSelector((state) => state.products);
-  const hasMore = products.length < totalCount;
+  const hasMore = totalCount ? products.length < totalCount : false;
   const fetchProducts = () => {
     const params = {
       page,
@@ -76,9 +79,11 @@ const Product = () => {
       params.maxPrice = filter.price[1];
     }
     console.log("FINAL PARAMS:", params);
-   if(!products || products.length === 0){
-     dispatch(getAllProducts(params));
-   }
+    dispatch(getAllProducts(params));
+
+    //  if(!products || products.length === 0){
+    //    dispatch(getAllProducts(params));
+    //  }
   };
 
   useEffect(() => {
@@ -86,14 +91,15 @@ const Product = () => {
     console.log("PAGE:", page);
   }, [filter, page]);
   useEffect(() => {
-    console.log("FETCH TRIGGERED");
+    newPage(1);
+  }, [filter]);
+
+  useEffect(() => {
     fetchProducts();
-  }, [page, filter]);
-  
-  if (loading) return <ProductPageSkeleton />;
+  }, [page]);
+
   return (
     <div className="min-h-screen">
-      
       {/* main product div */}
 
       <div className="p-8 px-10  ">
@@ -136,14 +142,29 @@ const Product = () => {
 
           {/* Product starts here */}
 
-          <div>
-            <div className="flex-1 grid grid-cols-1 border-b sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((product) => {
-                console.log(product);
-                return <ProductCard key={product.id} product={product} />;
-              })}
-            </div>
+          <div className="flex-1">
+              {isFetching && products.length === 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <ProductPageSkeleton />
+  </div>
+              ) : (
+              <>
+                {/* ✅ Grid ONLY for products */}
+                <div className="flex-1 grid grid-cols-1 border-b sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {products.map((product) => (
+                    <ProductCard key={product._id} product={product} />
+                  ))}
+                </div>
+
+                {/* pagination loader */}
+                  {isPaginating && (
+                  <p className="text-center mt-4">Loading more...</p>
+                  )}
+              </>
+              )}
+            
             {/* Load More Button */}
+
             {hasMore && (
               <div className="mt-4">
                 <div className="flex justify-center">
@@ -299,7 +320,6 @@ const Product = () => {
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
