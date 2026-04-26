@@ -3,8 +3,9 @@ import axios from "axios";
 export const getAllProducts = createAsyncThunk(
   "products/getallproducts",
   async (params, { rejectWithValue }) => {
-    await new Promise((res) => setTimeout(res, 1500))
+    
     console.log("PARAMS RECEIVED IN THUNK:", params);
+    
     try {
       const res = await axios.get(
         "http://localhost:5000/api/products",

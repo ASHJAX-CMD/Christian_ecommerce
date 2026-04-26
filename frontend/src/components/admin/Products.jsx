@@ -5,6 +5,7 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import LiveProducts from "./LiveProducts";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "../../slices/product";
+import AdminProductsSkeleton from "../../Skeleton/AdminProductsSkeleton";
 
 const Products = () => {
   const [add, setAdd] = useState(false);
@@ -30,23 +31,24 @@ const Products = () => {
       params.color = filter.color;
     }
 
+    
+
     console.log("FINAL PARAMS:", params);
     dispatch(getAllProducts(params));
   };
-  useEffect(() => {
-    console.log("FETCH TRIGGERED");
-    fetchProducts();
-  }, [page, filter]);
-  useEffect(() => {
-    newPage(1);
-  }, [filter]);
+ 
+ 
+
 
   const {
     items: products,
-    loading,
+    isFetching,
     error,
     totalCount,
   } = useSelector((state) => state.products);
+  useEffect(() => {
+  fetchProducts();
+}, [page, filter]);
   const hasMore = products.length < totalCount;
   const currentLocation = () => {
     if (location.pathname === "/admin/products") {
@@ -54,7 +56,7 @@ const Products = () => {
     }
     return false;
   };
-
+  if(isFetching && products.length===0){return <AdminProductsSkeleton/>}
   return (
     <div className="flex flex-col min-h-screen w-full p-4 gap-10">
       {/* Header Section */}
@@ -100,7 +102,7 @@ const Products = () => {
       <p className="font-extrabold mt-4 text-2xl">Products:</p>
       {/* Products Grid */}
       <div>
-        <Outlet context={{ products, loading, error, page, newPage }} />
+        <Outlet context={{ products, isFetching, error, page, newPage }} />
       </div>
       {hasMore && (
         <div className="mt-4">

@@ -67,7 +67,7 @@ export const fetchOrdersAdmin = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       console.log("FETCH ORDERS CALLED");
-
+      
       const res = await axios.get(
         "http://localhost:5000/api/orders/admin/all",
         {
@@ -88,6 +88,7 @@ export const fetchOrdersAdmin = createAsyncThunk(
 export const fetchOderDetails = createAsyncThunk(
   "order/fetchOrderDetails",
   async (id, { rejectWithValue }) => {
+   
     try {
       const orderId = id;
       const res = await axios.get(
@@ -150,6 +151,7 @@ export const updateOrderStatus = createAsyncThunk(
 export const fetchOrderStats = createAsyncThunk(
   "order/fetchOrderStats",
   async (_, { rejectWithValue }) => {
+    
     try {
       const res = await axios.get(
         "http://localhost:5000/api/orders/admin/dashboard/ordertotaldetails",
@@ -173,6 +175,8 @@ const orderSlice = createSlice({
     lowStock:0,
     order: null,
     loading: false,
+    loadingAdminOrders:true,
+    loadingOrderStats:false,
     error: null,
     success: false,
   },
@@ -216,16 +220,16 @@ const orderSlice = createSlice({
         state.error = action.payload || "Something went wrong";
       })
       .addCase(fetchOrdersAdmin.pending, (state, action) => {
-        state.loading = true;
+        state.loadingAdminOrders = true;
         state.error = action.payload;
       })
       .addCase(fetchOrdersAdmin.fulfilled, (state, action) => {
-        state.loading = false;
+        state.loadingAdminOrders = false;
 
         state.orders = action.payload;
       })
       .addCase(fetchOrdersAdmin.rejected, (state) => {
-        state.loading = false;
+        state.loadingAdminOrders = false;
         state.error = null;
       })
       .addCase(fetchOderDetails.pending, (state, action) => {
@@ -266,10 +270,10 @@ const orderSlice = createSlice({
         state.error = action.payload?.message;
       })
       .addCase(fetchOrderStats.pending, (state) => {
-        state.loading = true;
+        state.loadingOrderStats = true;
       })
       .addCase(fetchOrderStats.fulfilled, (state, action) => {
-        state.loading = false;
+        state.loadingOrderStats = false;
 
         // convert array → object for easy use
 
@@ -278,7 +282,7 @@ const orderSlice = createSlice({
         // state.lowStock = action.payload.lowStock;
       })
       .addCase(fetchOrderStats.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingOrderStats = false;
         state.error = action.payload;
       });
   },

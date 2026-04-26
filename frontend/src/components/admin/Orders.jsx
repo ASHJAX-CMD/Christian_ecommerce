@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrdersAdmin } from "../../slices/order";
 import { Badge } from "./Badge";
+import AdminOrdersSkeleton from "../../Skeleton/AdminOrderSkeleton";
 
 const statusConfig = {
   pending: {
@@ -38,10 +39,10 @@ const Orders = () => {
   useEffect(() => {
     dispatch(fetchOrdersAdmin());
   }, []);
-  const orders = useSelector((state) => state.order.orders);
+  const {orders,loadingAdminOrders} = useSelector((state) => state.order);
   const navigate = useNavigate();
 
-
+  
   const [search, setSearch] = useState("");
 
   const filtered = orders.filter(
@@ -49,7 +50,7 @@ const Orders = () => {
       o.id.toString().toLowerCase().includes(search.toLowerCase()) ||
       o.userId.toLowerCase().includes(search.toLowerCase()),
   );
-
+  if(loadingAdminOrders  && orders.length===0){return <AdminOrdersSkeleton/>}
   return (
     <div className="min-h-screen bg-background">
       {console.log("Data of Orders Placed", orders)}

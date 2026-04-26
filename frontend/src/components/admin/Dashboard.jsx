@@ -11,6 +11,7 @@ import { fetchOrderStats } from "../../slices/order";
 import { BsGraphUpArrow } from "react-icons/bs";
 import { BsGraphDownArrow } from "react-icons/bs";
 import { motion } from "framer-motion";
+import DashboardSkeleton from "../../Skeleton/DashBoardSkeleton";
 
 const LiveRipple = () => {
   return (
@@ -120,11 +121,12 @@ const StatCard = ({
 };
 
 const Dashboard = () => {
+  
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchOrderStats());
   }, []);
-  const { orderStats } = useSelector((state) => state.order);
+  const { orderStats,loadingOrderStats } = useSelector((state) => state.order);
 
   // const statusCounts =
   //   orderStats?.reduce((acc, item) => {
@@ -194,9 +196,10 @@ const Dashboard = () => {
       span: "col-span-6",
     },
   ];
-
+if(loadingOrderStats && Object.keys(orderStats).length===0){return <DashboardSkeleton/>}
   return (
     <div className="min-h-screen bg-background p-6 md:p-10">
+      {console.log(orderStats.length)}
       {console.log("Total Data for DashBoard", orderStats)}
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex justify-between">
