@@ -33,24 +33,6 @@ app.use(
 );
 app.use(express.json())
 
-// Connect databases
-connectMongo();
-testConnection();
-sequelize.sync({ force: true }).then(async () => {
-  console.log("DB reset successfully!");
-const hashedPassword = await bcrypt.hash("123456", 10);
-
-  // ✅ Seed a default user
-  await User.create({
-    id: 1, // make sure this matches your test JWT
-    name: "Test User",
-    email: "test@example.com",
-    password: hashedPassword,
-    role:"admin" // hashed password if using bcrypt
-  });
-
-  console.log("Default user seeded");
-});
 // Sample routes
 
 
@@ -80,6 +62,43 @@ app.get("/test-socket", (req, res) => {
   res.send("Socket event sent!");
 });
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// server.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
+
+const startServer = async () => {
+  try {
+    // Connect Mongo
+    await connectMongo();
+    console.log("Mongo connected ✅");
+
+    // Connect MySQL with retry
+    await testConnection();
+
+    // Sync DB AFTER connection
+    await sequelize.sync({ force: true });
+    console.log("DB synced ✅");
+
+    // Seed user
+    const hashedPassword = await bcrypt.hash("123456", 10);
+
+    await User.create({
+      id: 1,
+      name: "Test User",
+      email: "test@example.com",
+      password: hashedPassword,
+      role: "admin"
+    });
+
+    console.log("Default user seeded ✅");
+
+    // Start server ONLY after everything is ready
+    server.listen(PORT, () => {
+      console.log(`Server running on port ${PORT} 🚀`);
+    });
+
+  } catch (err) {
+    console.error("Startup error:", err);
+  }
+};
+startServer();

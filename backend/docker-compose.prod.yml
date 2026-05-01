@@ -1,0 +1,12 @@
+services:
+  backend:
+    env_file:
+      - .env.production
+
+  mysql:
+    env_file:
+      - .env.production
+
+  mongo:
+    env_file:
+      - .env.production
