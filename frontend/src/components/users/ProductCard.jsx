@@ -38,7 +38,7 @@ const ProductCard = ({ product }) => {
     <div k className="p-2 rounded-xl  bg-white">
       <img
         className="  h-86"
-        src={`${BASE_URL}/uploads/${product.images[0]}`}
+        src={`${product.images[0]}`}
         alt=""
       />
       {console.log(product)}

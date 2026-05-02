@@ -282,7 +282,7 @@ console.log("This Edit Data is Being Sent to API for Edit",product.colors)
               {product.images?.map((img, j) => (
                 <div key={j} className="relative">
                   <img
-                    src={`http://localhost:5000/uploads/${img}`}
+                    src={`${img}`}
                     alt={product.name}
                     className="w-40 h-40 object-contain rounded-lg"
                   />

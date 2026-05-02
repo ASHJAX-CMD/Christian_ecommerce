@@ -84,7 +84,7 @@ const LiveProducts = () => {
               {p.images?.map((img, j) => (
                 <img
                   key={j}
-                  src={`http://localhost:5000/uploads/${img}`}
+                  src={`${img}`}
                   alt={p.name}
                   className="w-20 h-20 object-cover rounded-lg border"
                 />

@@ -2,9 +2,29 @@ const express = require("express");
 const Product = require("../models/mongodb/Product");
 const router = express.Router();
 const role = require("../middlewares/role");
-const { upload } = require("../middlewares/upload");
+const upload = require("../middlewares/upload");
 const auth = require("../middlewares/auth");
 const { NUMBER } = require("sequelize");
+const { uploadToCloudinary } = require("../services/upload.service");
+const cloudinary = require("../utils/cloudinary");
+
+//for getting id of the image to be removed from media db Cloudinary
+const getPublicIdFromUrl = (url) => {
+  const parts = url.split("/");
+
+  const uploadIndex = parts.indexOf("upload");
+  console.log("Correct Public ID:", uploadIndex);
+
+  // keep full folder path AFTER version
+  const publicPath = parts.slice(uploadIndex + 2).join("/");
+  console.log("Correct Public ID:", publicPath);
+  const publicId = publicPath.split(".")[0];
+
+  console.log("Correct Public ID:", publicId);
+
+  return publicId;
+};
+
 const parseJSON = (value, fallback = []) => {
   if (!value) return fallback;
   if (Array.isArray(value)) return value;
@@ -20,7 +40,6 @@ const transformers = {
   sizes: (v) => parseJSON(v),
   price: (v) => Number(v),
   colors: (v) => {
-    console.log("Data from Transformers Function", parseJSON(v));
     return parseJSON(v);
   },
   compareAtPrice: (v) => Number(v),
@@ -38,7 +57,6 @@ const transformProductFields = (data) => {
 
     result[key] = transformers[key] ? transformers[key](value) : value;
   });
-  console.log("Data After TransformProductFields", result);
   return result;
 };
 // GET all products
@@ -94,19 +112,38 @@ router.patch(
       // --- Remove images ---
       if (req.body.removedImages) {
         let removed = req.body.removedImages;
-        if (typeof removed === "string") removed = [removed];
 
+        if (typeof removed === "string") {
+          removed = [removed];
+        }
+
+        //  Delete from Cloudinary
+        const ress = await Promise.all(
+          removed.map((url) => {
+            const publicId = getPublicIdFromUrl(url);
+            return cloudinary.uploader.destroy(publicId);
+          }),
+        );
+
+        //delete from bakend
         await Product.findByIdAndUpdate(id, {
           $pull: { images: { $in: removed } },
         });
+
+        console.log("removed img data", ress);
       }
 
       // --- Add new images ---
-      if (req.files && req.files.length > 0) {
-        const newImgs = req.files.map((f) => f.filename);
 
+      if (req.files && req.files.length > 0) {
+        const imageUploads = await Promise.all(
+          req.files.map((file) =>
+            uploadToCloudinary(file.buffer, "products/images"),
+          ),
+        );
+        const urls = imageUploads.map((img) => img.secure_url);
         await Product.findByIdAndUpdate(id, {
-          $push: { images: { $each: newImgs } },
+          $push: { images: { $each: urls } }, // FIXED
         });
       }
 
@@ -163,6 +200,24 @@ router.post(
       console.log("BODY:", req.body);
       console.log("FILES:", req.files);
 
+      const imageFiles = req.files?.images || [];
+      const videoFile = req.files?.video?.[0];
+
+      const imageUploads = await Promise.all(
+        imageFiles.map((file) =>
+          uploadToCloudinary(file.buffer, "products/images"),
+        ),
+      );
+
+      // Upload video
+      let videoUpload = null;
+      if (videoFile) {
+        videoUpload = await uploadToCloudinary(
+          videoFile.buffer,
+          "products/videos",
+        );
+      }
+
       const product = new Product({
         name: req.body.name,
         price: Number(req.body.price),
@@ -179,8 +234,9 @@ router.post(
         featured: req.body.featured === "true",
         status: req.body.status || "draft",
         quantity: req.body.quantity,
-        images: req.files?.images?.map((f) => f.filename) || [],
-        video: req.files?.video?.[0]?.filename || null,
+        //  store URLs now
+        images: imageUploads.map((img) => img.secure_url),
+        video: videoUpload?.secure_url || null,
       });
       console.log("NEW Product", product);
       await product.save();
