@@ -9,6 +9,8 @@ import { createOrder, resetOrderState } from "../slices/order";
 import HeaderSection from "../features/users/HeaderSection";
 import { loadRazorpay } from "../utils/loadRazorpay";
 import CartSkeleton from "../Skeleton/CartSkeleton";
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const Cart = () => {
   const dispatch = useDispatch();
   const id = import.meta.env.VITE_RAZORPAY_KEY_ID; 
@@ -60,7 +62,7 @@ const Cart = () => {
     
       // 1️⃣ Call backend to create Razorpay order
       const res = await fetch(
-        "http://localhost:5000/api/payment/create-order",
+        `${VITE_BACKEND_URL}/api/payment/create-order`,
         {
           method: "POST",
           headers: {
@@ -86,7 +88,8 @@ const Cart = () => {
         handler: async function (response) {
           // 3️⃣ Send payment info to backend
           const verifyRes = await fetch(
-            "http://localhost:5000/api/payment/verify",
+             `${VITE_BACKEND_URL}/api/payment/verify`
+           ,
             {
               method: "POST",
               headers: {
@@ -152,7 +155,7 @@ const Cart = () => {
                 <div className="flex gap-4 flex-1">
                   <div className="w-32 h-32 flex-shrink-0">
                     <img
-                      src={`http://localhost:5000/uploads/${item.images[0]}`}
+                      src={`${item.images[0]}`}
                       alt={item.name}
                       className="w-full h-full object-cover rounded-lg"
                     />

@@ -2,16 +2,16 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 // Async thunk for login
 export const fetchUser = createAsyncThunk(
   "user/login",
   async (credential, { rejectWithValue }) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/user/login",
+        `${VITE_BACKEND_URL}/api/user/login`,
         { email: credential.email, password: credential.password },
-        { withCredentials: true } // <-- important for cookies
+        { withCredentials: true }, // <-- important for cookies
       );
 
       // Backend should return user details along with cookie
@@ -19,7 +19,7 @@ export const fetchUser = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 export const createUser = createAsyncThunk(
@@ -27,52 +27,50 @@ export const createUser = createAsyncThunk(
   async (credential, { rejectWithValue }) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/user/register",
+        `${VITE_BACKEND_URL}/api/user/register`,
         {
           email: credential.email,
           password: credential.password,
           name: credential.fullName,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       return res.data; // success → goes to fulfilled
     } catch (error) {
       return rejectWithValue(error.response?.data); // error → goes to rejected
     }
-  }
+  },
 );
-
 
 export const fetchCurrentUser = createAsyncThunk(
   "user/fetchCurrentUser",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get("http://localhost:5000/api/user/me", {
+      const res = await axios.get(`${VITE_BACKEND_URL}/api/user/me`, {
         withCredentials: true, // send cookie
       });
       return res.data.user;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
-  }
+  },
 );
-
 
 export const logoutUser = createAsyncThunk(
   "user/logoutUser",
   async (_, { rejectWithValue }) => {
     try {
       await axios.post(
-        "http://localhost:5000/api/user/logout",
+        `${VITE_BACKEND_URL}/api/user/logout`,
         {},
-        { withCredentials: true }
+        { withCredentials: true },
       );
       return true;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
-  }
+  },
 );
 
 const userSlice = createSlice({
@@ -88,7 +86,7 @@ const userSlice = createSlice({
       state.user = null;
       state.success = false;
       // optionally call backend /logout to clear cookie
-    },  
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -106,7 +104,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-       .addCase(fetchCurrentUser.pending, (state) => {
+      .addCase(fetchCurrentUser.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
@@ -119,25 +117,25 @@ const userSlice = createSlice({
         state.user = null;
         state.success = false;
       })
-      .addCase(createUser.pending, (state)=>{
-        state.loading =true;
+      .addCase(createUser.pending, (state) => {
+        state.loading = true;
         state.error = null;
         state.success = false;
       })
-      .addCase(createUser.fulfilled,(state)=>{
+      .addCase(createUser.fulfilled, (state) => {
         state.loading = false;
         state.user = null;
-        state.success= true;
+        state.success = true;
       })
-      .addCase(createUser.rejected,(state, action)=>{
+      .addCase(createUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Registration Failed";
-        state.success= false;
+        state.success = false;
       })
       .addCase(logoutUser.fulfilled, (state) => {
-  state.user = null;
-  state.success = false;
-})
+        state.user = null;
+        state.success = false;
+      });
   },
 });
 

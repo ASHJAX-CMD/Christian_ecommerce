@@ -179,7 +179,7 @@ const OrderDetails = () => {
                 <div className="flex items-center gap-4">
                   <span className="text-4xl">
                     <img
-                      src={`http://localhost:5000/uploads/${
+                      src={`${
                         Array.isArray(item.productImage)
                           ? item.productImage[0]
                           : item.productImage

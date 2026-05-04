@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 export const createOrder = createAsyncThunk(
   "order/createOrder",
   async ({ cart, addressId }, { rejectWithValue }) => {
@@ -14,7 +14,8 @@ export const createOrder = createAsyncThunk(
         address: addressId,
       };
       const res = await axios.post(
-        "http://localhost:5000/api/orders",
+         `${VITE_BACKEND_URL}/api/orders`
+       ,
         cartData,
         { withCredentials: true },
       );
@@ -48,7 +49,9 @@ export const fetchOrders = createAsyncThunk(
     try {
       console.log("FETCH ORDERS CALLED");
 
-      const res = await axios.get("http://localhost:5000/api/orders/user/all", {
+      const res = await axios.get(
+         `${VITE_BACKEND_URL}/api/orders/user/all`
+        , {
         withCredentials: true,
       });
 
@@ -69,7 +72,8 @@ export const fetchOrdersAdmin = createAsyncThunk(
       console.log("FETCH ORDERS CALLED");
       
       const res = await axios.get(
-        "http://localhost:5000/api/orders/admin/all",
+         `${VITE_BACKEND_URL}/api/orders/admin/all`
+       ,
         {
           withCredentials: true,
         },
@@ -92,7 +96,8 @@ export const fetchOderDetails = createAsyncThunk(
     try {
       const orderId = id;
       const res = await axios.get(
-        `http://localhost:5000/api/orders/admin/${orderId}`,
+         `${VITE_BACKEND_URL}/api/orders/admin/${orderId}`
+       ,
         {
           withCredentials: true,
         },
@@ -111,7 +116,7 @@ export const refund = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/payment/verify/refund/${id}`,
+        `${VITE_BACKEND_URL}/api/payment/verify/refund/${id}`,
         {}, // empty body
         { withCredentials: true }, // config
       );
@@ -129,7 +134,7 @@ export const updateOrderStatus = createAsyncThunk(
   async ({ id, status }, { rejectWithValue }) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/orders/status/${id}`,
+        `${VITE_BACKEND_URL}/api/orders/status/${id}`,
         { status },
         {
           headers: {
@@ -154,7 +159,8 @@ export const fetchOrderStats = createAsyncThunk(
     
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/orders/admin/dashboard/ordertotaldetails",
+        `${VITE_BACKEND_URL}/api/orders/admin/dashboard/ordertotaldetails`
+       ,
         { withCredentials: true },
       );
 

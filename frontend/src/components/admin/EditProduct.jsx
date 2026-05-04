@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const EditProduct = () => {
   const { id } = useParams(); // Extract product ID from URL
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const EditProduct = () => {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://localhost:5000/api/products/${id}`)
+        .get(`${VITE_BACKEND_URL}/api/products/${id}`)
         .then((res) => {
           const data = res.data;
 
@@ -91,7 +91,7 @@ console.log("This Edit Data is Being Sent to API for Edit",product.colors)
     if (id) {
       // Edit existing product
       axios
-        .patch(`http://localhost:5000/api/products/${id}`, formData, {
+        .patch(`${VITE_BACKEND_URL}/api/products/${id}`, formData, {
           withCredentials: true,
         })
         .then(() => navigate("/admin/products"))
@@ -99,7 +99,9 @@ console.log("This Edit Data is Being Sent to API for Edit",product.colors)
     } else {
       // Add new product
       axios
-        .post("http://localhost:5000/api/products", formData, {
+        .post(
+          `${VITE_BACKEND_URL}/api/products`
+          , formData, {
           withCredentials: true,
         })
         .then(() => navigate("/admin/products"))

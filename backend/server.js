@@ -18,7 +18,7 @@ const server = http.createServer(app);
 
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:5173", // React app URL
+  origin: '*', // React app URL
   credentials: true,
 }));
 // app.use((req, res, next) => {
@@ -76,19 +76,25 @@ const startServer = async () => {
     await testConnection();
 
     // Sync DB AFTER connection
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
     console.log("DB synced ✅");
 
     // Seed user
-    const hashedPassword = await bcrypt.hash("123456", 10);
+    const hashedPassword = await bcrypt.hash(process.env.user_pass, 10);
 
-    await User.create({
+    const existing = await User.findByPk(1);
+
+if (!existing) {
+ await User.create({
       id: 1,
       name: "Test User",
       email: "test@example.com",
       password: hashedPassword,
       role: "admin"
     });
+}
+
+    
 
     console.log("Default user seeded ✅");
 

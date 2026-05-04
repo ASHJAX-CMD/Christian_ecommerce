@@ -1,7 +1,7 @@
 import Rating from "../../features/users/Rating";
 import { FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, decreaseQty, increaseQty } from "../../slices/cartslice";
+import { addToCart, decreaseQty, increaseQty } from "../../slices/cartSlice";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 

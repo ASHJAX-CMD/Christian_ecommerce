@@ -1,20 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 export const getAllProducts = createAsyncThunk(
   "products/getallproducts",
   async (params, { rejectWithValue }) => {
-    
     console.log("PARAMS RECEIVED IN THUNK:", params);
-    
-    try {
-      const res = await axios.get(
-        "http://localhost:5000/api/products",
 
-        {
-          params: params,
-          withCredentials: true,
-        },
-      );
+    try {
+      const res = await axios.get(`${VITE_BACKEND_URL}/api/products`, {
+        params: params,
+        withCredentials: true,
+      });
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response.data || error.message);
@@ -43,7 +39,7 @@ export const createProduct = createAsyncThunk(
       console.log("Its the FormData Baby", formData);
       // ✅ Proper axios POST
       const res = await axios.post(
-        "http://localhost:5000/api/products",
+        `${VITE_BACKEND_URL}/api/products`,
         formData,
         {
           withCredentials: true, // ✅ correct property name
@@ -97,7 +93,7 @@ const productSlice = createSlice({
         state.isCreating = false;
         state.error = action.payload || "Something went wrong";
       })
-      .addCase(getAllProducts.pending, (state,action) => {
+      .addCase(getAllProducts.pending, (state, action) => {
         if (action.meta.arg.page > 1) {
           state.isPaginating = true;
         } else {
@@ -108,8 +104,8 @@ const productSlice = createSlice({
       .addCase(getAllProducts.fulfilled, (state, action) => {
         const { products } = action.payload;
         const { totalCount } = action.payload;
-          state.isFetching = false;
-  state.isPaginating = false;
+        state.isFetching = false;
+        state.isPaginating = false;
         state.homeItems = products;
         const isHome = action.meta.arg?.type === "home";
         if (isHome) {

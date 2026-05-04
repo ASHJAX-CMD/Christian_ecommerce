@@ -5,6 +5,7 @@ import { useDispatch,  } from "react-redux";
 import { CiEdit } from "react-icons/ci";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const LiveProducts = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const LiveProducts = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:5000/api/products/${id}`, {
+      .delete(`${VITE_BACKEND_URL}/api/products/${id}`, {
         withCredentials: true,
       })
       .then(() => {

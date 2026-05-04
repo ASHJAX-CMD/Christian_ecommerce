@@ -1,12 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 export const createAddress = createAsyncThunk(
   "create/address",
   async (addressData, { rejectWithValue }) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/address/",
+         `${VITE_BACKEND_URL}/api/address/`
+        ,
         addressData,
         { withCredentials: true },
       );
@@ -23,7 +24,8 @@ export const fetchAddresses = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/address/fetchAddresses",
+        `${VITE_BACKEND_URL}/api/address/fetchAddresses`
+       ,
 
         { withCredentials: true },
       );
@@ -39,7 +41,7 @@ export const deleteAddress = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const res = await axios.delete(
-        `http://localhost:5000/api/address/${id}`,
+        `${VITE_BACKEND_URL}/api/address/${id}`,
         { withCredentials: true },
       );
       return { id };
@@ -54,7 +56,7 @@ export const updateAddress = createAsyncThunk(
   async ({ id, updatedAddress }, { rejectWithValue }) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/address/${id}`,
+        `${VITE_BACKEND_URL}/api/address/${id}`,
         updatedAddress,
         { withCredentials: true },
       );
