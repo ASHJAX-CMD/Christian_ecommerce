@@ -9,9 +9,9 @@ const Sidebar = ({ pathname }) => {
     <div className="h-full lg:w-64">
       <div className="bg-black h-full  text-white  gap-16 p-4 flex flex-col align-center  ">
         <div className="flex flex-col profile   items-center">
-          <div className=" flex justify-center  mt-2 ">
+          <div className=" flex justify-center w-2/3  mt-2 ">
             <img
-              className=" border-green-500 w-2/3 border-2 rounded-full"
+              className=" border-green-500  border-2 rounded-full"
               src={profile_img}
               alt=""
             />
