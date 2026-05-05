@@ -18,7 +18,7 @@ const server = http.createServer(app);
 
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:5173", // React app URL
+  origin: process.env.Frontend || "http://localhost:5173", // React app URL
   credentials: true,
 }));
 // app.use((req, res, next) => {
