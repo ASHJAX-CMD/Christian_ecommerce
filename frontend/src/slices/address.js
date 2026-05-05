@@ -6,7 +6,7 @@ export const createAddress = createAsyncThunk(
   async (addressData, { rejectWithValue }) => {
     try {
       const res = await axios.post(
-         `${VITE_BACKEND_URL}/api/address/`
+         `${VITE_BACKEND_URL}/api/address`
         ,
         addressData,
         { withCredentials: true },

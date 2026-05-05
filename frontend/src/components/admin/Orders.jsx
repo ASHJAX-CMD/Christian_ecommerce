@@ -135,7 +135,7 @@ const Orders = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-muted-foreground hidden sm:table-cell">
-                        {new Date(order.updatedAt).toLocaleDateString("en-US", {
+                        {new Date(order.created_at).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
@@ -147,7 +147,7 @@ const Orders = () => {
                         </Badge>
                       </td>
                        <td className="px-6 py-4">
-                        {order.paymentStatus.toUpperCase()}
+                        {order.payment_status.toUpperCase()}
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-foreground text-right">
                         {order.total.toFixed(2)}

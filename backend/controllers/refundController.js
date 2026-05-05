@@ -1,59 +1,68 @@
-const Razorpay = require("razorpay");
-
 const razorpay = require("../middlewares/razorpay");
-const Order = require("../models/mysql/Order");
+const supabase = require("../config/supabase");
+
 const refundController = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 1. Find order
-    const order = await Order.findByPk(id);
+    //  Step 1: Fetch order from Supabase
+    const { data: order, error: fetchError } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-    if (!order) {
+    if (fetchError || !order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // 2. Validate payment
-    if (order.paymentStatus === "pending") {
+    
+    // prevent users refunding others’ orders
+    if (req.user.role !== "admin" && order.user_id !== req.user.id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    //  Step 2: Validate payment
+    if (order.payment_status === "pending") {
       return res.status(400).json({
         message: "Only paid orders can be refunded",
       });
     }
 
-    // 3. Prevent duplicate refund
-    if (order.paymentStatus === "refunded") {
+    // Step 3: Prevent duplicate refund
+    if (order.payment_status === "refunded") {
       return res.status(400).json({
         message: "Order already refunded",
       });
     }
 
-    
-   
+    //  Safety check
+    if (!order.razorpay_payment_id) {
+      return res.status(400).json({
+        message: "No payment ID found for refund",
+      });
+    }
 
-    // 5. Call refund API
+    //  Step 4: Call Razorpay refund API
     const refund = await razorpay.payments.refund(
-      order.razorpayPaymentId,
+      order.razorpay_payment_id,
       {
-        amount: order.total * 100, // convert to paise
+        amount: order.total * 100, // paisa
       }
     );
 
-    // 6. Update DB  done in webhook
-    // order.paymentStatus = "refunded";
-    // order.refundId = refund.id;
-    // order.refundedAt = new Date();
+    //  webhook handles DB update → good
+    // So DO NOT update DB here
 
-    // await order.save();
-
-    // 7. Send response
     res.json({
       success: true,
-      message: "Refund Confirmed from RfundController now transfering Control to Webhook",
+      message:
+        "Refund initiated. Webhook will finalize status.",
       refundId: refund.id,
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("REFUND ERROR:", err);
     res.status(500).json({
       message: "Refund failed",
       error: err.message,
@@ -61,4 +70,4 @@ const refundController = async (req, res) => {
   }
 };
 
-module.exports = { refundController }; 
+module.exports = { refundController };

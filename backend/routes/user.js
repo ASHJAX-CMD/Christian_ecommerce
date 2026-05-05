@@ -1,10 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/mysql/User");
-const Order = require("../models/mysql/Order");
-const auth = require("../middlewares/auth");
 
+const auth = require("../middlewares/auth");
+const supabase = require("../config/supabase");
 const router = express.Router();
 
 // ----------------------
@@ -17,7 +16,11 @@ router.post("/register", async (req, res) => {
     
 
     // Check if user already exists
-    const existing = await User.findOne({ where: { email } });
+   const { data: existing } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single();
     
     if (existing) return res.status(400).json({ message: "Email already in use" });
 
@@ -25,9 +28,21 @@ router.post("/register", async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
 
     // Create user
-    const user = await User.create({ name, email, password: hashed });
+    const { data, error } = await supabase
+      .from("users")
+      .insert([
+        { name, email, password: hashed }
+      ])
+      .select()
+      .single();
 
-    res.json({ id: user.id, name: user.name, email: user.email });
+    if (error) return res.status(500).json({ error });
+
+   res.json({
+      id: data.id,
+      name: data.name,
+      email: data.email
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -64,7 +79,12 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     console.log("Login attempt:", email);
-    const user = await User.findOne({ where: { email } });
+     const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single();
+
      
      console.log("User found:", user);
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
@@ -116,10 +136,14 @@ router.get("/me",auth, (req, res) => {
 // ----------------------
 router.get("/profile", auth, async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.id, {
-      attributes: ["id", "name", "email", "role"], // exclude password
-    });
-    res.json(user);
+     const { data, error } = await supabase
+      .from("users")
+      .select("id, name, email, role")
+      .eq("id", req.user.id)
+      .single();
+    if (error) return res.status(500).json({ error });
+
+    res.json(data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

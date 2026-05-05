@@ -1,9 +1,8 @@
-const Order = require("../models/mysql/Order");
 const crypto = require("crypto");
 const { getIO } = require("../config/socket");
-const User = require("../models/mysql/User");
+
 const Product = require("../models/mongodb/Product");
-const OrderItem = require("../models/mysql/OrderItems");
+const supabase = require("../config/supabase");
 exports.webhookHandler = async (req, res) => {
   try {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -15,167 +14,105 @@ exports.webhookHandler = async (req, res) => {
       .digest("hex");
 
     if (expectedSignature !== receivedSignature) {
-      console.log("❌ Invalid webhook signature");
+      console.log(" Invalid webhook signature");
       return res.status(400).send("Invalid signature");
     }
 
     const body = JSON.parse(req.body.toString());
     console.log("📩 Webhook Event:", body.event);
-    //  if (body.event === "refund.created") {
-    //   const refund = body.payload.refund.entity;
 
-    //   console.log("💸 Refund created:", refund.id);
-
-    //   const order = await Order.findOne({
-    //     where: { razorpayPaymentId: refund.payment_id },
-    //   });
-
-    //   if (order) {
-    //     await Order.update(
-    //       {
-    //         paymentStatus: "pending",
-    //         status:"placed",
-    //         refundId: refund.id,
-    //         refundedAt: new Date(),
-    //       },
-    //       {
-    //         where: { razorpayPaymentId: refund.payment_id },
-    //       },
-    //     );
-
-    //     console.log("✅ Refund updated via webhook");
-    //   }
-    // }
-    //  if (body.event === "refund.pending") {
-    //   const refund = body.payload.refund.entity;
-
-    //   console.log("💸 Refund pending:", refund.id);
-
-    //   const order = await Order.findOne({
-    //     where: { razorpayPaymentId: refund.payment_id },
-    //   });
-
-    //   if (order) {
-    //     await Order.update(
-    //       {
-    //         paymentStatus: "refund_pending",
-    //         status:"placed",
-    //         refundId: refund.id,
-    //         refundedAt: new Date(),
-    //       },
-    //       {
-    //         where: { razorpayPaymentId: refund.payment_id },
-    //       },
-    //     );
-
-    //     console.log("✅ Refund updated via webhook");
-    //   }
-    // }
-
+    /* ======================================================
+        REFUND PROCESSED
+    ====================================================== */
     if (body.event === "refund.processed") {
       const refund = body.payload.refund.entity;
-      const order = await Order.findOne({
-        where: { razorpayOrderId: payment.order_id },
-      });
+
       console.log("💸 Refund processed:", refund.id);
 
-      if (order) {
-        await Order.update(
-          {
-            paymentStatus: "refunded",
-            status: "cancelled",
-            refundId: refund.id,
-            refundedAt: new Date(),
-          },
-          {
-            where: { razorpayPaymentId: refund.payment_id },
-          },
-        );
+      const { error } = await supabase
+        .from("orders")
+        .update({
+          payment_status: "refunded",
+          status: "cancelled",
+          refund_id: refund.id,
+          refunded_at: new Date(),
+        })
+        .eq("razorpay_payment_id", refund.payment_id);
 
-        console.log("✅ Refund updated via webhook");
-      }
+      if (error) console.log("Refund update error:", error.message);
+      else console.log("✅ Refund updated via webhook");
     }
-    // ❌ REFUND FAILED
+
+    //  REFUND FAILED
+
     if (body.event === "refund.failed") {
       const refund = body.payload.refund.entity;
 
-      console.log("❌ Refund failed:", refund.id);
+      console.log(" Refund failed:", refund.id);
 
-      await Order.update(
-        {
-          paymentStatus: "refund_failed",
-        },
-        {
-          where: { razorpayPaymentId: refund.payment_id },
-        },
-      );
+      await supabase
+        .from("orders")
+        .update({ payment_status: "refund_failed" })
+        .eq("razorpay_payment_id", refund.payment_id);
     }
     // ✅ PAYMENT SUCCESS
     if (body.event === "payment.captured") {
       const payment = body.payload.payment.entity;
 
-      const order = await Order.findOne({
-        where: { razorpayOrderId: payment.order_id },
-        include: [
-          {
-            model: User,
-            attributes: ["name","role"],
-          },
-          {
-            model: OrderItem,
-            as: "items",
-            // include: [
-            //   {
-            //     model: Product,
-            //     attributes: ["name"],
-            //   },
-            // ],
-          },
-        ],
-      });
+      const { data: order, error: fetchError } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("razorpay_order_id", payment.order_id)
+        .single();
 
-      if (!order) return res.sendStatus(200);
+      if (fetchError || !order) return res.sendStatus(200);
 
       console.log("Current Payment Status Razorpay:", payment.status);
 
-      if (order.paymentStatus === "completed") {
+      //  Idempotency check
+    if (order.payment_status === "completed") return res.sendStatus(200);
+if (order.payment_status === "paid") return res.sendStatus(200);
+      // 🔥 Update order
+      const { error: updateError } = await supabase
+        .from("orders")
+        .update({
+          status: "placed",
+          payment_status: "paid",
+          payment_method: payment.method,
+          razorpay_payment_id: payment.id,
+          razorpay_signature: receivedSignature,
+        })
+        .eq("razorpay_order_id", payment.order_id);
+
+      if (updateError) {
+        console.log("Update error:", updateError.message);
         return res.sendStatus(200);
       }
+      //  Fetch order items separately
+      const { data: items } = await supabase
+        .from("order_items")
+        .select("*")
+        .eq("order_id", order.id);
+      //  Fetch user  separately
+      const { data: user } = await supabase
+        .from("users")
+        .select("name, role")
+        .eq("id", order.user_id)
+        .single();
 
-      if (order.paymentStatus === "paid") {
-        return res.sendStatus(200); // already handled
-      }
-      await Order.update(
-        {
-          status: "placed",
-          paymentStatus: "paid",
-          paymentMethod: payment.method,
-          razorpayPaymentId: payment.id,
-          razorpaySignature: receivedSignature,
-        },
-        {
-          where: {
-            razorpayOrderId: payment.order_id,
-          },
-        },
-      );
-
-      console.log("EMITTING ORDER:", {
-        order,
-        userRole: order?.User.role,
-        items: order?.items,
-      });
+     
       const io = getIO();
       io.to("admin").emit("newOrder", {
         orderId: order.id,
-        userName: order.User.name,
-        role:order.User.role,
-        products: order.items.map((item) => ({
-          name: item.name, // ✅ from SQL
-          qty: item.quantity,
-          price: item.price,
-          image: item.image,
-        })),
+        userName: user?.name || "Unknown",
+        role: user?.role || "user",
+        products:
+          items?.map((item) => ({
+            name: item.product_name,
+            qty: item.quantity,
+            price: item.price,
+            image: item.product_image,
+          })) || [],
         total: order.total,
         paymentMethod: payment.method,
       });
@@ -188,10 +125,10 @@ exports.webhookHandler = async (req, res) => {
 
       console.log("❌ Payment failed");
 
-      await Order.update(
-        { paymentStatus: "failed" },
-        { where: { razorpayOrderId: payment.order_id } },
-      );
+      await supabase
+        .from("orders")
+        .update({ payment_status: "failed" })
+        .eq("razorpay_order_id", payment.order_id);
     }
 
     return res.status(200).json({ message: "Webhook processed" });

@@ -2,7 +2,11 @@ import { ArrowLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchOderDetails, refund, updateOrderStatus } from "../../slices/order";
+import {
+  fetchOderDetails,
+  refund,
+  updateOrderStatus,
+} from "../../slices/order";
 
 const statusConfig = {
   pending: {
@@ -25,7 +29,7 @@ const statusConfig = {
   cancelled: {
     label: "Cancelled",
     className: "bg-destructive/15 text-destructive border-destructive/30",
-  }
+  },
 };
 
 const OrderDetails = () => {
@@ -64,7 +68,7 @@ const OrderDetails = () => {
       console.log(err);
     }
   };
-  
+
   if (!order) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -131,11 +135,12 @@ const OrderDetails = () => {
             <h3 className="text-xs font-semibold  text-muted-foreground uppercase tracking-wider mb-4">
               Customer
             </h3>
+            {console.log("proper details", order)}
             <p className="font-semibold text-foreground mb-1">
-              {order.User.name}
+              {order.users.name}
             </p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <p className="h-3.5 w-3.5" /> {order.User.email}
+              <p className="h-3.5 w-3.5" /> {order.users.email}
             </div>
           </div>
 
@@ -146,8 +151,20 @@ const OrderDetails = () => {
             </h3>
             <div className="flex items-start gap-2 text-sm text-foreground">
               <p className="h-3.5 w-3.5 mt-0.5 shrink-0 text-muted-foreground" />
-              {order.Address?.city}, {order.Address?.state} -{" "}
-              {order.Address?.pincode}
+              <p>
+                <p>
+                  city--
+                  {order.addresses?.city}
+                </p>
+                <p>
+                  State--
+                  {order.addresses?.state} -{" "}
+                </p>
+              </p>
+              <p>
+                Zip-
+                {order.addresses?.zip}
+              </p>
             </div>
           </div>
 
@@ -158,7 +175,7 @@ const OrderDetails = () => {
             </h3>
             <div className="flex items-center gap-2 text-sm text-foreground">
               <p className="h-3.5 w-3.5 text-muted-foreground" />
-              {order.paymentMethod},{order.paymentStatus}
+              {order.payment_method},{order.payment_status}
             </div>
           </div>
         </div>
@@ -180,15 +197,15 @@ const OrderDetails = () => {
                   <span className="text-4xl">
                     <img
                       src={`${
-                        Array.isArray(item.productImage)
-                          ? item.productImage[0]
-                          : item.productImage
+                        Array.isArray(item.product_image)
+                          ? item.product_image[0]
+                          : item.product_image
                       }`}
-                      alt={item.productName}
+                      alt={item.product_name}
                       className="w-24 h-24 object-cover rounded"
                     />
                   </span>
-
+                  {console.log("image", item.product_image[0])}
                   <div>
                     <p className="font-medium text-sm text-foreground">
                       {item.productName}
@@ -235,37 +252,36 @@ const OrderDetails = () => {
               Refund failed ❌
             </p>
           )}
-          
         </div>
 
-      <div className="flex gap-3" >
+        <div className="flex gap-3">
           {!refundStarted && order.paymentStatus !== "refunded" && (
-          <p
-            className={`p-4 inline-block rounded-2xl mt-2 
+            <p
+              className={`p-4 inline-block rounded-2xl mt-2 
     ${loading ? "bg-gray-300 cursor-not-allowed" : "bg-white cursor-pointer"}`}
+              onClick={() => {
+                if (!loading) handleRefund(order.id);
+              }}
+            >
+              {loading ? "Processing..." : "Refund"}
+            </p>
+          )}
+          <div
             onClick={() => {
-              if (!loading) handleRefund(order.id);
+              if (!loading && status !== order.status) {
+                handleStatusUpdate();
+              }
             }}
-          >
-            {loading ? "Processing..." : "Refund"}
-          </p>
-        )}
-       <div
-  onClick={() => {
-    if (!loading && status !== order.status) {
-      handleStatusUpdate();
-    }
-  }}
-  className={`p-4 inline-block rounded-2xl mt-2 
+            className={`p-4 inline-block rounded-2xl mt-2 
   ${
     loading || status === order.status
       ? "bg-gray-300 cursor-not-allowed"
       : "bg-white cursor-pointer"
   }`}
->
-  {loading ? "Updating..." : "Update Status"}
-</div> 
-      </div>
+          >
+            {loading ? "Updating..." : "Update Status"}
+          </div>
+        </div>
       </div>
     </div>
   );

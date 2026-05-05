@@ -14,6 +14,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import ProfileSkeleton from "../Skeleton/ProfileSkeleton";
 logoutUser
 const Profile = () => {
+  const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [mode, setMode] = useState(null); // "add" | "edit" | null
   const { user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const Profile = () => {
     state: "",
     zip: "",
     country: "",
-    isDefault: false,
+    is_Default: false,
   };
   const [formData, setFormData] = useState(emptyAddress);
 
@@ -56,7 +57,7 @@ const Profile = () => {
       state: addr.state,
       zip: addr.zip,
       country: addr.country,
-      isDefault: addr.isDefault,
+      is_default: addr.is_default,
     });
   };
   const handleAddClick = () => {
@@ -100,7 +101,6 @@ const Profile = () => {
   
   return (
     <div className="min-h-screen">
-      {console.log(addresses)}
       
       <div>
         <div className="min-h-screen p-10 bg-gray-100">
@@ -123,7 +123,8 @@ const Profile = () => {
                   <p>
                     {addr.zip}, {addr.country}
                   </p>
-                  {addr.isDefault && (
+                  {console.log("default hek kro",addr.is_default)}
+                  {addr.is_default && (
                     <p className="font-semibold text-sm border inline-block p-1 rounded">
                       Default Address
                     </p>
@@ -186,7 +187,7 @@ const Profile = () => {
                     <p>Order ID: {order.id}</p>
                     <p>Total: ${order.total}</p>
                     <p>Order Status: {order.status}</p>
-                    <p>Payment Status: {order.paymentStatus}</p>
+                    <p>Payment Status: {order.payment_status}</p>
                     {console.log("Orderererer",order)}
                   </div>
                 ))

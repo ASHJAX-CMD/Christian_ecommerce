@@ -18,7 +18,7 @@ const Cart = () => {
   // ✅ Select cart and order state
   const cart = useSelector((state) => state.cart.items);
   const { loading, error } = useSelector((state) => state.order);
-  const defaultAddress = addresses?.find((addr) => addr.isDefault);
+  const defaultAddress = addresses?.find((addr) => addr.is_default);
   const total = cart.reduce((sum, item) => sum + item.price * item.cartQuantity, 0);
   const {user} = useSelector((state)=>state.user)
   // ✅ Dispatch order on click

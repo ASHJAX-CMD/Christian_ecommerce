@@ -1,10 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const {sequelize} = require('./db/mysql')
+
 const connectMongo = require('./db/mongodb');
-const { testConnection } = require('./db/mysql');
-const User = require("./models/mysql/User")
+
+
 const cookieParser = require("cookie-parser");
 const path = require("path")
 const app = express();
@@ -18,7 +18,7 @@ const server = http.createServer(app);
 
 app.use(cookieParser());
 app.use(cors({
-  origin: '*', // React app URL
+  origin: "http://localhost:5173", // React app URL
   credentials: true,
 }));
 // app.use((req, res, next) => {
@@ -72,31 +72,26 @@ const startServer = async () => {
     await connectMongo();
     console.log("Mongo connected ✅");
 
-    // Connect MySQL with retry
-    await testConnection();
 
-    // Sync DB AFTER connection
-    await sequelize.sync();
-    console.log("DB synced ✅");
 
-    // Seed user
-    const hashedPassword = await bcrypt.hash(process.env.user_pass, 10);
+//     // Seed user
+//     const hashedPassword = await bcrypt.hash(process.env.user_pass, 10);
 
-    const existing = await User.findByPk(1);
+//     const existing = await User.findByPk(1);
 
-if (!existing) {
- await User.create({
-      id: 1,
-      name: "Test User",
-      email: "test@example.com",
-      password: hashedPassword,
-      role: "admin"
-    });
-}
+// if (!existing) {
+//  await User.create({
+//       id: 1,
+//       name: "Test User",
+//       email: "test@example.com",
+//       password: hashedPassword,
+//       role: "admin"
+//     });
+// }
 
     
 
-    console.log("Default user seeded ✅");
+
 
     // Start server ONLY after everything is ready
     server.listen(PORT, () => {
