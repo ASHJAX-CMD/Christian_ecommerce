@@ -5,13 +5,12 @@ const jwt = require("jsonwebtoken");
 let io;
 
 exports.initSocket = (server) => {
-  io = new Server(server, {
-    cors: {
-      origin: "http://localhost:5173",
-      credentials: true,
-    },
-  });
-
+io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND,
+    credentials: true
+  }
+});
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
