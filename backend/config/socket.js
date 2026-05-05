@@ -5,21 +5,24 @@ const jwt = require("jsonwebtoken");
 let io;
 
 exports.initSocket = (server) => {
-io = new Server(server, {
-  cors: {
-    origin: process.env.FRONTEND,
-    credentials: true
-  }
-});
+  io = new Server(server, {
+    cors: {
+      origin: process.env.FRONTEND,
+       methods: ["GET", "POST"],
+      credentials: true,
+    },
+  });
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
     try {
       const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-      const token = cookies.token;
+      const token = socket.handshake.auth?.token;
 
-      if (!token) throw new Error("No token");
-
+      if (!token) {
+        console.log("❌ No token provided");
+        return socket.disconnect();
+      }
       const user = jwt.verify(token, process.env.JWT_SECRET);
 
       // attach user
@@ -33,7 +36,6 @@ io = new Server(server, {
         socket.join("admin");
         console.log("✅ Admin joined");
       }
-
     } catch (err) {
       console.log("❌ Unauthorized socket");
     }

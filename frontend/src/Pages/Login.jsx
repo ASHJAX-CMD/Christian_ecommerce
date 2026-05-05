@@ -25,6 +25,7 @@ const Login = () => {
       console.log("Login Data Submitted: ", formData);
       const result = await dispatch(fetchUser(formData)).unwrap();
       console.log("Login success →", result);
+
       navigate("/home");
     } catch (err) {
       console.log(err);
