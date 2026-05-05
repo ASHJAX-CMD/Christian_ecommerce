@@ -15,19 +15,7 @@ import DashboardSkeleton from "../../Skeleton/DashBoardSkeleton";
 
 const LiveRipple = () => {
   return (
-    // <div className="relative flex items-center gap-2">
-    //   {/* Ripple */}
-    //   <motion.span
-    //     className="absolute h-4 w-4 rounded-full bg-green-400"
-    //     animate={{ scale: [1, 2], opacity: [0.6, 0] }}
-    //     transition={{ repeat: Infinity, duration: 1 }}
-    //   />
-
-    //   {/* Center dot */}
-    //   <span className="relative h-3 w-3 rounded-full bg-green-600"></span>
-
-    //   <span className="text-xs text-green-600 font-medium">Live</span>
-    // </div>
+   
     <div className="flex items-center gap-2">
       {/* Dot container */}
       <div className="relative flex items-center justify-center h-4 w-4">
@@ -144,19 +132,19 @@ const Dashboard = () => {
   const stats = [
     {
       title: "Total Orders",
-      value: orderStats.thisMonth?.totalOrders || 0,
+      value: orderStats.thisMonth?.total_orders || 0,
       valueLastMonth: orderStats.prevMonthOrderStats?.totalOrders || 0,
       positive: true,
       icon: ShoppingCart,
       color: "text-blue-600",
       bg: "bg-blue-50",
       span: "col-span-12",
-      pending: orderStats.thisMonth?.pendingOrders,
-      placed: orderStats.thisMonth?.placedOrders,
-      completed: orderStats.thisMonth?.completedOrders,
-      pendingLastMonth: orderStats.prevMonthOrderStats?.pendingOrders,
-      placedLastMonth: orderStats.prevMonthOrderStats?.placedOrders,
-      completedLastMonth: orderStats.prevMonthOrderStats?.completedOrders,
+      pending: orderStats.thisMonth?.pending_orders,
+      placed: orderStats.thisMonth?.placed_orders,
+      completed: orderStats.thisMonth?.completed_orders,
+      pendingLastMonth: orderStats.prevMonth_orderStats?.pending_orders,
+      placedLastMonth: orderStats.prevMonth_orderStats?.placed_orders,
+      completedLastMonth: orderStats.prevMonth_orderStats?.completed_orders,
     },
     {
       title: "Total Revenue (This Month)",
