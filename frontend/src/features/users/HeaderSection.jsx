@@ -15,7 +15,7 @@ const HeaderSection = () => {
     navigate("/cart");
   };
   const { user, loading } = useSelector((state) => state.user);
-  if (loading) return null;
+  
   return (
     <div className="bg-[#fefadf] text-gray-700 font-sans ">
       {console.log(user)}

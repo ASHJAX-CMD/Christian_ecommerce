@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import img from "../../../public/images/img.jpg";
+import profile_img from "../../../public/images/profile.jpg";
 import { useSelector } from "react-redux";
 
 const Sidebar = ({ pathname }) => {
@@ -12,7 +12,7 @@ const Sidebar = ({ pathname }) => {
           <div className=" flex justify-center  mt-2 ">
             <img
               className=" border-green-500 w-2/3 border-2 rounded-full"
-              src={img}
+              src={profile_img}
               alt=""
             />
           </div>
