@@ -53,7 +53,7 @@ const Orders = () => {
   if(loadingAdminOrders  && orders.length===0){return <AdminOrdersSkeleton/>}
   return (
     <div className="min-h-screen bg-background">
-      {console.log("Data of Orders Placed", orders)}
+    
       <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">

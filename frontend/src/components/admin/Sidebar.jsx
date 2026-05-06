@@ -16,7 +16,7 @@ const Sidebar = ({ pathname }) => {
               alt=""
             />
           </div>
-          {console.log(user)}
+       
           <p className="text-white">{user.name}</p>
         </div>
         <div className="flex flex-col gap-16 ml-2 justify-center">

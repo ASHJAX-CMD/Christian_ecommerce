@@ -18,7 +18,7 @@ const HeaderSection = () => {
   
   return (
     <div className="bg-[#fefadf] text-gray-700 font-sans ">
-      {console.log(user)}
+      
       <header className="bg-[#273617] text-white px-4 py-2 flex items-center justify-between md:justify-start relative rounded-b-3xl">
         {/* Country Selector */}
         <div className="flex items-center text-2xl gap-1 hover:text-[#38A3A5] cursor-pointer">

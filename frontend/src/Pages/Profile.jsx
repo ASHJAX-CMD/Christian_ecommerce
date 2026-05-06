@@ -93,9 +93,6 @@ const Profile = () => {
     setFormData(emptyAddress);
   };
 
-  useEffect(() => {
-    console.log(orders);
-  }, [orders]);
   if (loading) return <ProfileSkeleton/>;
   if (!user) return <Navigate to="/login" />;
   
@@ -123,7 +120,7 @@ const Profile = () => {
                   <p>
                     {addr.zip}, {addr.country}
                   </p>
-                  {console.log("default hek kro",addr.is_default)}
+                 
                   {addr.is_default && (
                     <p className="font-semibold text-sm border inline-block p-1 rounded">
                       Default Address
@@ -188,7 +185,7 @@ const Profile = () => {
                     <p>Total: ${order.total}</p>
                     <p>Order Status: {order.status}</p>
                     <p>Payment Status: {order.payment_status}</p>
-                    {console.log("Orderererer",order)}
+                  
                   </div>
                 ))
               )}

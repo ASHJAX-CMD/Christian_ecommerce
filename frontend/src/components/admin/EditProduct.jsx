@@ -76,7 +76,6 @@ const EditProduct = () => {
       if (key === "images") return;
 
       const value = product[key];
-console.log("This Edit Data is Being Sent to API for Edit",product.colors)
       if (arrayFields.includes(key)) {
         const arr = value ? value.split(",").map((v) => v.trim()) : [];
 

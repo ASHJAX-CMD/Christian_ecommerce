@@ -78,7 +78,7 @@ const Product = () => {
       params.minPrice = filter.price[0];
       params.maxPrice = filter.price[1];
     }
-    console.log("FINAL PARAMS:", params);
+   
     dispatch(getAllProducts(params));
 
     //  if(!products || products.length === 0){
@@ -86,10 +86,7 @@ const Product = () => {
     //  }
   };
 
-  useEffect(() => {
-    console.log("FILTER:", filter);
-    console.log("PAGE:", page);
-  }, [filter, page]);
+  
   useEffect(() => {
     newPage(1);
   }, [filter]);

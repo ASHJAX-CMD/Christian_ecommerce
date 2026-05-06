@@ -4,7 +4,7 @@ const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 export const getAllProducts = createAsyncThunk(
   "products/getallproducts",
   async (params, { rejectWithValue }) => {
-    console.log("PARAMS RECEIVED IN THUNK:", params);
+  
 
     try {
       const res = await axios.get(`${VITE_BACKEND_URL}/api/products`, {
@@ -126,7 +126,7 @@ const productSlice = createSlice({
           }
         }
         state.totalCount = totalCount;
-        console.log(state.items);
+       
       })
       .addCase(getAllProducts.rejected, (state, action) => {
         state.isFetching = false;

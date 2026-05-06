@@ -8,11 +8,9 @@ const AdminLayout = ({ children }) => {
   const navigate = useNavigate();
   useEffect(() => {
     socket.on("connect", () => {
-      console.log("✅ Socket connected:", socket.id);
     });
 
     socket.on("newOrder", (data) => {
-      console.log("🔥 EVENT RECEIVED:", data);
     });
 
     return () => {
@@ -35,7 +33,7 @@ const AdminLayout = ({ children }) => {
       );
     });
 
-    // ✅ cleanup (VERY IMPORTANT)
+    // cleanup 
     return () => {
       socket.off("newOrder");
     };

@@ -19,7 +19,7 @@ export const createOrder = createAsyncThunk(
         cartData,
         { withCredentials: true },
       );
-      console.log("Sent cart Data", cartData);
+      
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message);
@@ -47,19 +47,18 @@ export const fetchOrders = createAsyncThunk(
   "order/fetchOrder",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("FETCH ORDERS CALLED");
-
+    
       const res = await axios.get(
          `${VITE_BACKEND_URL}/api/orders/user/all`
         , {
         withCredentials: true,
       });
 
-      console.log("API RESPONSE:", res.data);
+      
 
       return res.data;
     } catch (error) {
-      console.log("API ERROR:", error);
+      
       return rejectWithValue(error.response?.data?.message);
     }
   },
@@ -69,7 +68,7 @@ export const fetchOrdersAdmin = createAsyncThunk(
   "order/fetchOrdersAdmin",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("FETCH ORDERS CALLED");
+      
       
       const res = await axios.get(
          `${VITE_BACKEND_URL}/api/orders/admin/all`
@@ -79,11 +78,11 @@ export const fetchOrdersAdmin = createAsyncThunk(
         },
       );
 
-      console.log("API RESPONSE:", res.data);
+      
 
       return res.data;
     } catch (error) {
-      console.log("API ERROR:", error);
+      
       return rejectWithValue(error.response?.data?.message);
     }
   },
@@ -102,10 +101,10 @@ export const fetchOderDetails = createAsyncThunk(
           withCredentials: true,
         },
       );
-      console.log("res from api", res.data);
+      
       return res.data;
     } catch (error) {
-      console.log("API Error", error);
+      
       return rejectWithValue(error.response?.data?.message);
     }
   },
@@ -123,7 +122,7 @@ export const refund = createAsyncThunk(
 
       return res.data;
     } catch (error) {
-      console.log(error);
+      
       return rejectWithValue(error.response?.data?.message);
     }
   },

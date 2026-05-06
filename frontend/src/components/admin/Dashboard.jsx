@@ -69,7 +69,7 @@ const StatCard = ({
       <div className="mt-4">
         <h3 className="text-3xl font-bold">{value}</h3>
 
-        {/* 🔥 Percentage Footer */}
+        {/*  Percentage Footer */}
         <p
           className={`text-sm mt-1 ${
             title === "Canceled Orders"
@@ -187,8 +187,7 @@ const Dashboard = () => {
 if(loadingOrderStats && Object.keys(orderStats).length===0){return <DashboardSkeleton/>}
   return (
     <div className="min-h-screen bg-background p-6 md:p-10">
-      {console.log(orderStats.length)}
-      {console.log("Total Data for DashBoard", orderStats)}
+     
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex justify-between">
           <div>

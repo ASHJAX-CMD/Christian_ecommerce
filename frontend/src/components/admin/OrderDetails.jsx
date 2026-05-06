@@ -38,7 +38,6 @@ const OrderDetails = () => {
   const [refundStarted, setRefundStarted] = useState(false);
   const order = useSelector((state) => state.order.orderDetails);
   const { loading } = useSelector((state) => state.order);
-  console.log("params id:", id);
   const [status, setStatus] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
@@ -50,7 +49,7 @@ const OrderDetails = () => {
     }
   }, [order]);
   // const orderItems = useSelector((state) => state.order.orderDetails);
-  console.log("order details", order);
+  
   const handleStatusUpdate = async () => {
     if (status === order.status) return; // 🚀 avoid useless call
 
@@ -135,7 +134,7 @@ const OrderDetails = () => {
             <h3 className="text-xs font-semibold  text-muted-foreground uppercase tracking-wider mb-4">
               Customer
             </h3>
-            {console.log("proper details", order)}
+          
             <p className="font-semibold text-foreground mb-1">
               {order.users.name}
             </p>
@@ -205,7 +204,7 @@ const OrderDetails = () => {
                       className="w-24 h-24 object-cover rounded"
                     />
                   </span>
-                  {console.log("image", item.product_image[0])}
+                  
                   <div>
                     <p className="font-medium text-sm text-foreground">
                       {item.productName}

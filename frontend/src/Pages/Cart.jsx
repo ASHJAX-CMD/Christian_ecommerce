@@ -38,7 +38,7 @@ const Cart = () => {
       const result = await dispatch(createOrder(orderData)).unwrap();
 
       const orderId = result.id; // backend order id
-      console.log("Razorpay:", window.Razorpay);
+      
 
       handlePayment(orderId);
     } catch (err) {
@@ -47,7 +47,7 @@ const Cart = () => {
   };
   const handlePayment = async (orderId) => {
     try {
-       // 🔥 load SDK dynamically
+       // load SDK dynamically
     const isLoaded = await loadRazorpay();
 
     if (!isLoaded) {
@@ -75,7 +75,7 @@ const Cart = () => {
 
       const data = await res.json();
 
-      // 2️⃣ Razorpay checkout options
+      // 2️ Razorpay checkout options
       const options = {
         key: id,
         amount: data.amount,
@@ -86,7 +86,7 @@ const Cart = () => {
         description: "Order Payment",
 
         handler: async function (response) {
-          // 3️⃣ Send payment info to backend
+          // 3️ Send payment info to backend
           const verifyRes = await fetch(
              `${VITE_BACKEND_URL}/api/payment/verify`
            ,
@@ -120,10 +120,10 @@ const Cart = () => {
         },
       };
 
-      // 4️⃣ Open Razorpay checkout
+      // 4️ Open Razorpay checkout
       const rzp = new window.Razorpay(options);
       rzp.on("payment.failed", function (response) {
-        console.log(response.error);
+       
         alert("Payment Failed ❌");
       });
 

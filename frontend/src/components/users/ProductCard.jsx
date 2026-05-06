@@ -41,7 +41,7 @@ const ProductCard = ({ product }) => {
         src={`${product.images[0]}`}
         alt=""
       />
-      {console.log(product)}
+   
       <div className="flex  bg-white  p-4 flex-col gap-1">
         <section>
           <p className="font-extrabold">{product.name}</p>

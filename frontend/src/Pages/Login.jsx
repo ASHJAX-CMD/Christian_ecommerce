@@ -22,9 +22,9 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Login Data Submitted: ", formData);
-      const result = await dispatch(fetchUser(formData)).unwrap();
-      console.log("Login success →", result);
+      
+      await dispatch(fetchUser(formData)).unwrap();
+    
 
       navigate("/home");
     } catch (err) {

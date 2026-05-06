@@ -6,13 +6,13 @@ const AdminSocketHandler = ({ user }) => {
  useEffect(() => {
   if (!user) return;
 
-  // 🔌 Just connect — cookies will go automatically
+  //  Just connect — cookies will go automatically
   socket.connect();
 
-  console.log("🔥 Connecting via cookies");
+  
 
   socket.on("connect", () => {
-    console.log("✅ Connected:", socket.id);
+   
   });
 
   return () => {
@@ -28,12 +28,12 @@ const AdminSocketHandler = ({ user }) => {
     //    {console.log("user details ",user)}
     //   if (user?.role === "admin") {
     // socket.emit("joinAdmin"); 
-    //   console.log("✅ Admin joined");
+    //   console.log(" Admin joined");
     // } else {
-    //   console.log("❌ Non-admin tried to join admin room");
+    //   console.log(" Non-admin tried to join admin room");
     // }
     // });
-    // 🔔 listeners
+    //  listeners
     socket.off("newOrder").on("newOrder", (data) => {
       console.log("New Order:", data);
       toast.success(`${data.userName} placed order of ₹${data.total}`);
@@ -44,7 +44,7 @@ const AdminSocketHandler = ({ user }) => {
       toast.error(`${data.name} is low on stock ⚠️`);
     });
 
-    // 🧹 cleanup
+    //  cleanup
     return () => {
       socket.off("newOrder");
       socket.off("lowStock");

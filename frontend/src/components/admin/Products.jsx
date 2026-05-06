@@ -33,7 +33,7 @@ const Products = () => {
 
     
 
-    console.log("FINAL PARAMS:", params);
+  
     dispatch(getAllProducts(params));
   };
  

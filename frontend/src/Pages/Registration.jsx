@@ -28,9 +28,9 @@ const Register = () => {
   }
 
   try {
-    const result = await dispatch(createUser(formData)).unwrap();
+     await dispatch(createUser(formData)).unwrap();
 
-    console.log("Registration success:", result);
+    
 
     navigate("/login");  // redirect after success
   } catch (error) {
