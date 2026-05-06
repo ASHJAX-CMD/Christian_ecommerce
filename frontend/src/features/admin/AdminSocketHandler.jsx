@@ -3,20 +3,36 @@ import { socket } from "../../socket"; // adjust path
 import { toast } from "react-hot-toast";
 
 const AdminSocketHandler = ({ user }) => {
-  useEffect(() => {
-    // 🔌 connect
-    socket.connect();
+ useEffect(() => {
+  if (!user) return;
 
-    // 🛠 join admin room
-    socket.on("connect", () => {
-       {console.log("user details ",user)}
-      if (user?.role === "admin") {
-    socket.emit("joinAdmin"); 
-      console.log("✅ Admin joined");
-    } else {
-      console.log("❌ Non-admin tried to join admin room");
-    }
-    });
+  // 🔌 Just connect — cookies will go automatically
+  socket.connect();
+
+  console.log("🔥 Connecting via cookies");
+
+  socket.on("connect", () => {
+    console.log("✅ Connected:", socket.id);
+  });
+
+  return () => {
+    socket.disconnect();
+  };
+}, [user]);
+  useEffect(() => {
+    // // 🔌 connect
+    // socket.connect();
+
+    // // 🛠 join admin room
+    // socket.on("connect", () => {
+    //    {console.log("user details ",user)}
+    //   if (user?.role === "admin") {
+    // socket.emit("joinAdmin"); 
+    //   console.log("✅ Admin joined");
+    // } else {
+    //   console.log("❌ Non-admin tried to join admin room");
+    // }
+    // });
     // 🔔 listeners
     socket.off("newOrder").on("newOrder", (data) => {
       console.log("New Order:", data);

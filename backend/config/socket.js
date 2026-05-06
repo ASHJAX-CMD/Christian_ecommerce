@@ -8,7 +8,7 @@ exports.initSocket = (server) => {
   io = new Server(server, {
     cors: {
       origin: process.env.FRONTEND,
-       methods: ["GET", "POST"],
+      methods: ["GET", "POST"],
       credentials: true,
     },
   });
@@ -17,11 +17,14 @@ exports.initSocket = (server) => {
 
     try {
       const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-      const token = socket.handshake.auth?.token;
-
+      const token = cookies.token;
       if (!token) {
         console.log("❌ No token provided");
         return socket.disconnect();
+      }
+      if (token) {
+        console.log("token provided");
+       
       }
       const user = jwt.verify(token, process.env.JWT_SECRET);
 

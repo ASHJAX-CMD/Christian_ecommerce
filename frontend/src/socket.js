@@ -4,7 +4,5 @@ export const socket = io(VITE_BACKEND_URL, {
   autoConnect: false,
   transports: ["websocket"],
   withCredentials: true,
-  auth: {
-    token: localStorage.getItem("token"),
-  },
+
 });
