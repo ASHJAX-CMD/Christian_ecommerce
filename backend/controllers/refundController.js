@@ -16,7 +16,7 @@ const refundController = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    
+    console.log(req.user)
     // prevent users refunding others’ orders
     if (req.user.role !== "admin" && order.user_id !== req.user.id) {
       return res.status(403).json({ message: "Forbidden" });
@@ -51,8 +51,8 @@ const refundController = async (req, res) => {
       }
     );
 
-    //  webhook handles DB update → good
-    // So DO NOT update DB here
+    //  webhook handles DB update 
+  
 
     res.json({
       success: true,

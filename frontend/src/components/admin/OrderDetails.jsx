@@ -240,13 +240,13 @@ const OrderDetails = () => {
             </p>
           )}
 
-          {order.paymentStatus === "refunded" && (
+          {order.payment_status === "refunded" && (
             <p className="p-4 bg-green-100 text-green-600 rounded-2xl mt-2">
               Refunded ✅
             </p>
           )}
 
-          {order.paymentStatus === "refund_failed" && (
+          {order.payment_status === "refund_failed" && (
             <p className="p-4 bg-red-100 text-red-600 rounded-2xl mt-2">
               Refund failed ❌
             </p>
@@ -254,7 +254,7 @@ const OrderDetails = () => {
         </div>
 
         <div className="flex gap-3">
-          {!refundStarted && order.paymentStatus !== "refunded" && (
+          {!refundStarted && order.payment_status !== "refunded" && (
             <p
               className={`p-4 inline-block rounded-2xl mt-2 
     ${loading ? "bg-gray-300 cursor-not-allowed" : "bg-white cursor-pointer"}`}

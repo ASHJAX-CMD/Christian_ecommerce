@@ -8,7 +8,7 @@ router.post("/create-order", auth, createPaymentOrder);
 router.post("/verify", auth, verifyPayment);
 
 const { refundController } = require("../controllers/refundController");
-router.post("/verify/refund/:id", refundController)
+router.post("/verify/refund/:id",auth, refundController)
 // IMPORTANT: use RAW, not JSON
 router.post(
   "/webhook",
