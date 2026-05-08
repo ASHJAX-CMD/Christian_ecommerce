@@ -35,7 +35,7 @@ const ProductCard = ({ product }) => {
     navigate("/cart");
   };
   return (
-    <div k className="p-2 rounded-xl  bg-white">
+    <div  className="p-2 rounded-xl  bg-white">
       <img
         className="  h-86"
         src={`${product.images[0]}`}

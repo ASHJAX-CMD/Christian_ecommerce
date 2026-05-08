@@ -87,13 +87,11 @@ const Product = () => {
   };
 
   
-  useEffect(() => {
-    newPage(1);
-  }, [filter]);
+ 
 
-  useEffect(() => {
-    fetchProducts();
-  }, [page]);
+ useEffect(() => {
+  fetchProducts();
+}, [page, filter]);
 
   return (
     <div className="min-h-screen">
