@@ -3,7 +3,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, decreaseQty, increaseQty } from "../../slices/cartSlice";
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -16,32 +16,27 @@ const ProductCard = ({ product }) => {
   const counts = item?.cartQuantity || 0;
   const [count, setCount] = useState(counts);
   const handleShopNow = () => {
-    dispatch(addToCart(product));
+    if (count >= product.quantity)
+      return alert("Order art Inreasing Produt quantity");
+    dispatch(addToCart({ product, source: "productPage" }));
     setIsAdded(true);
+
     setCount((prev) => prev + 1);
-    console.log(item);
+
     setTimeout(() => {
       setIsAdded(false);
     }, 5000);
   };
   const handleShopNow1 = () => {
-    dispatch(addToCart(product));
-    // setIsAdded(true);
-    // setCount((prev) => prev + 1);
-    // console.log(item)
-    // setTimeout(() => {
-    //   setIsAdded(false);
-    // }, 5000);
+    dispatch(addToCart({ product, source: "productPage_shopNow" }));
     navigate("/cart");
   };
   return (
-    <div  className="p-2 rounded-xl  bg-white">
-      <img
-        className="  h-86"
-        src={`${product.images[0]}`}
-        alt=""
-      />
-   
+    <div className="p-2 rounded-xl  bg-white">
+      <Link key={product._id} to={`/productdetail/${product._id}`}>
+        <img className="  h-86" src={`${product.images[0]}`} alt="" />
+      </Link>
+
       <div className="flex  bg-white  p-4 flex-col gap-1">
         <section>
           <p className="font-extrabold">{product.name}</p>
@@ -80,6 +75,7 @@ const ProductCard = ({ product }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    if (count >= product.quantity) return;
                     setCount((prev) => prev + 1);
                     dispatch(increaseQty(product._id));
                   }}

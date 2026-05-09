@@ -10,7 +10,7 @@ import { Provider, useDispatch } from "react-redux";
 import store from "./store";
 import ProtectedAdmin from "./components/admin/Protected";
 import Splash from "./Splash";
-
+import ProductDetail from "./Pages/ProductDetail.jsx"
 import Home from "./Pages/Home";
 import Admin from "./Pages/Admin";
 import Reviews from "./components/admin/Reviews";
@@ -72,6 +72,7 @@ function AppContent() {
           <Route path="/home" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/product" element={<Product />} />
+          <Route path="/productdetail/:productId" element={<ProductDetail />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/design&support" element={<Design />} />
           <Route path="/offers" element={<Offers />} />

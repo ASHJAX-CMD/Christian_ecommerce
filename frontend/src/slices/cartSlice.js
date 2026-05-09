@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// 1️⃣ Load from localStorage
+// Load from localStorage
 const loadCartFromStorage = () => {
   try {
     const data = localStorage.getItem("cart");
@@ -12,62 +12,106 @@ const loadCartFromStorage = () => {
 
 const initialState = {
   items: loadCartFromStorage(),
-  
+
 };
 
 const cartSlice = createSlice({
   name: "cart",
+
   initialState,
-  
+
   reducers: {
 
     addToCart: (state, action) => {
-      const product = action.payload;
+
+      const { product, source, qty } = action.payload;
+
       const existing = state.items.find(
-        item => item._id === product._id
+        (item) => item?._id === product?._id
       );
 
-      if (existing) {
-        existing.cartQuantity += 1;
-        console.log(JSON.parse(JSON.stringify(state.items)));
-      } else {
-        state.items.push({ ...product, cartQuantity: 1 });
-        console.log(JSON.parse(JSON.stringify(state.items)));
+      // Single product page
+      if (source === "singleProduct") {
+
+        if (existing) {
+          existing.cartQuantity = qty;
+        } else {
+          state.items.push({
+            ...product,
+            cartQuantity: qty,
+          });
+        }
+
+
+        return;
       }
+
+      // Product card/default add
+      if (existing) {
+        if(source==="productPage_shopNow"){
+          if(!existing.cartQuantity){
+            existing.cartQuantity = 1;
+          }
+          return
+        }
+        existing.cartQuantity += 1;
+      } else {
+        state.items.push({
+          ...product,
+          cartQuantity: 1,
+        });
+      }
+
+   
     },
 
     increaseQty: (state, action) => {
+
       const item = state.items.find(
-        item => item._id === action.payload
+        (item) => item._id === action.payload
       );
-      if (item) item.cartQuantity += 1;
+
+      if (item) {
+        item.cartQuantity += 1;
+       
+      }
     },
 
     decreaseQty: (state, action) => {
+
       const item = state.items.find(
-        item => item._id === action.payload
+        (item) => item._id === action.payload
       );
+
       if (item) {
+
         item.cartQuantity -= 1;
+
         if (item.cartQuantity <= 0) {
+
           state.items = state.items.filter(
-            i => i._id !== action.payload
+            (i) => i._id !== action.payload
           );
         }
+
+    
       }
     },
 
     removeFromCart: (state, action) => {
+
       state.items = state.items.filter(
-        item => item._id !== action.payload
+        (item) => item._id !== action.payload
       );
     },
 
     clearCart: (state) => {
-      state.items = [];
-    }
 
-  }
+      state.items = [];
+      
+    },
+
+  },
 });
 
 export const {
@@ -75,7 +119,7 @@ export const {
   increaseQty,
   decreaseQty,
   removeFromCart,
-  clearCart
+  clearCart,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

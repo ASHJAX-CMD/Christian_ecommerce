@@ -146,7 +146,7 @@ const Cart = () => {
               <p className="text-gray-500">Your cart is empty.</p>
             )}
 
-            {cart.map((item) => (
+            {cart?.map((item) => (
               <div
                 key={item._id}
                 className="flex items-start justify-between gap-6 border-b py-6"
@@ -155,7 +155,7 @@ const Cart = () => {
                 <div className="flex gap-4 flex-1">
                   <div className="w-32 h-32 flex-shrink-0">
                     <img
-                      src={`${item.images[0]}`}
+                      src={`${item?.images[0]}`}
                       alt={item.name}
                       className="w-full h-full object-cover rounded-lg"
                     />

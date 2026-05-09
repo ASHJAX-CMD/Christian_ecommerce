@@ -58,9 +58,31 @@ export const createProduct = createAsyncThunk(
   },
 );
 
+// single Produt details
+export const fetchSingleProduct = createAsyncThunk(
+  "product/fetchSingleProduct",
+  async (productId, thunkAPI) => {
+    
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/products/${productId}`
+      );
+
+      return response.data.product;
+    } catch (error) {
+      console.log(error)
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch product"
+      );
+    }
+  }
+);
+
 const productSlice = createSlice({
   name: "products",
   initialState: {
+
+    product: null,
     items: [], // list of products
     homeItems: [],
     totalCount: 0,
@@ -68,15 +90,21 @@ const productSlice = createSlice({
     isCreating: false, // admin create
     isPaginating: false, // loading more
     error: null,
+    singleproductloading:false,
     success: false,
   },
-  reducers: {
-    resetProductState: (state) => {
-      state.loading = false;
-      state.error = null;
-      state.success = false;
-    },
+ reducers: {
+  resetProductState: (state) => {
+    state.loading = false;
+    state.error = null;
+    state.success = false;
   },
+
+  clearProduct: (state) => {
+    state.product = null;
+    state.error = null;
+  },
+},
   extraReducers: (builder) => {
     builder
       .addCase(createProduct.pending, (state) => {
@@ -131,6 +159,18 @@ const productSlice = createSlice({
       .addCase(getAllProducts.rejected, (state, action) => {
         state.isFetching = false;
         state.error = action.payload || "Failed to fetch products";
+      })
+       .addCase(fetchSingleProduct.pending, (state) => {
+        state.singleproductloading = true;
+        state.error = null;
+      })
+      .addCase(fetchSingleProduct.fulfilled, (state, action) => {
+        state.singleproductloading = false;
+        state.product = action.payload;
+      })
+      .addCase(fetchSingleProduct.rejected, (state, action) => {
+        state.singleproductloading = false;
+        state.error = action.payload;
       });
   },
 });

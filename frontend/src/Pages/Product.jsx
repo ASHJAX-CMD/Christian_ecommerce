@@ -8,6 +8,7 @@ import { getAllProducts } from "../slices/product";
 import { useEffect } from "react";
 import ProductPageSkeleton from "../Skeleton/ProductPageSkeleton";
 import ProfileSkeleton from "../Skeleton/ProfileSkeleton";
+import { Link } from "react-router-dom";
 
 const Product = () => {
   const dispatch = useDispatch();
@@ -78,7 +79,7 @@ const Product = () => {
       params.minPrice = filter.price[0];
       params.maxPrice = filter.price[1];
     }
-   
+
     dispatch(getAllProducts(params));
 
     //  if(!products || products.length === 0){
@@ -86,12 +87,9 @@ const Product = () => {
     //  }
   };
 
-  
- 
-
- useEffect(() => {
-  fetchProducts();
-}, [page, filter]);
+  useEffect(() => {
+    fetchProducts();
+  }, [page, filter]);
 
   return (
     <div className="min-h-screen">
@@ -138,32 +136,35 @@ const Product = () => {
           {/* Product starts here */}
 
           <div className="flex-1">
-              {isFetching && products.length === 0 ? (
+            {isFetching && products.length === 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    <ProductPageSkeleton />
-  </div>
-              ) : (
+                <ProductPageSkeleton />
+              </div>
+            ) : (
               <>
                 {/* ✅ Grid ONLY for products */}
                 <div className="flex-1 grid grid-cols-1 border-b sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {products.map((product) => (
-                    <ProductCard key={product._id} product={product} />
+                    <div>
+                     
+                      <ProductCard key={product._id} product={product} />
+                    </div>
                   ))}
                 </div>
 
                 {/* pagination loader */}
-                  {isPaginating && (
+                {isPaginating && (
                   <p className="text-center mt-4">Loading more...</p>
-                  )}
+                )}
               </>
-              )}
-            
+            )}
+
             {/* Load More Button */}
 
             {hasMore && (
               <div className="mt-4">
                 <div className="flex justify-center">
-                  <p
+                  <div
                     onClick={() => newPage((prev) => prev + 1)}
                     className="bg-white border flex justify-center flex-col items-center  font-semibold  p-2 px-6 w-fit rounded-4xl"
                   >
@@ -171,7 +172,7 @@ const Product = () => {
                     <p className="font-normal">
                       Showing {products.length} of {totalCount} Products
                     </p>
-                  </p>
+                  </div>
                 </div>
               </div>
             )}

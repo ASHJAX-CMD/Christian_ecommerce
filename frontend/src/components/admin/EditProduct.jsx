@@ -34,7 +34,7 @@ const EditProduct = () => {
       axios
         .get(`${VITE_BACKEND_URL}/api/products/${id}`)
         .then((res) => {
-          const data = res.data;
+          const data = res.data.product;
 
           setProduct({
             ...data,
