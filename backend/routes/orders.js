@@ -16,16 +16,17 @@ router.post("/", auth, async (req, res) => {
     const { items, address } = req.body;
 
     //  Validate address
-const { data: userAddress, error: addressError } = await supabase
-  .from("addresses")
-  .select("*")
-  .eq("id", address)
-  .eq("user_id", req.user.id)
-  .single();
+    const { data: userAddress, error: addressError } = await supabase
+      .from("addresses")
+      .select("*")
 
-if (addressError || !userAddress) {
-  return res.status(400).json({ message: "Invalid address" });
-}
+      .eq("user_id", req.user.id)
+      .eq("is_default", true)
+      .single();
+
+    if (addressError || !userAddress) {
+      return res.status(400).json({ message: "Invalid address" });
+    }
 
     //  Validate items
     if (!items || !items.length) {
@@ -114,7 +115,13 @@ if (addressError || !userAddress) {
       .from("orders")
       .insert({
         user_id: req.user.id,
-        address_id: address,
+        addresses: {
+          street: userAddress.street,
+          city: userAddress.city,
+          state: userAddress.state,
+          zip: userAddress.zip,
+          country: userAddress.country,
+        },
         total,
         status: "pending",
         payment_status: "pending",
@@ -142,7 +149,7 @@ if (addressError || !userAddress) {
       ...order,
       items: finalItems,
     });
-  }catch (err) {
+  } catch (err) {
     // -------------------------
     // ROLLBACK (MANUAL)
     // -------------------------
@@ -150,7 +157,7 @@ if (addressError || !userAddress) {
     for (const item of stockUpdates) {
       await Product.updateOne(
         { _id: item.productId },
-        { $inc: { quantity: item.quantity } }
+        { $inc: { quantity: item.quantity } },
       );
     }
 
@@ -243,12 +250,14 @@ if (addressError || !userAddress) {
 ====================================================== */
 router.get("/", auth, async (req, res) => {
   try {
-const { data: orders, error } = await supabase
+    const { data: orders, error } = await supabase
       .from("orders")
-      .select(`
+      .select(
+        `
         *,
         order_items (*)
-      `)
+      `,
+      )
       .eq("user_id", req.user.id)
       .order("created_at", { ascending: false });
 
@@ -310,7 +319,8 @@ router.get("/admin/:orderId", auth, async (req, res) => {
     // 📦 Fetch order with relations
     const { data: order, error } = await supabase
       .from("orders")
-      .select(`
+      .select(
+        `
         *,
         order_items (
           product_name,
@@ -318,18 +328,14 @@ router.get("/admin/:orderId", auth, async (req, res) => {
           price,
           quantity
         ),
-        addresses (
-          id,
-          city,
-          state,
-          zip
-        ),
+      
         users (
           id,
           name,
           email
         )
-      `)
+      `,
+      )
       .eq("id", orderId)
       .single();
 
@@ -361,10 +367,12 @@ router.get("/user/all", auth, async (req, res) => {
 
     const { data: orders, error } = await supabase
       .from("orders")
-      .select(`
+      .select(
+        `
         *,
         order_items (*)
-      `)
+      `,
+      )
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
@@ -399,10 +407,12 @@ router.get("/:orderId", auth, async (req, res) => {
 
     const { data: order, error } = await supabase
       .from("orders")
-      .select(`
+      .select(
+        `
         *,
         order_items (*)
-      `)
+      `,
+      )
       .eq("id", orderId)
       .eq("user_id", req.user.id)
       .single();
@@ -456,12 +466,14 @@ router.put("/status/:orderId", auth, async (req, res) => {
     // Step 2: Fetch updated order with relations
     const { data: order, error: fetchError } = await supabase
       .from("orders")
-      .select(`
+      .select(
+        `
         *,
         order_items (*),
-        addresses (*),
+       
         users (id, name, email)
-      `)
+      `,
+      )
       .eq("id", orderId)
       .single();
 
@@ -530,8 +542,6 @@ router.delete("/:orderId", auth, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
 
 router.get("/admin/dashboard/ordertotaldetails", auth, async (req, res) => {
   if (req.user.role !== "admin") {

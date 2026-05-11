@@ -44,7 +44,7 @@ const OrderDetails = () => {
     dispatch(fetchOderDetails(id));
   }, [id]);
   useEffect(() => {
-    if (order?.status) {
+    if (order?.status) {  
       setStatus(order.status);
     }
   }, [order]);

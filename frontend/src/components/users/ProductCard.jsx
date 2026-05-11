@@ -17,7 +17,7 @@ const ProductCard = ({ product }) => {
   const [count, setCount] = useState(counts);
   const handleShopNow = () => {
     if (count >= product.quantity)
-      return alert("Order art Inreasing Produt quantity");
+      return alert("Order Cart Inreasing, Produt quantity");
     dispatch(addToCart({ product, source: "productPage" }));
     setIsAdded(true);
 

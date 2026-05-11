@@ -142,6 +142,7 @@ const updateAddress = async (req, res) => {
   }
 };
 const deleteAddress = async (req, res) => {
+   console.log("DELETE ROUTE HIT");
   try {
     const { id } = req.params;
     const userId = req.user.id;
@@ -169,6 +170,7 @@ const deleteAddress = async (req, res) => {
     });
 
   } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
       message: "Error deleting address",
