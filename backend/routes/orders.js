@@ -16,16 +16,17 @@ router.post("/", auth, async (req, res) => {
     const { items, address } = req.body;
 
     //  Validate address
-const { data: userAddress, error: addressError } = await supabase
-  .from("addresses")
-  .select("*")
-  .eq("id", address)
-  .eq("user_id", req.user.id)
-  .single();
+    const { data: userAddress, error: addressError } = await supabase
+      .from("addresses")
+      .select("*")
+      .eq("id", address)
+      .eq("user_id", req.user.id)
+      .single();
 
-if (addressError || !userAddress) {
-  return res.status(400).json({ message: "Invalid address" });
-}
+    if (addressError || !userAddress) {
+      console.error("Address validation error:", addressError);
+      return res.status(400).json({ message: "Invalid address" });
+    }
 
     //  Validate items
     if (!items || !items.length) {
@@ -108,6 +109,11 @@ if (addressError || !userAddress) {
       });
     }
 
+    console.log("INSERTING ORDER WITH:", {
+      user_id: req.user.id,
+      address_id: address,
+      total,
+    });
     // CREATE ORDER (SUPABASE)
     // -------------------------
     const { data: order, error: orderError } = await supabase
@@ -142,7 +148,7 @@ if (addressError || !userAddress) {
       ...order,
       items: finalItems,
     });
-  }catch (err) {
+  } catch (err) {
     // -------------------------
     // ROLLBACK (MANUAL)
     // -------------------------
@@ -243,7 +249,7 @@ if (addressError || !userAddress) {
 ====================================================== */
 router.get("/", auth, async (req, res) => {
   try {
-const { data: orders, error } = await supabase
+    const { data: orders, error } = await supabase
       .from("orders")
       .select(`
         *,

@@ -98,14 +98,14 @@ const updateAddress = async (req, res) => {
       }
     });
 
-    // 🔥 Handle boolean properly
+    //  Handle boolean properly
     if (updates.isDefault !== undefined) {
       updates.is_default =
         updates.isDefault === true || updates.isDefault === "true";
       delete updates.isDefault;
     }
 
-    // 🔥 If setting new default → reset old default
+    //  If setting new default → reset old default
     if (updates.is_default === true) {
       const { error: resetError } = await supabase
         .from("addresses")
@@ -116,7 +116,7 @@ const updateAddress = async (req, res) => {
       if (resetError) throw resetError;
     }
 
-    // 🔥 Update address
+    //  Update address
     const { data: updatedAddress, error: updateError } = await supabase
       .from("addresses")
       .update(updates)
@@ -151,7 +151,7 @@ const deleteAddress = async (req, res) => {
       .delete()
       .eq("id", id)
       .eq("user_id", userId)
-      .select(); // 🔥 IMPORTANT
+      .select(); //  IMPORTANT
 
     if (error) throw error;
 
