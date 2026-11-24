@@ -19,12 +19,12 @@ router.post("/", auth, async (req, res) => {
     const { data: userAddress, error: addressError } = await supabase
       .from("addresses")
       .select("*")
-
+      .eq("id", address)
       .eq("user_id", req.user.id)
-      .eq("is_default", true)
       .single();
 
     if (addressError || !userAddress) {
+      console.error("Address validation error:", addressError);
       return res.status(400).json({ message: "Invalid address" });
     }
 
@@ -109,6 +109,11 @@ router.post("/", auth, async (req, res) => {
       });
     }
 
+    console.log("INSERTING ORDER WITH:", {
+      user_id: req.user.id,
+      address_id: address,
+      total,
+    });
     // CREATE ORDER (SUPABASE)
     // -------------------------
     const { data: order, error: orderError } = await supabase
